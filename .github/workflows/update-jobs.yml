@@ -22,7 +22,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Fetch and filter trusted jobs
+      - name: Fetch and filter jobs
         run: |
           python - <<'PY'
           import json
@@ -30,14 +30,37 @@ jobs:
           import html
           import urllib.request
           from datetime import datetime, timezone, timedelta
-          from urllib.parse import urlparse
+          from urllib.parse import urlparse, urlencode
+
+          NOW = datetime.now(timezone.utc)
+
+          COUNTRIES = {
+              "India": [
+                  "india", "bengaluru", "bangalore", "mumbai",
+                  "delhi", "hyderabad", "chennai", "pune", "noida"
+              ],
+              "Indonesia": [
+                  "indonesia", "jakarta", "surabaya", "bandung",
+                  "yogyakarta", "bali"
+              ],
+              "Philippines": ["philippines", "manila", "cebu"],
+              "Vietnam": [
+                  "vietnam", "viet nam", "ho chi minh", "hanoi"
+              ],
+              "Malaysia": ["malaysia", "kuala lumpur", "penang"],
+              "Thailand": ["thailand", "bangkok", "chiang mai"]
+          }
 
           def fetch(url):
               req = urllib.request.Request(
-                  url, headers={"User-Agent": "Switchremote/1.0"}
+                  url,
+                  headers={
+                      "User-Agent": "Switchremote/1.0",
+                      "Accept": "application/json"
+                  }
               )
-              with urllib.request.urlopen(req, timeout=30) as r:
-                  return json.loads(r.read().decode("utf-8"))
+              with urllib.request.urlopen(req, timeout=30) as response:
+                  return json.loads(response.read().decode("utf-8"))
 
           def clean(value):
               if isinstance(value, list):
@@ -46,22 +69,9 @@ jobs:
 
           def plain(value):
               value = re.sub(r"<[^>]*>", " ", clean(value))
-              return re.sub(r"\s+", " ", value).lower()
+              return re.sub(r"\s+", " ", value).strip().lower()
 
-          COUNTRIES = {
-              "India": ["india", "bangalore", "bengaluru", "mumbai",
-                        "delhi", "hyderabad", "chennai", "pune", "noida"],
-              "Indonesia": ["indonesia", "jakarta", "surabaya", "bandung",
-                            "yogyakarta", "bali"],
-              "Philippines": ["philippines", "manila", "cebu"],
-              "Vietnam": ["vietnam", "viet nam", "ho chi minh", "hanoi"],
-              "Malaysia": ["malaysia", "kuala lumpur", "penang"],
-              "Thailand": ["thailand", "bangkok", "chiang mai"]
-          }
-
-          ALLOWED_COUNTRIES = set(COUNTRIES)
-
-          def get_date(value):
+          def parse_date(value):
               if not value:
                   return None
               try:
@@ -69,7 +79,7 @@ jobs:
                       if value > 10**12:
                           value /= 1000
                       return datetime.fromtimestamp(value, timezone.utc)
-                  value = value.replace("Z", "+00:00")
+                  value = str(value).replace("Z", "+00:00")
                   result = datetime.fromisoformat(value)
                   if result.tzinfo is None:
                       result = result.replace(tzinfo=timezone.utc)
@@ -77,43 +87,53 @@ jobs:
               except (ValueError, TypeError, OverflowError):
                   return None
 
-          def eligible(job):
-              title = job["title"].lower()
-              location = job["location"].lower()
-              description = plain(job["description"])
+          def valid_date(value):
+              posted = parse_date(value)
+              return bool(
+                  posted
+                  and posted <= NOW + timedelta(days=1)
+                  and posted >= NOW - timedelta(days=30)
+              )
+
+          def country_match(location):
+              loc = clean(location).lower()
+              for country, aliases in COUNTRIES.items():
+                  if any(alias in loc for alias in aliases):
+                      return country
+              return None
+
+          def eligible(job, mode_verified=False):
+              title = clean(job.get("title")).lower()
+              location = clean(job.get("location")).lower()
+              description = plain(job.get("description"))
               text = title + " " + description
               mode_text = title + " " + location + " " + description
 
-              # Require a clearly identified target country in location.
-              country_found = any(
-                  alias in location
-                  for aliases in COUNTRIES.values()
-                  for alias in aliases
-              )
-              if not country_found:
+              if not title or not country_match(location):
                   return False
 
-              # Require explicit remote wording and reject onsite/hybrid.
+              # Remote must be explicitly verified by source or listing.
               remote_terms = [
                   "remote", "fully remote", "100% remote",
                   "work from home", "work-from-home"
               ]
-              if not any(term in mode_text for term in remote_terms):
+              if not mode_verified and not any(
+                  term in mode_text for term in remote_terms
+              ):
                   return False
 
               reject_modes = [
-                  "on-site", "onsite", "on site",
-                  "hybrid", "in-office", "in office",
-                  "office-based", "office based"
+                  "on-site", "onsite", "on site", "hybrid",
+                  "in-office", "in office", "office-based",
+                  "office based"
               ]
               if any(term in mode_text for term in reject_modes):
                   return False
 
-              # Reject seniority and explicit experience requirements.
               reject_titles = [
-                  "senior", "sr.", "principal", "staff engineer",
-                  "director", "manager", "head of", "vice president",
-                  "lead engineer", "team lead", "experienced"
+                  "senior", "principal", "director", "manager",
+                  "head of", "vice president", "team lead",
+                  "lead engineer", "staff engineer", "experienced"
               ]
               if any(term in title for term in reject_titles):
                   return False
@@ -138,15 +158,19 @@ jobs:
                          for term in entry_terms):
                   return False
 
-              # Require an identifiable target country and a recent date.
-              posted = get_date(job.get("postedAt"))
-              now = datetime.now(timezone.utc)
-              if not posted or posted > now + timedelta(days=1):
-                  return False
-              if posted < now - timedelta(days=30):
-                  return False
+              return valid_date(job.get("postedAt"))
 
-              return True
+          def safe_https_url(url, allowed_hosts):
+              parsed = urlparse(clean(url))
+              return bool(
+                  parsed.scheme == "https"
+                  and parsed.hostname
+                  and any(
+                      parsed.hostname == host
+                      or parsed.hostname.endswith("." + host)
+                      for host in allowed_hosts
+                  )
+              )
 
           with open("employers.json", encoding="utf-8") as f:
               config = json.load(f)
@@ -154,6 +178,7 @@ jobs:
           jobs = []
           errors = []
 
+          # 1. Official company ATS boards: Greenhouse, Lever, Ashby
           for employer in config.get("employers", []):
               if employer.get("approved") is not True:
                   continue
@@ -163,11 +188,11 @@ jobs:
               token = clean(employer.get("board_token"))
 
               if not name or not token:
-                  errors.append("Missing company or board token")
+                  errors.append("Employer missing company or board token")
                   continue
 
-              if kind not in ("greenhouse", "lever"):
-                  errors.append(f"Unsupported source for {name}")
+              if kind not in ("greenhouse", "lever", "ashby"):
+                  errors.append(f"Unsupported source for {name}: {kind}")
                   continue
 
               try:
@@ -177,16 +202,28 @@ jobs:
                           + token + "/jobs?content=true"
                       )
                       items = data.get("jobs", [])
-                  else:
+
+                  elif kind == "lever":
                       data = fetch(
                           "https://api.lever.co/v0/postings/"
                           + token + "?mode=json"
                       )
                       items = data if isinstance(data, list) else []
 
+                  else:
+                      data = fetch(
+                          "https://api.ashbyhq.com/posting-api/job-board/"
+                          + token
+                      )
+                      items = data.get("jobs", [])
+
                   added = 0
 
                   for item in items:
+                      workplace = ""
+                      listed = True
+                      salary = ""
+
                       if kind == "greenhouse":
                           title = clean(item.get("title"))
                           location = clean(
@@ -196,37 +233,54 @@ jobs:
                           url = clean(item.get("absolute_url"))
                           posted = clean(item.get("updated_at"))
                           job_id = clean(item.get("id"))
-                          workplace = ""
-                      else:
+                          allowed_hosts = ["boards.greenhouse.io"]
+
+                      elif kind == "lever":
                           categories = item.get("categories") or {}
                           title = clean(item.get("text"))
                           location = clean(categories.get("location"))
-                          description = clean(item.get("description"))
+                          description = clean(
+                              item.get("descriptionPlain")
+                              or item.get("description")
+                          )
                           url = clean(item.get("hostedUrl"))
                           posted = clean(item.get("createdAt"))
                           job_id = clean(item.get("id"))
-                          workplace = clean(item.get("workplaceType")).lower()
+                          workplace = clean(
+                              item.get("workplaceType")
+                          ).lower()
+                          allowed_hosts = ["jobs.lever.co"]
 
-                      parsed = urlparse(url)
-                      hosts = {
-                          "greenhouse": ["boards.greenhouse.io"],
-                          "lever": ["jobs.lever.co"]
-                      }
-
-                      if (
-                          not title or not job_id
-                          or parsed.scheme != "https"
-                          or not parsed.hostname
-                          or not any(
-                              parsed.hostname == host
-                              or parsed.hostname.endswith("." + host)
-                              for host in hosts[kind]
+                      else:
+                          title = clean(item.get("title"))
+                          location = clean(item.get("location"))
+                          description = clean(
+                              item.get("descriptionPlain")
+                              or item.get("descriptionHtml")
                           )
-                      ):
+                          url = clean(item.get("jobUrl"))
+                          posted = clean(item.get("publishedAt"))
+                          job_id = clean(item.get("jobUrl"))
+                          workplace = clean(
+                              item.get("workplaceType")
+                          ).lower()
+                          listed = item.get("isListed") is True
+                          salary = clean(
+                              (item.get("compensation") or {}).get(
+                                  "scrapeableCompensationSalarySummary"
+                              )
+                          )
+                          allowed_hosts = ["jobs.ashbyhq.com"]
+
+                      if not listed or not job_id:
+                          continue
+                      if not safe_https_url(url, allowed_hosts):
                           continue
 
-                      # Lever explicitly identifies workplace type when available.
-                      if workplace and workplace != "remote":
+                      # Strict remote check for ATS sources.
+                      if kind == "lever" and workplace != "remote":
+                          continue
+                      if kind == "ashby" and workplace != "remote":
                           continue
 
                       job = {
@@ -237,21 +291,99 @@ jobs:
                           "location": location,
                           "category": "",
                           "type": "Remote",
-                          "salary": "",
+                          "salary": salary,
                           "logo": "",
                           "source": kind.title(),
                           "description": description,
                           "postedAt": posted
                       }
 
-                      if eligible(job):
+                      if eligible(
+                          job,
+                          mode_verified=(kind in ("lever", "ashby"))
+                      ):
                           jobs.append(job)
                           added += 1
 
-                  print(f"{name}: checked {len(items)}; eligible {added}")
+                  print(
+                      f"{name} ({kind}): checked {len(items)}, "
+                      f"eligible {added}"
+                  )
 
-              except Exception as e:
-                  errors.append(f"{name}: {e}")
+              except Exception as exc:
+                  errors.append(f"{name} ({kind}): {exc}")
+
+          # 2. Jobicy public API.
+          # Its terms require keeping the canonical Jobicy URL/source.
+          try:
+              data = fetch(
+                  "https://jobicy.com/api/jobs?"
+                  + urlencode({"count": 200})
+              )
+              if data.get("success") is False:
+                  raise RuntimeError(data.get("error", "API error"))
+
+              items = data.get("jobs", [])
+              added = 0
+
+              for item in items:
+                  title = clean(item.get("jobTitle"))
+                  location = clean(item.get("jobGeo"))
+                  description = clean(item.get("jobDescription"))
+                  url = clean(item.get("url"))
+                  posted = clean(item.get("pubDate"))
+                  job_id = clean(item.get("id"))
+
+                  if not safe_https_url(url, ["jobicy.com"]):
+                      continue
+
+                  # "Anywhere" is not enough: only six named countries.
+                  if not country_match(location):
+                      continue
+
+                  level = clean(item.get("jobLevel")).lower()
+                  job_types = clean(item.get("jobType")).lower()
+
+                  if level in ("senior", "mid", "mid-level", "manager"):
+                      continue
+
+                  job = {
+                      "id": "Jobicy-" + job_id,
+                      "title": title,
+                      "company": clean(item.get("companyName")),
+                      "url": url,
+                      "location": location,
+                      "category": clean(item.get("jobIndustry")),
+                      "type": "Remote",
+                      "salary": "",
+                      "logo": clean(item.get("companyLogo")),
+                      "source": "Jobicy",
+                      "description": description,
+                      "postedAt": posted
+                  }
+
+                  entry_signal = (
+                      any(x in (title + " " + plain(description))
+                          for x in [
+                              "intern", "internship", "entry-level",
+                              "entry level", "graduate", "new grad",
+                              "trainee", "junior", "no experience required",
+                              "no prior experience", "0-1 years"
+                          ])
+                      or "intern" in job_types
+                      or "entry" in level
+                      or "junior" in level
+                      or "graduate" in level
+                  )
+
+                  if entry_signal and eligible(job, mode_verified=True):
+                      jobs.append(job)
+                      added += 1
+
+              print(f"Jobicy: checked {len(items)}, eligible {added}")
+
+          except Exception as exc:
+              errors.append(f"Jobicy: {exc}")
 
           if errors:
               raise SystemExit(
@@ -265,7 +397,7 @@ jobs:
               unique.setdefault(key, job)
 
           output = {
-              "updatedAt": datetime.now(timezone.utc).isoformat(),
+              "updatedAt": NOW.isoformat(),
               "jobs": list(unique.values())
           }
 
