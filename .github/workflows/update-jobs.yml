@@ -30,6 +30,7 @@ jobs:
           import html
           import urllib.request
           from datetime import datetime, timezone
+          from urllib.parse import urlparse
 
           def fetch(url):
               req = urllib.request.Request(
@@ -48,35 +49,35 @@ jobs:
           def plain(value):
               return re.sub(r"<[^>]*>", " ", clean(value)).lower()
 
-          def eligible(job):
+          def eligible(job, employer):
               title = job["title"].lower()
               location = job["location"].lower()
               description = plain(job["description"])
 
-              # Require explicit Indonesia location
-              indonesia = any(x in location for x in [
-                  "indonesia", "jakarta", "surabaya",
-                  "bandung", "yogyakarta", "bali"
-              ])
-              if not indonesia:
+              # Require an explicit location match
+              allowed_locations = [
+                  x.lower() for x in employer.get(
+                      "eligible_countries", ["Indonesia"]
+                  )
+              ]
+              if not any(x in location for x in allowed_locations):
                   return False
 
-              # Reject senior, management and experienced roles
+              # Reject senior or management roles
               reject = [
-                  "senior", "staff ", "principal", "director",
-                  "manager", "management", "head of ",
-                  "vice president", "lead ", "experienced",
-                  "project manager", "3+ years", "4+ years",
-                  "5+ years", "3 years of experience",
-                  "5 years of experience"
+                  "senior", "principal", "director", "manager",
+                  "management", "head of ", "vice president",
+                  "project manager", "team lead", "lead engineer",
+                  "3+ years", "4+ years", "5+ years",
+                  "3 years of experience", "5 years of experience"
               ]
               if any(x in title or x in description for x in reject):
                   return False
 
-              # Require an explicit entry-level signal
+              # Require explicit entry-level evidence
               allow = [
-                  "intern", "internship", "entry level",
-                  "entry-level", "graduate", "fresh graduate",
+                  "intern", "internship", "entry-level",
+                  "entry level", "graduate", "fresh graduate",
                   "new grad", "trainee", "no experience required",
                   "no prior experience",
                   "all levels of experience welcome"
@@ -94,7 +95,7 @@ jobs:
                   continue
 
               name = clean(employer.get("company"))
-              kind = employer.get("source_type")
+              kind = clean(employer.get("source_type")).lower()
               token = clean(employer.get("board_token"))
 
               if not name or not token:
@@ -141,7 +142,23 @@ jobs:
                           posted = clean(item.get("createdAt"))
                           job_id = clean(item.get("id"))
 
-                      if not title or not url.startswith("https://"):
+                      parsed = urlparse(url)
+                      if (
+                          not title or not job_id
+                          or parsed.scheme != "https"
+                          or not parsed.netloc
+                      ):
+                          continue
+
+                      allowed_hosts = {
+                          "greenhouse": {"boards.greenhouse.io"},
+                          "lever": {"jobs.lever.co"}
+                      }
+                      if not any(
+                          parsed.hostname == host
+                          or parsed.hostname.endswith("." + host)
+                          for host in allowed_hosts[kind]
+                      ):
                           continue
 
                       job = {
@@ -149,7 +166,7 @@ jobs:
                           "title": title,
                           "company": name,
                           "url": url,
-                          "location": location or "Check employer listing",
+                          "location": location or "Location not verified",
                           "category": "",
                           "type": "",
                           "salary": "",
@@ -159,7 +176,7 @@ jobs:
                           "postedAt": posted
                       }
 
-                      if eligible(job):
+                      if eligible(job, employer):
                           jobs.append(job)
                           added += 1
 
@@ -174,7 +191,7 @@ jobs:
 
           if errors:
               raise SystemExit(
-                  "Employer feed error; keeping existing jobs.json: "
+                  "Feed error; existing jobs.json preserved: "
                   + "; ".join(errors)
               )
 
