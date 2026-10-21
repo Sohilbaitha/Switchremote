@@ -1,3 +1,4 @@
+
 {
   "employers": [
     {
@@ -5,7 +6,7 @@
       "source_type": "lever",
       "board_token": "tsmg",
       "careers_url": "https://jobs.lever.co/tsmg/",
-      "eligible_countries": ["Indonesia", "Jakarta"],
+      "eligible_countries": ["Indonesia"],
       "entry_level_only": true,
       "approved": true
     }
