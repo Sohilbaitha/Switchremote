@@ -37,8 +37,6 @@ jobs:
                   url, headers={"User-Agent": "Switchremote/1.0"}
               )
               with urllib.request.urlopen(req, timeout=25) as r:
-                  if r.status != 200:
-                      raise RuntimeError(f"HTTP {r.status}")
                   return json.loads(r.read().decode("utf-8"))
 
           def clean(value):
@@ -53,17 +51,16 @@ jobs:
               title = job["title"].lower()
               location = job["location"].lower()
               description = plain(job["description"])
+              text = title + " " + description
 
-              # Require an explicit location match
-              allowed_locations = [
-                  x.lower() for x in employer.get(
-                      "eligible_countries", ["Indonesia"]
-                  )
+              # Match Indonesia location aliases only in location field
+              indonesia_aliases = [
+                  "indonesia", "jakarta", "surabaya",
+                  "bandung", "yogyakarta", "bali"
               ]
-              if not any(x in location for x in allowed_locations):
+              if not any(x in location for x in indonesia_aliases):
                   return False
 
-              # Reject senior or management roles
               reject = [
                   "senior", "principal", "director", "manager",
                   "management", "head of ", "vice president",
@@ -74,15 +71,13 @@ jobs:
               if any(x in title or x in description for x in reject):
                   return False
 
-              # Require explicit entry-level evidence
               allow = [
-                  "intern", "internship", "entry-level",
-                  "entry level", "graduate", "fresh graduate",
-                  "new grad", "trainee", "no experience required",
-                  "no prior experience",
+                  "intern", "internship", "entry-level", "entry level",
+                  "graduate", "fresh graduate", "new grad", "trainee",
+                  "no experience required", "no prior experience",
                   "all levels of experience welcome"
               ]
-              return any(x in title or x in description for x in allow)
+              return any(x in text for x in allow)
 
           with open("employers.json", encoding="utf-8") as f:
               config = json.load(f)
@@ -143,21 +138,17 @@ jobs:
                           job_id = clean(item.get("id"))
 
                       parsed = urlparse(url)
-                      if (
-                          not title or not job_id
-                          or parsed.scheme != "https"
-                          or not parsed.netloc
-                      ):
+                      if not title or not job_id or parsed.scheme != "https":
                           continue
 
-                      allowed_hosts = {
-                          "greenhouse": {"boards.greenhouse.io"},
-                          "lever": {"jobs.lever.co"}
+                      hosts = {
+                          "greenhouse": ["boards.greenhouse.io"],
+                          "lever": ["jobs.lever.co"]
                       }
                       if not any(
                           parsed.hostname == host
                           or parsed.hostname.endswith("." + host)
-                          for host in allowed_hosts[kind]
+                          for host in hosts[kind]
                       ):
                           continue
 
@@ -180,14 +171,10 @@ jobs:
                           jobs.append(job)
                           added += 1
 
-                  print(
-                      f"{name}: checked {len(items)} vacancies; "
-                      f"eligible {added}"
-                  )
+                  print(f"{name}: checked {len(items)}; eligible {added}")
 
               except Exception as e:
                   errors.append(f"{name}: {e}")
-                  print(f"Could not fetch {name}: {e}")
 
           if errors:
               raise SystemExit(
@@ -198,8 +185,7 @@ jobs:
           unique = {}
           for job in jobs:
               key = job["url"].split("?")[0].rstrip("/").lower()
-              if key not in unique:
-                  unique[key] = job
+              unique.setdefault(key, job)
 
           output = {
               "updatedAt": datetime.now(timezone.utc).isoformat(),
