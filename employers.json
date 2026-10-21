@@ -9,6 +9,60 @@
       "eligible_countries": ["Indonesia"],
       "entry_level_only": true,
       "approved": true
+    },
+    {
+      "company": "Xendit",
+      "source_type": "greenhouse",
+      "board_token": "xendit",
+      "careers_url": "https://job-boards.greenhouse.io/xendit",
+      "eligible_countries": ["Indonesia", "Philippines", "Thailand", "Malaysia"],
+      "entry_level_only": true,
+      "approved": true
+    },
+    {
+      "company": "Pratham International",
+      "source_type": "greenhouse",
+      "board_token": "prathaminternational",
+      "careers_url": "https://job-boards.greenhouse.io/prathaminternational",
+      "eligible_countries": ["India"],
+      "entry_level_only": true,
+      "approved": true
+    },
+    {
+      "company": "Welo Global",
+      "source_type": "lever",
+      "board_token": "weloglobal",
+      "careers_url": "https://jobs.lever.co/weloglobal",
+      "eligible_countries": ["India", "Indonesia", "Philippines", "Vietnam", "Malaysia", "Thailand"],
+      "entry_level_only": true,
+      "approved": true
+    },
+    {
+      "company": "Level AI",
+      "source_type": "lever",
+      "board_token": "levelai",
+      "careers_url": "https://jobs.lever.co/levelai",
+      "eligible_countries": ["India"],
+      "entry_level_only": true,
+      "approved": true
+    },
+    {
+      "company": "Worldly",
+      "source_type": "ashby",
+      "board_token": "worldly",
+      "careers_url": "https://jobs.ashbyhq.com/worldly",
+      "eligible_countries": ["India", "Indonesia", "Philippines", "Vietnam", "Malaysia", "Thailand"],
+      "entry_level_only": true,
+      "approved": true
+    },
+    {
+      "company": "Ema",
+      "source_type": "ashby",
+      "board_token": "ema",
+      "careers_url": "https://jobs.ashbyhq.com/ema",
+      "eligible_countries": ["India"],
+      "entry_level_only": true,
+      "approved": true
     }
   ]
 }
