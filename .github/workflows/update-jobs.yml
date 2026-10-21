@@ -4,14 +4,19 @@ name: Update remote jobs
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 */6 * * *"
+    - cron: "17 */6 * * *"
 
 permissions:
   contents: write
 
+concurrency:
+  group: update-remote-jobs
+  cancel-in-progress: false
+
 jobs:
   update:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
 
     steps:
       - name: Checkout repository
@@ -21,6 +26,7 @@ jobs:
         run: |
           python - <<'PY'
           import json
+          import os
           import urllib.request
           from datetime import datetime, timezone
 
@@ -31,6 +37,14 @@ jobs:
           ]
 
           jobs = []
+          successes = 0
+
+          def text_value(value):
+              if isinstance(value, str):
+                  return value.strip()
+              if isinstance(value, list):
+                  return ", ".join(str(x) for x in value)
+              return ""
 
           for source, url in sources:
               try:
@@ -38,7 +52,10 @@ jobs:
                       url,
                       headers={"User-Agent": "Switchremote/1.0"}
                   )
-                  with urllib.request.urlopen(req, timeout=30) as response:
+
+                  with urllib.request.urlopen(req, timeout=25) as response:
+                      if response.status != 200:
+                          raise RuntimeError(f"HTTP {response.status}")
                       data = json.loads(response.read().decode("utf-8"))
 
                   if source == "Remotive":
@@ -48,41 +65,73 @@ jobs:
                   else:
                       items = data.get("data", [])
 
-                  for item in items:
-                      title = item.get("title", "")
-                      company = item.get("company_name") or item.get("company", "")
-                      url_job = item.get("url") or item.get("apply_url") or ""
+                  successes += 1
+                  added = 0
 
-                      if not title or not company or not url_job:
+                  for item in items:
+                      title = text_value(item.get("title"))
+                      company = text_value(
+                          item.get("company_name") or item.get("company")
+                      )
+                      link = text_value(
+                          item.get("url") or item.get("apply_url")
+                      )
+
+                      if not title or not company or not link:
                           continue
 
+                      logo = text_value(
+                          item.get("company_logo")
+                          or item.get("logo")
+                          or item.get("companyLogo")
+                      )
+
+                      location = text_value(
+                          item.get("candidate_required_location")
+                          or item.get("location")
+                          or item.get("region")
+                      ) or "Check employer listing"
+
                       jobs.append({
-                          "id": source + "-" + url_job,
+                          "id": source + "-" + link,
                           "title": title,
                           "company": company,
-                          "url": url_job,
-                          "location": item.get("candidate_required_location")
-                              or item.get("location")
-                              or "Check employer listing",
-                          "category": item.get("category")
-                              or item.get("tags", []),
-                          "type": item.get("job_type") or "",
-                          "salary": item.get("salary") or "",
-                          "logo": item.get("company_logo") or "",
+                          "url": link,
+                          "location": location,
+                          "category": text_value(
+                              item.get("category") or item.get("tags")
+                          ),
+                          "type": text_value(
+                              item.get("job_type") or item.get("type")
+                          ),
+                          "salary": text_value(item.get("salary")),
+                          "logo": logo,
                           "source": source,
-                          "description": item.get("description", ""),
-                          "postedAt": item.get("publication_date")
+                          "description": text_value(item.get("description")),
+                          "postedAt": text_value(
+                              item.get("publication_date")
                               or item.get("date")
                               or item.get("created_at")
-                              or ""
+                          )
                       })
+                      added += 1
+
+                  print(f"{source}: fetched {added} jobs")
 
               except Exception as error:
                   print(f"{source} fetch failed: {error}")
 
+          if successes == 0:
+              raise SystemExit("All job sources failed; keeping existing jobs.json")
+
           unique = {}
           for job in jobs:
-              unique[job["url"]] = job
+              key = job["url"].split("?")[0].rstrip("/").lower()
+              if key and key not in unique:
+                  unique[key] = job
+
+          if not unique:
+              raise SystemExit("No valid jobs found; keeping existing jobs.json")
 
           output = {
               "updatedAt": datetime.now(timezone.utc).isoformat(),
@@ -92,7 +141,7 @@ jobs:
           with open("jobs.json", "w", encoding="utf-8") as file:
               json.dump(output, file, ensure_ascii=False, indent=2)
 
-          print(f"Saved {len(output['jobs'])} jobs")
+          print(f"Saved {len(output['jobs'])} unique jobs")
           PY
 
       - name: Commit updated jobs
@@ -103,4 +152,6 @@ jobs:
           if ! git diff --cached --quiet; then
             git commit -m "Update remote jobs data"
             git push
+          else
+            echo "No changes to commit"
           fi
