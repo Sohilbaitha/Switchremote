@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#ffffff">
-<meta name="description" content="Switchremote helps you discover remote jobs with location details, company information and direct application links.">
+<meta name="description" content="Switchremote: Discover remote jobs with company, source and location details.">
 <title>Switchremote | Remote jobs from around the world</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='20' y='4' width='24' height='56' rx='12'/%3E%3Ccircle cx='32' cy='17' r='8' fill='%23f3f3f3'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -33,31 +33,30 @@ h1 span{color:#159fe9}
 h2{font:800 clamp(22px,3vw,28px)/1.15 Manrope,sans-serif;letter-spacing:-.04em;margin:0 0 6px}
 .sub{font-size:14px;color:var(--muted);margin:0 0 14px}
 .bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-.field{flex:1;min-width:190px;min-height:48px;padding:0 14px;border:1px solid #c8d5e0;border-radius:12px;outline:none;background:#f5f9fc;color:#111318}
+.field{flex:1;min-width:180px;min-height:46px;padding:0 13px;border:1px solid #c8d5e0;border-radius:12px;outline:none;background:#f5f9fc;color:#111318}
 .field:focus{background:#fff;border-color:var(--blue);box-shadow:0 0 0 3px #3cb8ff25}
-.btn{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:8px 16px;border:1px solid #dfe4e9;border-radius:999px;font-size:13px;font-weight:700;cursor:pointer;background:#fff;color:var(--ink)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:8px 15px;border:1px solid #dfe4e9;border-radius:999px;font-size:13px;font-weight:700;cursor:pointer;background:#fff;color:var(--ink)}
 .btn.dark{background:var(--ink);color:#fff;border-color:var(--ink)}
-.btn:disabled{opacity:.5;cursor:wait}
-.meta{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:12px;color:#7d8690;margin:10px 0 12px;min-height:40px;align-items:center}
-.filters{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-.filters .field{flex:1;min-width:175px;min-height:42px}
+.btn:disabled{opacity:.45;cursor:default}
+.meta{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:12px;color:#7d8690;margin:9px 0 12px;min-height:30px;align-items:center}
+.status{font-size:12px;color:var(--muted);margin:0 0 8px;min-height:0}
 .jobs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .job{border:1px solid var(--line);border-radius:15px;padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0}
 .job:hover{border-color:#bfe6fb}
 .top{display:flex;gap:12px;align-items:center;min-width:0}
-.logo{flex:none;width:46px;height:46px;border-radius:12px;background:var(--soft);display:grid;place-items:center;color:#087db9;font-size:18px;font-weight:800;overflow:hidden}
-.logo img{width:100%;height:100%;object-fit:contain;background:#fff;padding:4px}
+.avatar{flex:none;width:46px;height:46px;border-radius:11px;background:var(--soft);display:grid;place-items:center;color:#087db9;font-weight:800;font-size:18px;overflow:hidden}
+.avatar img{width:100%;height:100%;object-fit:contain;background:white;padding:4px}
 .jobheading{min-width:0}
 h3{font:700 16px/1.3 Manrope,sans-serif;margin:0 0 4px;overflow-wrap:anywhere}
 .co{font-size:13px;color:#626b75;overflow-wrap:anywhere}
 .tags{display:flex;gap:5px;flex-wrap:wrap}
 .tags span{font-size:11px;color:#555e68;background:#f7f9fa;border:1px solid #edf0f2;border-radius:6px;padding:3px 7px}
 .foot{display:flex;align-items:center;justify-content:space-between;gap:8px;border-top:1px solid #f0f2f4;padding-top:10px;margin-top:auto}
-.foot small{font-size:11px;color:#838b95}
-.apply{font-size:13px;font-weight:700;color:#fff;background:var(--ink);border-radius:999px;padding:8px 15px;white-space:nowrap}
-.pager{display:flex;gap:7px;flex-wrap:wrap;align-items:center;justify-content:center;margin-top:18px}
+.foot small{font-size:11px;color:#838b95;overflow-wrap:anywhere}
+.apply{font-size:13px;font-weight:700;color:#fff;background:var(--ink);border-radius:999px;padding:8px 14px;white-space:nowrap}
+.pager{display:flex;gap:9px;align-items:center;justify-content:center;margin-top:18px;flex-wrap:wrap}
+.pageinfo{font-size:13px;color:var(--muted);min-width:100px;text-align:center}
 .empty{padding:22px;border:1px dashed #dbe1e6;border-radius:14px;text-align:center;color:var(--muted);grid-column:1/-1}
-.status{font-size:12px;color:var(--muted);min-height:18px;margin:0 0 10px}
 .disclaimer{background:#f8fafb;border:1px solid var(--line);border-radius:16px;padding:20px 22px}
 .disclaimer h2{font-size:20px}
 .disclaimer ul{margin:10px 0 0;padding-left:18px;color:#4d5661;font-size:13.5px}
@@ -67,7 +66,7 @@ h3{font:700 16px/1.3 Manrope,sans-serif;margin:0 0 4px;overflow-wrap:anywhere}
 footer{border-top:1px solid var(--line);margin-top:30px;padding:22px 0;font-size:12px;color:#828a94}
 .footrow{display:flex;align-items:center;justify-content:center;text-align:center;gap:18px;flex-wrap:wrap}
 .footrow a{text-decoration:underline}
-@media(max-width:700px){.jobs{grid-template-columns:1fr}.links a:not(.cta){display:none}.submit{flex-direction:column;align-items:flex-start}.hero{padding:34px 0 16px}}
+@media(max-width:700px){.jobs{grid-template-columns:1fr}.links a:not(.cta){display:none}.submit{flex-direction:column;align-items:flex-start}.hero{padding:34px 0 16px}.foot{align-items:flex-start}.apply{flex-shrink:0}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
 </style>
 </head>
@@ -80,7 +79,7 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:22px 0;font-size
 <main id="top">
 <section class="hero"><div class="wrap">
 <h1>Connecting talent with <span>remote opportunities.</span></h1>
-<p class="lead">Discover remote opportunities with clear location details. Open a role to apply through its listed employer or job source.</p>
+<p class="lead">Fresh remote jobs from around the world, updated automatically. Check each role's location and apply through its listed employer or job source.</p>
 </div></section>
 
 <section class="section" id="jobs"><div class="wrap">
@@ -88,9 +87,6 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:22px 0;font-size
 <p class="sub">Check each listing's location and the employer's eligibility rules before applying.</p>
 <div class="bar">
 <input class="field" id="q" type="search" placeholder="Search by job title, company or skill" aria-label="Search jobs">
-<button class="btn" id="refresh" type="button">↻ Refresh jobs</button>
-</div>
-<div class="filters">
 <select class="field" id="country" aria-label="Filter by country">
 <option value="all">All locations</option>
 <option value="India">India</option>
@@ -99,12 +95,7 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:22px 0;font-size
 <option value="Vietnam">Vietnam</option>
 <option value="worldwide">Worldwide / anywhere</option>
 </select>
-<select class="field" id="source" aria-label="Filter by job source">
-<option value="all">All job sources</option>
-<option value="Remotive">Remotive</option>
-<option value="Remote OK">Remote OK</option>
-<option value="Arbeitnow">Arbeitnow</option>
-</select>
+<button class="btn" id="refresh" type="button">↻ Refresh</button>
 </div>
 <div class="meta"><span id="count" aria-live="polite">Loading jobs…</span><span id="updated"></span></div>
 <p class="status" id="status" role="status" aria-live="polite"></p>
@@ -115,15 +106,14 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:22px 0;font-size
 <section class="section" id="disclaimer"><div class="wrap"><div class="disclaimer">
 <h2>Disclaimer</h2>
 <ul>
-<li>Switchremote is a job discovery service. We do not hire, recruit, or act on behalf of any employer.</li>
-<li>Listings are collected automatically from third-party sources. We cannot guarantee every role is current or open to your country.</li>
-<li>Always check the employer's official listing. Never pay money, share OTPs or banking details to get a job.</li>
-<li>Salary details and eligibility may change. Verify them before applying.</li>
+<li>Switchremote is a job discovery service, not an employer or recruiter.</li>
+<li>Listings are collected automatically from third-party sources. We cannot guarantee that every role is still open or accepts applicants from your country.</li>
+<li>Always verify details on the employer's official listing. Never pay money or share OTPs or banking details to get a job.</li>
 <li>Company names, logos and trademarks belong to their respective owners.</li>
 </ul></div></div></section>
 
 <section class="section" id="employers"><div class="wrap"><div class="submit">
-<div><h2>Hiring for a remote role?</h2><p>Send us the job link and we will review it before listing.</p></div>
+<div><h2>Hiring for a remote role?</h2><p>Send us the job link and eligible countries for review.</p></div>
 <a class="btn dark" href="mailto:hello@switchremote.com?subject=Remote%20job%20submission&body=Company%3A%0AJob%20link%3A%0ACountries%20eligible%3A">Submit a job</a>
 </div></div></section>
 </main>
@@ -138,154 +128,145 @@ const $=id=>document.getElementById(id);
 let ALL=[],page=0,stamp=null,loading=false;
 
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const safeUrl=u=>{try{const x=new URL(u);return x.protocol==="https:"?x.href:"#"}catch(e){return "#"}};
-const ago=d=>{
-  if(!d)return "Date unavailable";
-  const t=new Date(d).getTime();
-  if(!Number.isFinite(t))return "Date unavailable";
-  const m=Math.max(0,Date.now()-t)/60000;
-  if(m<60)return Math.max(1,Math.round(m))+" min ago";
-  if(m<1440)return Math.round(m/60)+" hr ago";
-  const days=Math.round(m/1440);
-  return days+(days===1?" day ago":" days ago");
-};
-const getLocation=j=>String(j.location??j.loc??"Check employer listing");
-const getCategory=j=>Array.isArray(j.category)?j.category.join(", "):String(j.category??j.cat??"");
-const getSource=j=>String(j.source??j.src??"Job source");
-const getDate=j=>j.postedAt??j.date??"";
-const getCountry=j=>String($("country").value);
-const isWorldwide=loc=>/worldwide|anywhere|global|world wide|all countries/i.test(loc);
-
-function normalize(j){
+function safeUrl(value){
+  try{
+    const u=new URL(String(value||""),location.href);
+    return u.protocol==="https:"?u.href:"#";
+  }catch(e){return "#"}
+}
+function textValue(v){
+  if(Array.isArray(v))return v.map(x=>String(x)).join(", ");
+  return String(v??"").trim();
+}
+function normalize(item){
   return {
-    ...j,
-    title:String(j.title??"Untitled role"),
-    company:String(j.company??"Company not listed"),
-    url:String(j.url??""),
-    location:getLocation(j),
-    category:getCategory(j),
-    source:getSource(j),
-    postedAt:getDate(j),
-    logo:String(j.logo??""),
-    type:String(j.type??"").replace(/_/g," "),
-    salary:String(j.salary??"")
+    ...item,
+    title:textValue(item.title)||"Untitled role",
+    company:textValue(item.company||item.company_name)||"Company not listed",
+    url:textValue(item.url||item.apply_url),
+    location:textValue(item.location||item.loc||item.candidate_required_location)||"Check employer listing",
+    category:textValue(item.category||item.cat||item.tags),
+    source:textValue(item.source||item.src)||"Source unavailable",
+    postedAt:item.postedAt||item.date||item.publication_date||"",
+    logo:textValue(item.logo||item.company_logo||item.companyLogo),
+    type:textValue(item.type||item.job_type).replace(/_/g," "),
+    salary:textValue(item.salary)
   };
 }
-
-function matchesCountry(j){
-  const choice=getCountry();
-  const loc=j.location.toLowerCase();
-  if(choice==="all")return true;
-  if(choice==="worldwide")return isWorldwide(loc);
-  return loc.includes(choice.toLowerCase()) || isWorldwide(loc);
+function ago(date){
+  if(!date)return "Date unavailable";
+  const time=new Date(date).getTime();
+  if(!Number.isFinite(time))return "Date unavailable";
+  const minutes=Math.max(0,Math.floor((Date.now()-time)/60000));
+  if(minutes<60)return Math.max(1,minutes)+" min ago";
+  if(minutes<1440)return Math.floor(minutes/60)+" hr ago";
+  const days=Math.floor(minutes/1440);
+  return days+(days===1?" day ago":" days ago");
 }
-
+function isWorldwide(location){
+  return /worldwide|world wide|anywhere|global|all countries/i.test(location);
+}
 function filtered(){
   const q=$("q").value.trim().toLowerCase();
-  const src=$("source").value;
+  const country=$("country").value;
   return ALL.filter(j=>{
     const hay=[j.title,j.company,j.category,j.location,j.description].join(" ").toLowerCase();
-    return (!q||hay.includes(q)) &&
-      matchesCountry(j) &&
-      (src==="all"||j.source===src);
+    const searchMatch=!q||hay.includes(q);
+    const loc=j.location.toLowerCase();
+    const countryMatch=country==="all"||
+      (country==="worldwide"?isWorldwide(j.location):
+        loc.includes(country.toLowerCase())||isWorldwide(j.location));
+    return searchMatch&&countryMatch;
   });
 }
-
 function render(){
   const list=filtered();
-  const pages=Math.max(1,Math.ceil(list.length/PER));
-  if(page>=pages)page=pages-1;
+  const totalPages=Math.max(1,Math.ceil(list.length/PER));
+  page=Math.min(page,totalPages-1);
   const start=page*PER;
-  const show=list.slice(start,start+PER);
+  const visible=list.slice(start,start+PER);
 
   $("count").textContent=list.length
-    ? `${list.length} jobs · showing ${start+1}–${start+show.length}`
-    : "0 matching jobs";
+    ?`${list.length} jobs · showing ${start+1}–${start+visible.length}`
+    :"0 matching jobs";
 
-  $("grid").innerHTML=show.length?show.map(j=>{
+  $("grid").innerHTML=visible.length?visible.map(j=>{
+    const initial=esc((j.company.trim()[0]||"?").toUpperCase());
     const logo=safeUrl(j.logo);
-    const logoMarkup=logo!=="#"
-      ? `<img src="${esc(logo)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">`
-      : "";
-    const initials=esc((j.company.trim()[0]||"?").toUpperCase());
-    const location=esc(j.location);
-    const applyUrl=safeUrl(j.url);
-    const date=esc(ago(j.postedAt));
-    const category=j.category?`<span>${esc(j.category)}</span>`:"";
-    const type=j.type?`<span>${esc(j.type)}</span>`:"";
-    const salary=j.salary?`<span>${esc(j.salary)}</span>`:"";
+    const logoHTML=logo!=="#"
+      ?`<img src="${esc(logo)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none';this.parentElement.textContent=this.dataset.initial" data-initial="${initial}">`
+      :initial;
+    const tags=[
+      "<span>Remote</span>",
+      `<span>${esc(j.location)}</span>`,
+      j.type?`<span>${esc(j.type)}</span>`:"",
+      j.salary?`<span>${esc(j.salary)}</span>`:"",
+      j.category?`<span>${esc(j.category)}</span>`:""
+    ].join("");
+    const href=safeUrl(j.url);
     return `<article class="job">
       <div class="top">
-        <div class="logo">${logoMarkup}${logoMarkup?"":initials}</div>
+        <div class="avatar">${logoHTML}</div>
         <div class="jobheading"><h3>${esc(j.title)}</h3><div class="co">${esc(j.company)}</div></div>
       </div>
-      <div class="tags"><span>Remote</span><span>${location}</span>${type}${salary}${category}</div>
-      <div class="foot"><small>${date} · via ${esc(j.source)}</small>
-      <a class="apply" href="${esc(applyUrl)}" target="_blank" rel="noopener noreferrer">View job ↗</a></div>
+      <div class="tags">${tags}</div>
+      <div class="foot"><small>${esc(ago(j.postedAt))} · via ${esc(j.source)}</small>
+      <a class="apply" href="${esc(href)}" target="_blank" rel="noopener noreferrer">View job ↗</a></div>
     </article>`;
-  }).join(""):'<div class="empty">No jobs match these filters. Try another country, source or search term.</div>';
+  }).join(""):'<div class="empty">No jobs match your search or location filter. Try another search.</div>';
 
-  let p="";
-  if(pages>1){
-    p+=`<button class="btn" data-p="${page-1}" ${page?"":"disabled"}>Previous</button>`;
-    for(let i=0;i<pages;i++){
-      p+=`<button class="btn${i===page?" dark":""}" data-p="${i}">${i*PER+1}–${Math.min((i+1)*PER,list.length)}</button>`;
-    }
-    p+=`<button class="btn" data-p="${page+1}" ${page<pages-1?"":"disabled"}>Next</button>`;
+  let pagination="";
+  if(totalPages>1){
+    pagination+=`<button class="btn" data-page="${page-1}" ${page===0?"disabled":""}>Previous</button>`;
+    pagination+=`<span class="pageinfo">Page ${page+1} of ${totalPages}</span>`;
+    pagination+=`<button class="btn" data-page="${page+1}" ${page>=totalPages-1?"disabled":""}>Next</button>`;
   }
-  $("pager").innerHTML=p;
+  $("pager").innerHTML=pagination;
 }
-
 async function load(manual=false){
   if(loading)return;
   loading=true;
   const button=$("refresh");
   button.disabled=true;
   button.textContent="↻ Loading…";
-  $("status").textContent=manual?"Checking for updated jobs…":"Loading job listings…";
-
+  $("status").textContent=manual?"Checking for updated jobs…":"";
   try{
-    const response=await fetch("jobs.json?refresh="+Date.now(),{cache:"no-store"});
-    if(!response.ok)throw new Error("Job feed returned HTTP "+response.status);
+    const response=await fetch("jobs.json?ts="+Date.now(),{cache:"no-store"});
+    if(!response.ok)throw new Error("HTTP "+response.status);
     const data=await response.json();
-    if(!Array.isArray(data.jobs))throw new Error("The job feed has an invalid format.");
-
-    const normalized=data.jobs.map(normalize).filter(j=>j.title&&j.company&&safeUrl(j.url)!=="#");
-    if(!normalized.length)throw new Error("The job feed contains no valid listings.");
-
-    ALL=normalized;
-    stamp=data.updatedAt??data.updated??null;
+    if(!Array.isArray(data.jobs))throw new Error("Invalid jobs.json format");
+    const jobs=data.jobs.map(normalize).filter(j=>j.title&&j.company&&safeUrl(j.url)!=="#");
+    if(!jobs.length)throw new Error("No valid jobs in the feed");
+    ALL=jobs;
+    stamp=data.updatedAt||data.updated||null;
     page=0;
     render();
     $("updated").textContent=stamp?"Feed updated "+ago(stamp):"Feed loaded";
     $("status").textContent=manual?"Jobs refreshed successfully.":"";
   }catch(error){
     if(ALL.length){
-      $("status").textContent="Could not refresh: "+error.message+". Showing the previously loaded jobs.";
+      $("status").textContent="Refresh failed. Showing the jobs already loaded. ("+error.message+")";
     }else{
       $("count").textContent="Jobs could not be loaded";
-      $("grid").innerHTML='<div class="empty">The job feed could not be loaded. Please try Refresh again shortly.</div>';
-      $("status").textContent="Check that jobs.json exists and the latest GitHub Actions run succeeded.";
+      $("grid").innerHTML='<div class="empty">Unable to load jobs. Check that jobs.json exists and GitHub Actions completed successfully.</div>';
+      $("status").textContent="Please try Refresh again shortly.";
     }
   }finally{
     loading=false;
     button.disabled=false;
-    button.textContent="↻ Refresh jobs";
+    button.textContent="↻ Refresh";
   }
 }
-
-$("pager").addEventListener("click",e=>{
-  const b=e.target.closest("[data-p]");
-  if(!b||b.disabled)return;
-  page=Number(b.dataset.p);
+$("pager").addEventListener("click",event=>{
+  const button=event.target.closest("[data-page]");
+  if(!button||button.disabled)return;
+  page=Number(button.dataset.page);
   render();
   $("jobs").scrollIntoView({behavior:"smooth"});
 });
 $("q").addEventListener("input",()=>{page=0;render()});
 $("country").addEventListener("change",()=>{page=0;render()});
-$("source").addEventListener("change",()=>{page=0;render()});
 $("refresh").addEventListener("click",()=>load(true));
-
 load();
 setInterval(()=>load(false),15*60*1000);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden)load(false)});
