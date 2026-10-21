@@ -5,19 +5,19 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#ffffff">
-<meta name="description" content="Switchremote: Connecting talent with remote opportunities. Fresh remote jobs from around the world, updated automatically.">
+<meta name="description" content="Switchremote helps you discover remote jobs with location details, company information and direct application links.">
 <title>Switchremote | Remote jobs from around the world</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='20' y='4' width='24' height='56' rx='12'/%3E%3Ccircle cx='32' cy='17' r='8' fill='%23f3f3f3'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@700;800&family=Noto+Sans:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@700;800&display=swap" rel="stylesheet">
 <style>
 :root{--ink:#111318;--muted:#68717c;--blue:#3cb8ff;--line:#e9edf1;--soft:#eff9ff}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{margin:0;color:var(--ink);background:#fff;font:15px/1.55 "DM Sans",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
 a{color:inherit;text-decoration:none}
-button,input{font:inherit}
+button,input,select{font:inherit}
 .wrap{width:min(1080px,calc(100% - 32px));margin:auto}
 .mark{display:block;position:relative;overflow:hidden;width:calc(var(--h)*1.78);height:var(--h)}
 .mark img{position:absolute;display:block;max-width:none;width:calc(var(--h)*2.5);left:calc(var(--h)*-.35);top:calc(var(--h)*-.75)}
@@ -33,26 +33,31 @@ h1 span{color:#159fe9}
 h2{font:800 clamp(22px,3vw,28px)/1.15 Manrope,sans-serif;letter-spacing:-.04em;margin:0 0 6px}
 .sub{font-size:14px;color:var(--muted);margin:0 0 14px}
 .bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-.field{flex:1;min-width:220px;min-height:48px;padding:0 14px;border:1px solid #c8d5e0;border-radius:12px;outline:none;background:#f5f9fc;color:#111318;box-shadow:0 1px 3px #11131808}
+.field{flex:1;min-width:190px;min-height:48px;padding:0 14px;border:1px solid #c8d5e0;border-radius:12px;outline:none;background:#f5f9fc;color:#111318}
 .field:focus{background:#fff;border-color:var(--blue);box-shadow:0 0 0 3px #3cb8ff25}
 .btn{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:8px 16px;border:1px solid #dfe4e9;border-radius:999px;font-size:13px;font-weight:700;cursor:pointer;background:#fff;color:var(--ink)}
 .btn.dark{background:var(--ink);color:#fff;border-color:var(--ink)}
-.btn:disabled{opacity:.4;cursor:default}
-.meta{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;font-size:12px;color:#7d8690;margin:6px 0 12px;min-height:40px;align-items:center}
+.btn:disabled{opacity:.5;cursor:wait}
+.meta{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:12px;color:#7d8690;margin:10px 0 12px;min-height:40px;align-items:center}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.filters .field{flex:1;min-width:175px;min-height:42px}
 .jobs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.job{border:1px solid var(--line);border-radius:15px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.job{border:1px solid var(--line);border-radius:15px;padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0}
 .job:hover{border-color:#bfe6fb}
-.top{display:flex;gap:12px;align-items:center}
-.avatar{flex:none;width:40px;height:40px;border-radius:10px;background:var(--soft);display:grid;place-items:center;color:#087db9;font-weight:800}
-h3{font:700 16px/1.3 Manrope,sans-serif;margin:0}
-.co{font-size:13px;color:#626b75}
+.top{display:flex;gap:12px;align-items:center;min-width:0}
+.logo{flex:none;width:46px;height:46px;border-radius:12px;background:var(--soft);display:grid;place-items:center;color:#087db9;font-size:18px;font-weight:800;overflow:hidden}
+.logo img{width:100%;height:100%;object-fit:contain;background:#fff;padding:4px}
+.jobheading{min-width:0}
+h3{font:700 16px/1.3 Manrope,sans-serif;margin:0 0 4px;overflow-wrap:anywhere}
+.co{font-size:13px;color:#626b75;overflow-wrap:anywhere}
 .tags{display:flex;gap:5px;flex-wrap:wrap}
 .tags span{font-size:11px;color:#555e68;background:#f7f9fa;border:1px solid #edf0f2;border-radius:6px;padding:3px 7px}
 .foot{display:flex;align-items:center;justify-content:space-between;gap:8px;border-top:1px solid #f0f2f4;padding-top:10px;margin-top:auto}
 .foot small{font-size:11px;color:#838b95}
 .apply{font-size:13px;font-weight:700;color:#fff;background:var(--ink);border-radius:999px;padding:8px 15px;white-space:nowrap}
 .pager{display:flex;gap:7px;flex-wrap:wrap;align-items:center;justify-content:center;margin-top:18px}
-.empty{padding:22px;border:1px dashed #dbe1e6;border-radius:14px;text-align:center;color:var(--muted)}
+.empty{padding:22px;border:1px dashed #dbe1e6;border-radius:14px;text-align:center;color:var(--muted);grid-column:1/-1}
+.status{font-size:12px;color:var(--muted);min-height:18px;margin:0 0 10px}
 .disclaimer{background:#f8fafb;border:1px solid var(--line);border-radius:16px;padding:20px 22px}
 .disclaimer h2{font-size:20px}
 .disclaimer ul{margin:10px 0 0;padding-left:18px;color:#4d5661;font-size:13.5px}
@@ -63,6 +68,7 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:22px 0;font-size
 .footrow{display:flex;align-items:center;justify-content:center;text-align:center;gap:18px;flex-wrap:wrap}
 .footrow a{text-decoration:underline}
 @media(max-width:700px){.jobs{grid-template-columns:1fr}.links a:not(.cta){display:none}.submit{flex-direction:column;align-items:flex-start}.hero{padding:34px 0 16px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
 </style>
 </head>
 <body>
@@ -74,16 +80,34 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:22px 0;font-size
 <main id="top">
 <section class="hero"><div class="wrap">
 <h1>Connecting talent with <span>remote opportunities.</span></h1>
-<p class="lead">Fresh remote jobs from around the world, updated automatically. Open a role and apply on the employer’s own page.</p>
+<p class="lead">Discover remote opportunities with clear location details. Open a role to apply through its listed employer or job source.</p>
 </div></section>
 
 <section class="section" id="jobs"><div class="wrap">
 <h2>Latest remote jobs</h2>
-<p class="sub">Remote positions only. Check the location line on each job to see where applicants are accepted.</p>
+<p class="sub">Check each listing's location and the employer's eligibility rules before applying.</p>
 <div class="bar">
 <input class="field" id="q" type="search" placeholder="Search by job title, company or skill" aria-label="Search jobs">
+<button class="btn" id="refresh" type="button">↻ Refresh jobs</button>
 </div>
-<div class="meta"><span id="count" aria-live="polite" hidden></span><span><span id="updated"></span> <button class="btn" id="refresh" type="button">Refresh</button></span></div>
+<div class="filters">
+<select class="field" id="country" aria-label="Filter by country">
+<option value="all">All locations</option>
+<option value="India">India</option>
+<option value="Indonesia">Indonesia</option>
+<option value="Philippines">Philippines</option>
+<option value="Vietnam">Vietnam</option>
+<option value="worldwide">Worldwide / anywhere</option>
+</select>
+<select class="field" id="source" aria-label="Filter by job source">
+<option value="all">All job sources</option>
+<option value="Remotive">Remotive</option>
+<option value="Remote OK">Remote OK</option>
+<option value="Arbeitnow">Arbeitnow</option>
+</select>
+</div>
+<div class="meta"><span id="count" aria-live="polite">Loading jobs…</span><span id="updated"></span></div>
+<p class="status" id="status" role="status" aria-live="polite"></p>
 <div class="jobs" id="grid"></div>
 <div class="pager" id="pager"></div>
 </div></section>
@@ -92,10 +116,10 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:22px 0;font-size
 <h2>Disclaimer</h2>
 <ul>
 <li>Switchremote is a job discovery service. We do not hire, recruit, or act on behalf of any employer.</li>
-<li>Listings are collected automatically from third-party sources. We do not verify every employer, and we cannot guarantee that a role is still open, accurate, or open to your country.</li>
-<li>Always apply through the employer’s official website. Never pay money, share bank details, OTPs, or ID documents to get a job.</li>
-<li>Switchremote does not guarantee interviews, offers, or income. Salary details come from the source and may change.</li>
-<li>Company names, logos, and trademarks belong to their respective owners. Switchremote is not affiliated with them.</li>
+<li>Listings are collected automatically from third-party sources. We cannot guarantee every role is current or open to your country.</li>
+<li>Always check the employer's official listing. Never pay money, share OTPs or banking details to get a job.</li>
+<li>Salary details and eligibility may change. Verify them before applying.</li>
+<li>Company names, logos and trademarks belong to their respective owners.</li>
 </ul></div></div></section>
 
 <section class="section" id="employers"><div class="wrap"><div class="submit">
@@ -105,67 +129,166 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:22px 0;font-size
 </main>
 
 <footer><div class="wrap footrow">
-<p style="margin:0;max-width:520px">Job data from <a href="https://remotive.com" target="_blank" rel="noopener noreferrer">Remotive</a>, <a href="https://remoteok.com" target="_blank" rel="noopener noreferrer">Remote OK</a> and <a href="https://www.arbeitnow.com" target="_blank" rel="noopener noreferrer">Arbeitnow</a>. <a id="li" href="#" target="_blank" rel="noopener noreferrer" hidden>LinkedIn</a></p>
+<p style="margin:0;max-width:520px">Job data from <a href="https://remotive.com" target="_blank" rel="noopener noreferrer">Remotive</a>, <a href="https://remoteok.com" target="_blank" rel="noopener noreferrer">Remote OK</a> and <a href="https://www.arbeitnow.com" target="_blank" rel="noopener noreferrer">Arbeitnow</a>. Listings are provided by third parties.</p>
 </div></footer>
 
 <script>
-const LINKEDIN_URL="";
 const PER=10;
-let ALL=[],page=0,stamp=null;
 const $=id=>document.getElementById(id);
-const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const safe=u=>/^https:\/\//.test(u)?u:"#";
-if(LINKEDIN_URL){$("li").href=LINKEDIN_URL;$("li").hidden=false}
-function ago(d){const m=(Date.now()-new Date(d))/6e4;if(!(m>=0))return"";if(m<60)return Math.max(1,Math.round(m))+" min ago";if(m<1440)return Math.round(m/60)+" hr ago";const x=Math.round(m/1440);return x+(x===1?" day ago":" days ago")}
+let ALL=[],page=0,stamp=null,loading=false;
 
-async function load(){
-  let data=null;
-  try{const r=await fetch("jobs.json?t="+Date.now(),{cache:"no-store"});if(r.ok)data=await r.json()}catch(e){}
-  if(!data||!data.jobs||!data.jobs.length){
-    try{const c=JSON.parse(localStorage.getItem("sr_jobs")||"null");if(c&&Date.now()-c.t<216e5)data=c.d}catch(e){}
-    if(!data){
-      try{
-        const r=await fetch("https://remotive.com/api/remote-jobs?limit=60");
-        if(!r.ok)throw new Error("Feed unavailable");
-        const j=(await r.json()).jobs;
-        data={updated:new Date().toISOString(),jobs:j.map(x=>({id:"r"+x.id,title:x.title,company:x.company_name,cat:x.category,loc:x.candidate_required_location||"Worldwide",type:(x.job_type||"").replace(/_/g," "),salary:x.salary||"",date:x.publication_date,url:x.url,src:"Remotive"}))};
-        try{localStorage.setItem("sr_jobs",JSON.stringify({t:Date.now(),d:data}))}catch(e){}
-      }catch(e){}
-    }
-  }
-  if(data&&Array.isArray(data.jobs)&&data.jobs.length){ALL=data.jobs;stamp=data.updated;render()}
-  else if(!ALL.length){
-    $("grid").innerHTML='<div class="empty">Jobs could not be loaded right now. Please try again shortly, or browse <a href="https://remotive.com" target="_blank" rel="noopener noreferrer"><b>Remotive</b></a>, <a href="https://remoteok.com" target="_blank" rel="noopener noreferrer"><b>Remote OK</b></a> or <a href="https://weworkremotely.com" target="_blank" rel="noopener noreferrer"><b>We Work Remotely</b></a>.</div>';
-  }
-  $("updated").textContent=stamp?"Updated "+ago(stamp):"";
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const safeUrl=u=>{try{const x=new URL(u);return x.protocol==="https:"?x.href:"#"}catch(e){return "#"}};
+const ago=d=>{
+  if(!d)return "Date unavailable";
+  const t=new Date(d).getTime();
+  if(!Number.isFinite(t))return "Date unavailable";
+  const m=Math.max(0,Date.now()-t)/60000;
+  if(m<60)return Math.max(1,Math.round(m))+" min ago";
+  if(m<1440)return Math.round(m/60)+" hr ago";
+  const days=Math.round(m/1440);
+  return days+(days===1?" day ago":" days ago");
+};
+const getLocation=j=>String(j.location??j.loc??"Check employer listing");
+const getCategory=j=>Array.isArray(j.category)?j.category.join(", "):String(j.category??j.cat??"");
+const getSource=j=>String(j.source??j.src??"Job source");
+const getDate=j=>j.postedAt??j.date??"";
+const getCountry=j=>String($("country").value);
+const isWorldwide=loc=>/worldwide|anywhere|global|world wide|all countries/i.test(loc);
+
+function normalize(j){
+  return {
+    ...j,
+    title:String(j.title??"Untitled role"),
+    company:String(j.company??"Company not listed"),
+    url:String(j.url??""),
+    location:getLocation(j),
+    category:getCategory(j),
+    source:getSource(j),
+    postedAt:getDate(j),
+    logo:String(j.logo??""),
+    type:String(j.type??"").replace(/_/g," "),
+    salary:String(j.salary??"")
+  };
+}
+
+function matchesCountry(j){
+  const choice=getCountry();
+  const loc=j.location.toLowerCase();
+  if(choice==="all")return true;
+  if(choice==="worldwide")return isWorldwide(loc);
+  return loc.includes(choice.toLowerCase()) || isWorldwide(loc);
 }
 
 function filtered(){
   const q=$("q").value.trim().toLowerCase();
-  return ALL.filter(j=>!q||(j.title+" "+j.company+" "+(j.cat||"")).toLowerCase().includes(q));
+  const src=$("source").value;
+  return ALL.filter(j=>{
+    const hay=[j.title,j.company,j.category,j.location,j.description].join(" ").toLowerCase();
+    return (!q||hay.includes(q)) &&
+      matchesCountry(j) &&
+      (src==="all"||j.source===src);
+  });
 }
 
 function render(){
-  const list=filtered(),pages=Math.max(1,Math.ceil(list.length/PER));
+  const list=filtered();
+  const pages=Math.max(1,Math.ceil(list.length/PER));
   if(page>=pages)page=pages-1;
-  const s=page*PER,show=list.slice(s,s+PER);
-  $("grid").innerHTML=show.length?show.map(j=>`<article class="job"><div class="top"><div class="avatar">${esc((j.company||"?")[0].toUpperCase())}</div><div><h3>${esc(j.title)}</h3><div class="co">${esc(j.company)}</div></div></div><div class="tags"><span>Remote</span><span>${esc(j.loc||"Worldwide")}</span>${j.type?`<span>${esc(j.type)}</span>`:""}${j.salary?`<span>${esc(j.salary)}</span>`:""}${j.cat?`<span>${esc(j.cat)}</span>`:""}</div><div class="foot"><small>${esc(ago(j.date))} · via ${esc(j.src)}</small><a class="apply" href="${esc(safe(j.url))}" target="_blank" rel="noopener noreferrer">View job</a></div></article>`).join(""):'<div class="empty">No jobs match your search. Try another title, company or skill.</div>';
+  const start=page*PER;
+  const show=list.slice(start,start+PER);
+
+  $("count").textContent=list.length
+    ? `${list.length} jobs · showing ${start+1}–${start+show.length}`
+    : "0 matching jobs";
+
+  $("grid").innerHTML=show.length?show.map(j=>{
+    const logo=safeUrl(j.logo);
+    const logoMarkup=logo!=="#"
+      ? `<img src="${esc(logo)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">`
+      : "";
+    const initials=esc((j.company.trim()[0]||"?").toUpperCase());
+    const location=esc(j.location);
+    const applyUrl=safeUrl(j.url);
+    const date=esc(ago(j.postedAt));
+    const category=j.category?`<span>${esc(j.category)}</span>`:"";
+    const type=j.type?`<span>${esc(j.type)}</span>`:"";
+    const salary=j.salary?`<span>${esc(j.salary)}</span>`:"";
+    return `<article class="job">
+      <div class="top">
+        <div class="logo">${logoMarkup}${logoMarkup?"":initials}</div>
+        <div class="jobheading"><h3>${esc(j.title)}</h3><div class="co">${esc(j.company)}</div></div>
+      </div>
+      <div class="tags"><span>Remote</span><span>${location}</span>${type}${salary}${category}</div>
+      <div class="foot"><small>${date} · via ${esc(j.source)}</small>
+      <a class="apply" href="${esc(applyUrl)}" target="_blank" rel="noopener noreferrer">View job ↗</a></div>
+    </article>`;
+  }).join(""):'<div class="empty">No jobs match these filters. Try another country, source or search term.</div>';
 
   let p="";
   if(pages>1){
     p+=`<button class="btn" data-p="${page-1}" ${page?"":"disabled"}>Previous</button>`;
-    for(let i=0;i<pages;i++)p+=`<button class="btn${i===page?" dark":""}" data-p="${i}">${i*PER+1}–${Math.min((i+1)*PER,list.length)}</button>`;
+    for(let i=0;i<pages;i++){
+      p+=`<button class="btn${i===page?" dark":""}" data-p="${i}">${i*PER+1}–${Math.min((i+1)*PER,list.length)}</button>`;
+    }
     p+=`<button class="btn" data-p="${page+1}" ${page<pages-1?"":"disabled"}>Next</button>`;
   }
   $("pager").innerHTML=p;
 }
 
-$("pager").addEventListener("click",e=>{const b=e.target.closest("[data-p]");if(!b||b.disabled)return;page=+b.dataset.p;render();$("jobs").scrollIntoView({behavior:"smooth"})});
+async function load(manual=false){
+  if(loading)return;
+  loading=true;
+  const button=$("refresh");
+  button.disabled=true;
+  button.textContent="↻ Loading…";
+  $("status").textContent=manual?"Checking for updated jobs…":"Loading job listings…";
+
+  try{
+    const response=await fetch("jobs.json?refresh="+Date.now(),{cache:"no-store"});
+    if(!response.ok)throw new Error("Job feed returned HTTP "+response.status);
+    const data=await response.json();
+    if(!Array.isArray(data.jobs))throw new Error("The job feed has an invalid format.");
+
+    const normalized=data.jobs.map(normalize).filter(j=>j.title&&j.company&&safeUrl(j.url)!=="#");
+    if(!normalized.length)throw new Error("The job feed contains no valid listings.");
+
+    ALL=normalized;
+    stamp=data.updatedAt??data.updated??null;
+    page=0;
+    render();
+    $("updated").textContent=stamp?"Feed updated "+ago(stamp):"Feed loaded";
+    $("status").textContent=manual?"Jobs refreshed successfully.":"";
+  }catch(error){
+    if(ALL.length){
+      $("status").textContent="Could not refresh: "+error.message+". Showing the previously loaded jobs.";
+    }else{
+      $("count").textContent="Jobs could not be loaded";
+      $("grid").innerHTML='<div class="empty">The job feed could not be loaded. Please try Refresh again shortly.</div>';
+      $("status").textContent="Check that jobs.json exists and the latest GitHub Actions run succeeded.";
+    }
+  }finally{
+    loading=false;
+    button.disabled=false;
+    button.textContent="↻ Refresh jobs";
+  }
+}
+
+$("pager").addEventListener("click",e=>{
+  const b=e.target.closest("[data-p]");
+  if(!b||b.disabled)return;
+  page=Number(b.dataset.p);
+  render();
+  $("jobs").scrollIntoView({behavior:"smooth"});
+});
 $("q").addEventListener("input",()=>{page=0;render()});
-$("refresh").addEventListener("click",load);
+$("country").addEventListener("change",()=>{page=0;render()});
+$("source").addEventListener("change",()=>{page=0;render()});
+$("refresh").addEventListener("click",()=>load(true));
+
 load();
-setInterval(load,15*60*1000);
-document.addEventListener("visibilitychange",()=>{if(!document.hidden)load()});
+setInterval(()=>load(false),15*60*1000);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)load(false)});
 </script>
 </body>
 </html>
