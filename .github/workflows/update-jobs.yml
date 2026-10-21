@@ -18,30 +18,27 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Fetch remote jobs
-        env:
-          REMOTIVE_URL: https://remotive.com/api/remote-jobs
-          REMOTEOK_URL: https://remoteok.com/api
-          ARBEITNOW_URL: https://www.arbeitnow.com/api/job-board-api
         run: |
           python - <<'PY'
           import json
           import urllib.request
           from datetime import datetime, timezone
 
-          jobs = []
           sources = [
               ("Remotive", "https://remotive.com/api/remote-jobs"),
               ("Remote OK", "https://remoteok.com/api"),
               ("Arbeitnow", "https://www.arbeitnow.com/api/job-board-api"),
           ]
 
+          jobs = []
+
           for source, url in sources:
               try:
                   req = urllib.request.Request(
                       url,
-                      headers={"User-Agent": "Switchremote job board"}
+                      headers={"User-Agent": "Switchremote/1.0"}
                   )
-                  with urllib.request.urlopen(req, timeout=25) as response:
+                  with urllib.request.urlopen(req, timeout=30) as response:
                       data = json.loads(response.read().decode("utf-8"))
 
                   if source == "Remotive":
@@ -54,19 +51,24 @@ jobs:
                   for item in items:
                       title = item.get("title", "")
                       company = item.get("company_name") or item.get("company", "")
-                      link = item.get("url") or item.get("apply_url") or ""
-                      if not title or not company or not link:
+                      url_job = item.get("url") or item.get("apply_url") or ""
+
+                      if not title or not company or not url_job:
                           continue
 
                       jobs.append({
+                          "id": source + "-" + url_job,
                           "title": title,
                           "company": company,
-                          "url": link,
+                          "url": url_job,
                           "location": item.get("candidate_required_location")
                               or item.get("location")
                               or "Check employer listing",
                           "category": item.get("category")
                               or item.get("tags", []),
+                          "type": item.get("job_type") or "",
+                          "salary": item.get("salary") or "",
+                          "logo": item.get("company_logo") or "",
                           "source": source,
                           "description": item.get("description", ""),
                           "postedAt": item.get("publication_date")
