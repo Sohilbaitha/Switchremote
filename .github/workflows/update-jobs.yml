@@ -30,7 +30,6 @@ jobs:
           import html
           import urllib.request
           from datetime import datetime, timezone
-          from html.parser import HTMLParser
 
           def fetch(url):
               req = urllib.request.Request(
@@ -50,31 +49,36 @@ jobs:
               return re.sub(r"<[^>]*>", " ", clean(value)).lower()
 
           def eligible(job):
-              text = " ".join([
-                  job["title"], job["location"], job["description"]
-              ]).lower()
+              title = job["title"].lower()
+              description = plain(job["description"])
+              location = job["location"].lower()
+              text = f"{title} {location} {description}"
 
-              indonesia = any(x in text for x in [
+              indonesia = any(x in location for x in [
                   "indonesia", "jakarta", "surabaya",
                   "bandung", "yogyakarta", "bali"
               ])
               if not indonesia:
                   return False
 
-              entry_level = any(x in text for x in [
-                  "entry-level", "entry level", "junior",
-                  "internship", "intern ", "graduate",
-                  "fresh graduate", "new grad", "trainee",
-                  "no experience required", "no prior experience",
-                  "all levels of experience welcome"
-              ])
-
-              senior = any(x in job["title"].lower() for x in [
+              reject = [
                   "senior", "staff ", "principal", "director",
-                  "head of ", "vice president", "lead "
-              ])
+                  "manager", "management", "head of ",
+                  "vice president", "lead ", "experienced",
+                  "3+ years", "4+ years", "5+ years",
+                  "3 years of experience", "5 years of experience"
+              ]
+              if any(x in title or x in description for x in reject):
+                  return False
 
-              return entry_level and not senior
+              allow = [
+                  "intern", "internship", "entry level",
+                  "entry-level", "graduate", "fresh graduate",
+                  "new grad", "trainee", "no experience required",
+                  "no prior experience",
+                  "all levels of experience welcome"
+              ]
+              return any(x in text for x in allow)
 
           with open("employers.json", encoding="utf-8") as f:
               config = json.load(f)
@@ -105,13 +109,15 @@ jobs:
                   elif kind == "lever":
                       data = fetch(
                           "https://api.lever.co/v0/postings/"
-                        + token + "?mode=json"
+                          + token + "?mode=json"
                       )
                       items = data if isinstance(data, list) else []
 
                   else:
                       errors.append(f"Unsupported source for {name}")
                       continue
+
+                  added = 0
 
                   for item in items:
                       if kind == "greenhouse":
@@ -152,19 +158,21 @@ jobs:
 
                       if eligible(job):
                           jobs.append(job)
+                          added += 1
 
-                  print(f"{name}: checked {len(items)} vacancies")
+                  print(
+                      f"{name}: checked {len(items)} vacancies; "
+                      f"eligible {added}"
+                  )
 
               except Exception as e:
                   errors.append(f"{name}: {e}")
                   print(f"Could not fetch {name}: {e}")
 
-          # Fail safely if a configured employer's feed breaks.
-          # Do not replace existing data with incomplete results.
           if errors:
               raise SystemExit(
-                  "Some approved employer feeds failed; "
-                  "keeping existing jobs.json: " + "; ".join(errors)
+                  "Employer feed error; keeping existing jobs.json: "
+                  + "; ".join(errors)
               )
 
           unique = {}
