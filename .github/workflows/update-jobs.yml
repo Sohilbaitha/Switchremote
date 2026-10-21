@@ -50,10 +50,10 @@ jobs:
 
           def eligible(job):
               title = job["title"].lower()
-              description = plain(job["description"])
               location = job["location"].lower()
-              text = f"{title} {location} {description}"
+              description = plain(job["description"])
 
+              # Require explicit Indonesia location
               indonesia = any(x in location for x in [
                   "indonesia", "jakarta", "surabaya",
                   "bandung", "yogyakarta", "bali"
@@ -61,16 +61,19 @@ jobs:
               if not indonesia:
                   return False
 
+              # Reject senior, management and experienced roles
               reject = [
                   "senior", "staff ", "principal", "director",
                   "manager", "management", "head of ",
                   "vice president", "lead ", "experienced",
-                  "3+ years", "4+ years", "5+ years",
-                  "3 years of experience", "5 years of experience"
+                  "project manager", "3+ years", "4+ years",
+                  "5+ years", "3 years of experience",
+                  "5 years of experience"
               ]
               if any(x in title or x in description for x in reject):
                   return False
 
+              # Require an explicit entry-level signal
               allow = [
                   "intern", "internship", "entry level",
                   "entry-level", "graduate", "fresh graduate",
@@ -78,7 +81,7 @@ jobs:
                   "no prior experience",
                   "all levels of experience welcome"
               ]
-              return any(x in text for x in allow)
+              return any(x in title or x in description for x in allow)
 
           with open("employers.json", encoding="utf-8") as f:
               config = json.load(f)
