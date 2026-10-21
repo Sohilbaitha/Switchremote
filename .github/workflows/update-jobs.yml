@@ -27,7 +27,7 @@ jobs:
           python - <<'PY'
           import json, re, html, urllib.request
           from datetime import datetime, timezone, timedelta
-          from urllib.parse import urlparse, urlencode
+          from urllib.parse import urlparse
 
           NOW = datetime.now(timezone.utc)
 
@@ -67,8 +67,7 @@ jobs:
                       if value > 10**12:
                           value /= 1000
                       return datetime.fromtimestamp(value, timezone.utc)
-                  value = str(value).replace("Z", "+00:00")
-                  d = datetime.fromisoformat(value)
+                  d = datetime.fromisoformat(str(value).replace("Z", "+00:00"))
                   if d.tzinfo is None:
                       d = d.replace(tzinfo=timezone.utc)
                   return d.astimezone(timezone.utc)
@@ -156,7 +155,6 @@ jobs:
                   jobs.append(job)
               return ok, reason
 
-          # OFFICIAL EMPLOYER BOARDS
           with open("employers.json", encoding="utf-8") as f:
               employers = json.load(f).get("employers", [])
 
@@ -208,7 +206,6 @@ jobs:
 
                   for item in items:
                       verified_remote = False
-                      hosts = []
                       salary = ""
 
                       if kind == "greenhouse":
@@ -216,10 +213,12 @@ jobs:
                           loc = clean((item.get("location") or {}).get("name"))
                           desc = clean(item.get("content"))
                           url = clean(item.get("absolute_url"))
-                          # updated_at is not reliable proof of original posting date.
                           posted = clean(item.get("first_published"))
                           jobid = clean(item.get("id"))
-                          hosts = ["boards.greenhouse.io"]
+                          hosts = [
+                              "boards.greenhouse.io",
+                              "job-boards.greenhouse.io"
+                          ]
 
                       elif kind == "lever":
                           cat = item.get("categories") or {}
@@ -259,16 +258,18 @@ jobs:
 
                       else:
                           title = clean(item.get("name"))
-                          loc = clean(item.get("location", {}).get("fullLocation")
-                                      if isinstance(item.get("location"), dict)
-                                      else item.get("location"))
-                          desc = clean(item.get("jobAd", {}).get("sections", {}).get(
-                              "jobDescription", {}).get("text", ""))
+                          loc_data = item.get("location")
+                          loc = clean(
+                              loc_data.get("fullLocation")
+                              if isinstance(loc_data, dict) else loc_data
+                          )
+                          desc = clean(item.get("jobAd", {}).get(
+                              "sections", {}).get("jobDescription", {}).get(
+                              "text", ""))
                           url = clean(item.get("ref"))
                           posted = clean(item.get("releasedDate"))
                           jobid = clean(item.get("id"))
                           hosts = ["jobs.smartrecruiters.com"]
-                          verified_remote = False
 
                       if not jobid or not valid_url(url, hosts):
                           continue
@@ -300,7 +301,7 @@ jobs:
               except Exception as exc:
                   errors.append(f"{name} ({kind}): {exc}")
 
-          # JOBICY PUBLIC API: preserve Jobicy source and canonical URL.
+          # Jobicy public API; keep original source and application URL.
           try:
               data = fetch("https://jobicy.com/api/jobs?count=200")
               items = data.get("jobs", [])
@@ -366,7 +367,6 @@ jobs:
           except Exception as exc:
               errors.append(f"Jobicy: {exc}")
 
-          # Keep successful feed results; report individual source errors.
           for error in errors:
               print("SOURCE ERROR:", error)
 
