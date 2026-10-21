@@ -1,5 +1,5 @@
 
-name: Update remote jobs
+name: Update trusted remote jobs
 
 on:
   workflow_dispatch:
@@ -22,126 +22,166 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Fetch remote jobs
+      - name: Fetch approved employer jobs
         run: |
           python - <<'PY'
           import json
-          import os
+          import re
+          import html
           import urllib.request
           from datetime import datetime, timezone
+          from html.parser import HTMLParser
 
-          sources = [
-              ("Remotive", "https://remotive.com/api/remote-jobs"),
-              ("Remote OK", "https://remoteok.com/api"),
-              ("Arbeitnow", "https://www.arbeitnow.com/api/job-board-api"),
-          ]
+          def fetch(url):
+              req = urllib.request.Request(
+                  url, headers={"User-Agent": "Switchremote/1.0"}
+              )
+              with urllib.request.urlopen(req, timeout=25) as r:
+                  if r.status != 200:
+                      raise RuntimeError(f"HTTP {r.status}")
+                  return json.loads(r.read().decode("utf-8"))
+
+          def clean(value):
+              if isinstance(value, list):
+                  return ", ".join(map(str, value))
+              return html.unescape(str(value or ""))
+
+          def plain(value):
+              return re.sub(r"<[^>]*>", " ", clean(value)).lower()
+
+          def eligible(job):
+              text = " ".join([
+                  job["title"], job["location"], job["description"]
+              ]).lower()
+
+              indonesia = any(x in text for x in [
+                  "indonesia", "jakarta", "surabaya",
+                  "bandung", "yogyakarta", "bali"
+              ])
+              if not indonesia:
+                  return False
+
+              entry_level = any(x in text for x in [
+                  "entry-level", "entry level", "junior",
+                  "internship", "intern ", "graduate",
+                  "fresh graduate", "new grad", "trainee",
+                  "no experience required", "no prior experience",
+                  "all levels of experience welcome"
+              ])
+
+              senior = any(x in job["title"].lower() for x in [
+                  "senior", "staff ", "principal", "director",
+                  "head of ", "vice president", "lead "
+              ])
+
+              return entry_level and not senior
+
+          with open("employers.json", encoding="utf-8") as f:
+              config = json.load(f)
 
           jobs = []
-          successes = 0
+          errors = []
 
-          def text_value(value):
-              if isinstance(value, str):
-                  return value.strip()
-              if isinstance(value, list):
-                  return ", ".join(str(x) for x in value)
-              return ""
+          for employer in config.get("employers", []):
+              if employer.get("approved") is not True:
+                  continue
 
-          for source, url in sources:
+              name = clean(employer.get("company"))
+              kind = employer.get("source_type")
+              token = clean(employer.get("board_token"))
+
+              if not name or not token:
+                  errors.append("Missing company or board token")
+                  continue
+
               try:
-                  req = urllib.request.Request(
-                      url,
-                      headers={"User-Agent": "Switchremote/1.0"}
-                  )
-
-                  with urllib.request.urlopen(req, timeout=25) as response:
-                      if response.status != 200:
-                          raise RuntimeError(f"HTTP {response.status}")
-                      data = json.loads(response.read().decode("utf-8"))
-
-                  if source == "Remotive":
+                  if kind == "greenhouse":
+                      data = fetch(
+                          "https://boards-api.greenhouse.io/v1/boards/"
+                          + token + "/jobs?content=true"
+                      )
                       items = data.get("jobs", [])
-                  elif source == "Remote OK":
-                      items = data[1:] if isinstance(data, list) else []
-                  else:
-                      items = data.get("data", [])
 
-                  successes += 1
-                  added = 0
+                  elif kind == "lever":
+                      data = fetch(
+                          "https://api.lever.co/v0/postings/"
+                        + token + "?mode=json"
+                      )
+                      items = data if isinstance(data, list) else []
+
+                  else:
+                      errors.append(f"Unsupported source for {name}")
+                      continue
 
                   for item in items:
-                      title = text_value(item.get("title"))
-                      company = text_value(
-                          item.get("company_name") or item.get("company")
-                      )
-                      link = text_value(
-                          item.get("url") or item.get("apply_url")
-                      )
+                      if kind == "greenhouse":
+                          title = clean(item.get("title"))
+                          location = clean(
+                              (item.get("location") or {}).get("name")
+                          )
+                          description = clean(item.get("content"))
+                          url = clean(item.get("absolute_url"))
+                          posted = clean(item.get("updated_at"))
+                          job_id = clean(item.get("id"))
+                      else:
+                          categories = item.get("categories") or {}
+                          title = clean(item.get("text"))
+                          location = clean(categories.get("location"))
+                          description = clean(item.get("description"))
+                          url = clean(item.get("hostedUrl"))
+                          posted = clean(item.get("createdAt"))
+                          job_id = clean(item.get("id"))
 
-                      if not title or not company or not link:
+                      if not title or not url.startswith("https://"):
                           continue
 
-                      logo = text_value(
-                          item.get("company_logo")
-                          or item.get("logo")
-                          or item.get("companyLogo")
-                      )
-
-                      location = text_value(
-                          item.get("candidate_required_location")
-                          or item.get("location")
-                          or item.get("region")
-                      ) or "Check employer listing"
-
-                      jobs.append({
-                          "id": source + "-" + link,
+                      job = {
+                          "id": name + "-" + job_id,
                           "title": title,
-                          "company": company,
-                          "url": link,
-                          "location": location,
-                          "category": text_value(
-                              item.get("category") or item.get("tags")
-                          ),
-                          "type": text_value(
-                              item.get("job_type") or item.get("type")
-                          ),
-                          "salary": text_value(item.get("salary")),
-                          "logo": logo,
-                          "source": source,
-                          "description": text_value(item.get("description")),
-                          "postedAt": text_value(
-                              item.get("publication_date")
-                              or item.get("date")
-                              or item.get("created_at")
-                          )
-                      })
-                      added += 1
+                          "company": name,
+                          "url": url,
+                          "location": location or "Check employer listing",
+                          "category": "",
+                          "type": "",
+                          "salary": "",
+                          "logo": "",
+                          "source": kind.title(),
+                          "description": description,
+                          "postedAt": posted
+                      }
 
-                  print(f"{source}: fetched {added} jobs")
+                      if eligible(job):
+                          jobs.append(job)
 
-              except Exception as error:
-                  print(f"{source} fetch failed: {error}")
+                  print(f"{name}: checked {len(items)} vacancies")
 
-          if successes == 0:
-              raise SystemExit("All job sources failed; keeping existing jobs.json")
+              except Exception as e:
+                  errors.append(f"{name}: {e}")
+                  print(f"Could not fetch {name}: {e}")
+
+          # Fail safely if a configured employer's feed breaks.
+          # Do not replace existing data with incomplete results.
+          if errors:
+              raise SystemExit(
+                  "Some approved employer feeds failed; "
+                  "keeping existing jobs.json: " + "; ".join(errors)
+              )
 
           unique = {}
           for job in jobs:
               key = job["url"].split("?")[0].rstrip("/").lower()
-              if key and key not in unique:
+              if key not in unique:
                   unique[key] = job
-
-          if not unique:
-              raise SystemExit("No valid jobs found; keeping existing jobs.json")
 
           output = {
               "updatedAt": datetime.now(timezone.utc).isoformat(),
-              "jobs": list(unique.values())[:300]
+              "jobs": list(unique.values())
           }
 
-          with open("jobs.json", "w", encoding="utf-8") as file:
-              json.dump(output, file, ensure_ascii=False, indent=2)
+          with open("jobs.json", "w", encoding="utf-8") as f:
+              json.dump(output, f, ensure_ascii=False, indent=2)
 
-          print(f"Saved {len(output['jobs'])} unique jobs")
+          print(f"Saved {len(output['jobs'])} eligible jobs")
           PY
 
       - name: Commit updated jobs
@@ -150,7 +190,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add jobs.json
           if ! git diff --cached --quiet; then
-            git commit -m "Update remote jobs data"
+            git commit -m "Update trusted jobs"
             git push
           else
             echo "No changes to commit"
