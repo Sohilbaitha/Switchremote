@@ -53,20 +53,36 @@ jobs:
               description = plain(job["description"])
               text = title + " " + description
 
-              # Match Indonesia location aliases only in location field
-              indonesia_aliases = [
-                  "indonesia", "jakarta", "surabaya",
-                  "bandung", "yogyakarta", "bali"
+              asia_locations = [
+                  "india", "indonesia", "philippines", "vietnam",
+                  "malaysia", "singapore", "thailand", "pakistan",
+                  "bangladesh", "sri lanka", "nepal", "cambodia",
+                  "myanmar", "laos", "brunei", "japan", "south korea",
+                  "taiwan", "hong kong", "china",
+                  "jakarta", "surabaya", "bandung", "yogyakarta", "bali",
+                  "manila", "cebu", "ho chi minh", "hanoi",
+                  "kuala lumpur", "bangalore", "bengaluru", "mumbai",
+                  "delhi", "hyderabad", "chennai", "pune", "dhaka",
+                  "karachi", "lahore", "colombo", "kathmandu",
+                  "bangkok", "singapore"
               ]
-              if not any(x in location for x in indonesia_aliases):
+
+              worldwide_remote = any(x in location for x in [
+                  "worldwide", "work from anywhere",
+                  "anywhere in the world", "global remote"
+              ])
+
+              asia_eligible = any(x in location for x in asia_locations)
+
+              if not asia_eligible and not worldwide_remote:
                   return False
 
               reject = [
                   "senior", "principal", "director", "manager",
                   "management", "head of ", "vice president",
-                  "project manager", "team lead", "lead engineer",
-                  "3+ years", "4+ years", "5+ years",
-                  "3 years of experience", "5 years of experience"
+                  "team lead", "lead engineer", "3+ years",
+                  "4+ years", "5+ years", "3 years of experience",
+                  "5 years of experience"
               ]
               if any(x in title or x in description for x in reject):
                   return False
@@ -77,6 +93,7 @@ jobs:
                   "no experience required", "no prior experience",
                   "all levels of experience welcome"
               ]
+
               return any(x in text for x in allow)
 
           with open("employers.json", encoding="utf-8") as f:
