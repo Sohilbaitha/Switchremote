@@ -9,9 +9,11 @@ MAX_SMARTRECRUITERS_PAGES = 10
 
 def run(key, label, raws):
     checked, got, rejected = 0, 0, {}
+
     for raw in raws:
         checked += 1
         ok, reason, job = consider(raw)
+
         if ok:
             job["sourceKey"] = key
             accepted.append(job)
@@ -30,7 +32,10 @@ def employer_items(emp):
     name = clean(emp.get("company"))
     kind = clean(emp.get("source_type")).lower()
     token = clean(emp.get("board_token"))
-    allowed = emp.get("eligible_countries") or None
+    allowed = [
+        c for c in (emp.get("eligible_countries") or [])
+        if c in ALL6
+    ]
     entry_required = emp.get("entry_level_only") is not False
     out = []
 
@@ -39,12 +44,14 @@ def employer_items(emp):
             "https://boards-api.greenhouse.io/v1/boards/"
             + token + "/jobs?content=true"
         )
+
         for item in data.get("jobs", []):
             url = clean(item.get("absolute_url"))
             if not valid_url(
                 url, ["boards.greenhouse.io", "job-boards.greenhouse.io"]
             ):
                 continue
+
             out.append({
                 "id": name + "-" + clean(item.get("id")),
                 "title": item.get("title"),
@@ -70,9 +77,11 @@ def employer_items(emp):
 
             categories = item.get("categories") or {}
             locations = [clean(categories.get("location"))]
+
             for extra in categories.get("allLocations") or []:
-                if clean(extra) and clean(extra) not in locations:
-                    locations.append(clean(extra))
+                extra = clean(extra)
+                if extra and extra not in locations:
+                    locations.append(extra)
 
             out.append({
                 "id": name + "-" + clean(item.get("id")),
@@ -95,6 +104,7 @@ def employer_items(emp):
         data = fetch(
             "https://api.ashbyhq.com/posting-api/job-board/" + token
         )
+
         for item in data.get("jobs", []):
             if item.get("isListed") is not True:
                 continue
@@ -133,24 +143,24 @@ def employer_items(emp):
             })
 
     elif kind == "smartrecruiters":
-        # Fetch multiple pages rather than silently stopping at 100 jobs.
         limit = 100
         offset = 0
 
         for _ in range(MAX_SMARTRECRUITERS_PAGES):
-            url = (
+            api_url = (
                 "https://api.smartrecruiters.com/v1/companies/"
                 + token
                 + f"/postings?limit={limit}&offset={offset}"
             )
-            data = fetch(url)
+            data = fetch(api_url)
             items = data.get("content", [])
+
             if not items:
                 break
 
             for item in items:
-                job_url = clean(item.get("ref"))
-                if not valid_url(job_url, ["jobs.smartrecruiters.com"]):
+                url = clean(item.get("ref"))
+                if not valid_url(url, ["jobs.smartrecruiters.com"]):
                     continue
 
                 location_data = item.get("location") or {}
@@ -163,7 +173,7 @@ def employer_items(emp):
                     "id": name + "-" + clean(item.get("id")),
                     "title": item.get("name"),
                     "company": name,
-                    "url": job_url,
+                    "url": url,
                     "location": (
                         location_data.get("fullLocation")
                         if isinstance(location_data, dict)
@@ -176,6 +186,7 @@ def employer_items(emp):
 
             offset += len(items)
             total = data.get("totalFound")
+
             if len(items) < limit:
                 break
             if isinstance(total, int) and offset >= total:
@@ -184,6 +195,7 @@ def employer_items(emp):
     else:
         raise ValueError("Unsupported source type: " + kind)
 
+    # Carry employer policy metadata into the shared filter.
     for item in out:
         item["eligible_countries"] = allowed
         item["entry_required"] = entry_required
@@ -198,6 +210,7 @@ def jobicy_items():
         data = fetch("https://jobicy.com/api/jobs?count=200")
 
     out = []
+
     for item in data.get("jobs", []):
         url = clean(item.get("url"))
         if not valid_url(url, ["jobicy.com"]):
@@ -207,11 +220,11 @@ def jobicy_items():
         types = clean(item.get("jobType")).lower()
         job_level = ""
 
-        if any(word in level for word in (
+        if any(w in level for w in (
             "senior", "mid", "manager", "lead"
         )):
             job_level = "senior"
-        elif any(word in level for word in (
+        elif any(w in level for w in (
             "junior", "entry", "intern", "graduate"
         )) or "intern" in types:
             job_level = "entry"
@@ -230,6 +243,7 @@ def jobicy_items():
             "level": job_level,
             "source": "Jobicy",
         })
+
     return out
 
 
@@ -256,6 +270,7 @@ def remotive_items():
             "remote_verified": True,
             "source": "Remotive",
         })
+
     return out
 
 
@@ -288,41 +303,37 @@ def remoteok_items():
             "remote_verified": True,
             "source": "RemoteOK",
         })
+
     return out
 
 
 def keep_fresh_old_jobs(old_jobs, failed_keys):
-    """Keep recent cached jobs for failed sources only."""
+    """Keep only recent cached jobs belonging to failed sources."""
     kept = []
     cutoff = NOW - timedelta(days=MAX_AGE_DAYS)
 
-    for job in old_jobs:
+    for old in old_jobs:
         key = (
-            job.get("sourceKey")
-            or job.get("company")
-            or job.get("source")
+            old.get("sourceKey")
+            or old.get("company")
+            or old.get("source")
         )
         if key not in failed_keys:
             continue
 
-        posted = parse_date(job.get("postedAt"))
+        posted = parse_date(old.get("postedAt"))
         if not posted or not (cutoff <= posted <= NOW + timedelta(days=1)):
             continue
 
         countries = [
-            country for country in job.get("countries", [])
+            country for country in old.get("countries", [])
             if country in ALL6
         ]
-        if not countries:
+        if not countries or old.get("scope") == "region":
             continue
 
-        # Do not retain legacy regional classifications that were inferred
-        # from APAC/Asia rather than verified country eligibility.
-        if job.get("scope") == "region":
-            continue
-
-        job["countries"] = countries
-        kept.append(job)
+        old["countries"] = countries
+        kept.append(old)
 
     return kept
 
@@ -373,20 +384,25 @@ def main():
     for error in errors:
         print("SOURCE ERROR:", error)
 
-    # If every configured source failed, fail the workflow and leave jobs.json
-    # untouched instead of publishing a misleading empty or stale dataset.
     if not stats or not any(stats.values()):
         print("ALL SOURCES FAILED - keeping old jobs.json")
         raise SystemExit(1)
 
-    failed_keys = {key for key, success in stats.items() if not success}
+    failed_keys = {
+        key for key, success in stats.items() if not success
+    }
     cached = keep_fresh_old_jobs(old_jobs, failed_keys)
     accepted.extend(cached)
 
     if cached:
         print(f"Kept {len(cached)} fresh jobs from failed sources")
 
-    # Deduplicate by canonical-ish URL and by title/company/country set.
+    # Do not replace the dataset with an empty or near-empty result.
+    # Inspect the logs and correct the filters before publishing it.
+    if not accepted:
+        print("No qualifying jobs found; jobs.json left unchanged.")
+        raise SystemExit(1)
+
     seen_urls = set()
     seen_signatures = set()
     final_jobs = []
@@ -419,6 +435,7 @@ def main():
         )
         for country in ALL6
     }
+
     print("Country coverage:", coverage)
 
     with open("jobs.json", "w", encoding="utf-8") as file:
