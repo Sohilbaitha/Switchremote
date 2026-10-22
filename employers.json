@@ -1,6 +1,15 @@
 {
   "employers": [
     {
+      "company": "LevelUp",
+      "source_type": "lever",
+      "board_token": "levelup",
+      "careers_url": "https://jobs.lever.co/levelup",
+      "eligible_countries": ["Philippines"],
+      "entry_level_only": true,
+      "approved": true
+    },
+    {
       "company": "TSMG",
       "source_type": "lever",
       "board_token": "tsmg",
@@ -51,6 +60,42 @@
       "board_token": "ema",
       "careers_url": "https://jobs.ashbyhq.com/ema",
       "eligible_countries": ["India"],
+      "entry_level_only": true,
+      "approved": true
+    },
+    {
+      "company": "Remote",
+      "source_type": "greenhouse",
+      "board_token": "remotecom",
+      "careers_url": "https://job-boards.greenhouse.io/remotecom",
+      "eligible_countries": ["India", "Indonesia", "Philippines", "Vietnam", "Malaysia", "Thailand"],
+      "entry_level_only": true,
+      "approved": true
+    },
+    {
+      "company": "Deel",
+      "source_type": "ashby",
+      "board_token": "deel",
+      "careers_url": "https://jobs.ashbyhq.com/deel",
+      "eligible_countries": ["India", "Indonesia", "Philippines", "Vietnam", "Malaysia", "Thailand"],
+      "entry_level_only": true,
+      "approved": true
+    },
+    {
+      "company": "Canonical",
+      "source_type": "greenhouse",
+      "board_token": "canonical",
+      "careers_url": "https://job-boards.greenhouse.io/canonical",
+      "eligible_countries": ["India", "Indonesia", "Philippines", "Vietnam", "Malaysia", "Thailand"],
+      "entry_level_only": true,
+      "approved": true
+    },
+    {
+      "company": "GitLab",
+      "source_type": "greenhouse",
+      "board_token": "gitlab",
+      "careers_url": "https://job-boards.greenhouse.io/gitlab",
+      "eligible_countries": ["India", "Indonesia", "Philippines", "Vietnam", "Malaysia", "Thailand"],
       "entry_level_only": true,
       "approved": true
     }
