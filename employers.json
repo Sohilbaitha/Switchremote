@@ -146,6 +146,18 @@
       ],
       "entry_level_only": true,
       "approved": true
+    },
+    {
+      "company": "Fresh Prints",
+      "source_type": "greenhouse",
+      "board_token": "freshprints",
+      "careers_url": "https://job-boards.greenhouse.io/freshprints",
+      "eligible_countries": [
+        "India",
+        "Philippines"
+      ],
+      "entry_level_only": true,
+      "approved": true
     }
   ]
 }
