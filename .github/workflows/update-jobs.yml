@@ -1,4 +1,3 @@
-
 name: Update trusted remote jobs
 
 on:
@@ -30,6 +29,15 @@ jobs:
           from urllib.parse import urlparse
 
           NOW = datetime.now(timezone.utc)
+
+          ENTRY_TITLE = re.compile(
+              r"\b(intern|internship|entry[- ]level|graduate|"
+              r"fresh graduate|new grad|trainee|junior)\b")
+          ENTRY_DESC = re.compile(
+              r"\b(intern|internship|entry[- ]level|fresh graduate|"
+              r"new grad|recent graduate|trainee|junior|"
+              r"no experience required|no prior experience|"
+              r"0[-–]1 years?|0 years of experience)\b")
 
           COUNTRIES = {
               "India": ["india", "bengaluru", "bangalore", "mumbai",
@@ -132,13 +140,8 @@ jobs:
               if any(re.search(p, text) for p in experience_patterns):
                   return False, "experience requirement"
 
-              entry_terms = [
-                  "intern", "internship", "entry-level", "entry level",
-                  "graduate", "fresh graduate", "new grad", "trainee",
-                  "junior", "no experience required", "no prior experience",
-                  "0-1 years", "0–1 years", "0 years of experience"
-              ]
-              if not any(w in title or w in desc for w in entry_terms):
+              if not (ENTRY_TITLE.search(title)
+                      or ENTRY_DESC.search(desc)):
                   return False, "not clearly entry-level"
 
               if not is_recent(job.get("postedAt")):
@@ -322,13 +325,8 @@ jobs:
                       continue
 
                   entry_signal = (
-                      any(w in title.lower() + " " + plain(desc)
-                          for w in [
-                              "intern", "internship", "entry-level",
-                              "entry level", "graduate", "new grad",
-                              "trainee", "junior", "no experience required",
-                              "no prior experience", "0-1 years"
-                          ])
+                      ENTRY_TITLE.search(title.lower())
+                      or ENTRY_DESC.search(plain(desc))
                       or "intern" in types
                       or "entry" in level
                       or "junior" in level
