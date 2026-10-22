@@ -422,8 +422,12 @@ jobs:
           try:
               with open("jobs.json", encoding="utf-8") as f:
                   old_jobs = json.load(f).get("jobs", [])
-          except Exception:
+                    except Exception:
               old_jobs = []
+
+          BLOCKED = {"pratham international"}
+          old_jobs = [j for j in old_jobs
+                      if clean(j.get("company")).lower() not in BLOCKED]
 
           with open("employers.json", encoding="utf-8") as f:
               employers = json.load(f).get("employers", [])
