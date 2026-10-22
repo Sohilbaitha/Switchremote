@@ -1,106 +1,137 @@
-import json, re, html, sys, time
-import urllib.request, urllib.error
+
+import json
+import re
+import html
+import time
+import urllib.request
+import urllib.error
 from datetime import datetime, timezone, timedelta
 from urllib.parse import urlparse
 
 NOW = datetime.now(timezone.utc)
-MAX_AGE_DAYS = 45
+MAX_AGE_DAYS = 30
 BLOCKED = {"pratham international"}
 
 COUNTRIES = {
-    "India": ["india", "bengaluru", "bangalore", "mumbai",
-              "delhi", "hyderabad", "chennai", "pune", "noida",
-              "gurgaon", "gurugram"],
-    "Indonesia": ["indonesia", "jakarta", "surabaya", "bandung",
-                  "yogyakarta", "bali"],
+    "India": [
+        "india", "bengaluru", "bangalore", "mumbai", "delhi",
+        "hyderabad", "chennai", "pune", "noida", "gurgaon", "gurugram"
+    ],
+    "Indonesia": [
+        "indonesia", "jakarta", "surabaya", "bandung", "yogyakarta", "bali"
+    ],
     "Philippines": ["philippines", "manila", "cebu", "davao"],
     "Vietnam": ["vietnam", "viet nam", "ho chi minh", "hanoi"],
     "Malaysia": ["malaysia", "kuala lumpur", "penang"],
     "Thailand": ["thailand", "bangkok", "chiang mai"],
 }
-COUNTRY_RX = {
-    c: re.compile(r"\b(" + "|".join(re.escape(a) for a in al) + r")\b")
-    for c, al in COUNTRIES.items()
-}
 ALL6 = list(COUNTRIES)
+COUNTRY_RX = {
+    c: re.compile(
+        r"\b(" + "|".join(re.escape(x) for x in names) + r")\b",
+        re.I
+    )
+    for c, names in COUNTRIES.items()
+}
 
 WORLD = re.compile(
     r"\b(worldwide|world wide|anywhere|global|globally|"
-    r"all countries|work from anywhere)\b")
+    r"all countries|work from anywhere)\b", re.I
+)
 REGION = re.compile(
     r"\b(apac|asia|asia pacific|asia-pacific|"
-    r"southeast asia|south east asia)\b")
+    r"southeast asia|south east asia)\b", re.I
+)
 RESTRICT = re.compile(
-    r"\b(us|usa|u\.s\.|united states|canada|uk|united kingdom|"
-    r"europe|emea|eu|latam|latin america|americas|"
-    r"north america|australia|new zealand)\b")
+    r"\b(usa|u\.s\.|united states|canada|uk|united kingdom|"
+    r"europe|emea|latam|latin america|americas|"
+    r"north america|australia|new zealand)\b", re.I
+)
 REMOTE_LOC = re.compile(
-    r"\b(remote|work from home|wfh|anywhere|worldwide|distributed)\b")
+    r"\b(remote|work from home|wfh|anywhere|worldwide|distributed)\b", re.I
+)
 REMOTE_DESC = re.compile(
     r"(fully remote|100% remote|remote[- ](first|position|role|work|job)"
-    r"|work from home|work-from-home)")
+    r"|work from home|work-from-home)", re.I
+)
 HYBRID = re.compile(
-    r"\b(on[- ]?site|hybrid|in[- ]office|office[- ]based)\b")
+    r"\b(on[- ]?site|hybrid|in[- ]office|office[- ]based)\b", re.I
+)
 SENIOR = re.compile(
-    r"\b(senior|sr|principal|director|manager|head of|"
+    r"\b(senior|sr\.?|principal|director|manager|head of|"
     r"vice president|vp|team lead|tech lead|lead engineer|"
-    r"lead developer|staff engineer|architect|chief|expert)\b")
+    r"lead developer|staff engineer|architect|chief|expert)\b", re.I
+)
+
 EXP = [
-    re.compile(r"\b(?:[2-9]|1\d)\s*\+?\s*(?:(?:-|–|to)\s*\d+\s*)?"
-               r"years?\b[^.]{0,40}\bexperience"),
-    re.compile(r"\bexperience\b[^.]{0,30}\b(?:[2-9]|1\d)\s*\+?\s*"
-               r"years?\b"),
-    re.compile(r"\b(?:minimum|min\.?|at least)\s+(?:of\s+)?"
-               r"(?:[2-9]|1\d)\s*\+?\s*years?"),
+    re.compile(
+        r"\b(?:[2-9]|1\d)\s*\+?\s*(?:(?:-|–|to)\s*\d+\s*)?"
+        r"years?\b[^.]{0,60}\bexperience\b", re.I
+    ),
+    re.compile(
+        r"\bexperience\b[^.]{0,40}\b(?:[2-9]|1\d)\s*\+?\s*years?\b",
+        re.I
+    ),
+    re.compile(
+        r"\b(?:minimum|min\.?|at least)\s+(?:of\s+)?"
+        r"(?:[2-9]|1\d)\s*\+?\s*years?\b", re.I
+    ),
 ]
+
 ENTRY_TITLE = re.compile(
-    r"\b(intern|internship|entry[- ]level|graduate|"
-    r"fresh graduate|new grad|trainee|junior)\b")
+    r"\b(intern|internship|entry[- ]level|graduate|fresh graduate|"
+    r"new grad|trainee|junior)\b", re.I
+)
 ENTRY_DESC = re.compile(
-    r"\b(intern|internship|entry[- ]level|fresh graduate|"
-    r"new grad|recent graduate|trainee|junior|"
-    r"no experience required|no prior experience|"
-    r"0[-–]1 years?|0 years of experience)\b")
+    r"\b(intern|internship|entry[- ]level|fresh graduate|new grad|"
+    r"recent graduate|trainee|junior|no experience required|"
+    r"no prior experience|0[-–]1 years?|0 years of experience)\b", re.I
+)
 FRIENDLY = re.compile(
     r"\b(customer support|customer service|customer care|"
     r"customer success|support agent|support representative|"
     r"support associate|helpdesk|help desk|technical support|"
-    r"it support|associate|assistant|coordinator|representative|"
-    r"data entry|annotator|annotation|content moderator|"
+    r"it support|data entry|annotator|annotation|content moderator|"
     r"moderator|sales development|sdr|bdr|virtual assistant|"
-    r"social media|content writer|copywriter)\b")
+    r"social media|content writer|copywriter)\b", re.I
+)
 
 
-def clean(v):
-    if isinstance(v, list):
-        return ", ".join(map(str, v))
-    return html.unescape(str(v or ""))
+def clean(value):
+    if isinstance(value, list):
+        return ", ".join(map(str, value))
+    return html.unescape(str(value or ""))
 
 
-def plain(v):
-    text = re.sub(r"<[^>]*>", " ", clean(v))
-    return re.sub(r"\s+", " ", text).strip().lower()
+def plain(value):
+    value = re.sub(r"<[^>]*>", " ", clean(value))
+    return re.sub(r"\s+", " ", value).strip().lower()
 
 
 def fetch(url, tries=3):
     last = None
-    for i in range(tries):
+    for attempt in range(tries):
         try:
-            req = urllib.request.Request(url, headers={
-                "User-Agent": "Switchremote/1.0 "
-                              "(+https://sohilbaitha.github.io/Switchremote/)",
-                "Accept": "application/json",
-            })
-            with urllib.request.urlopen(req, timeout=30) as resp:
-                return json.loads(resp.read().decode("utf-8"))
-        except urllib.error.HTTPError as e:
-            last = e
-            if e.code in (400, 401, 403, 404):
+            req = urllib.request.Request(
+                url,
+                headers={
+                    "User-Agent": (
+                        "Switchremote/1.0 "
+                        "(+https://sohilbaitha.github.io/Switchremote/)"
+                    ),
+                    "Accept": "application/json",
+                },
+            )
+            with urllib.request.urlopen(req, timeout=30) as response:
+                return json.loads(response.read().decode("utf-8"))
+        except urllib.error.HTTPError as exc:
+            last = exc
+            if exc.code in (400, 401, 403, 404):
                 break
-            time.sleep(3 * (i + 1))
-        except Exception as e:
-            last = e
-            time.sleep(3 * (i + 1))
+            time.sleep(2 * (attempt + 1))
+        except Exception as exc:
+            last = exc
+            time.sleep(2 * (attempt + 1))
     raise last
 
 
@@ -112,99 +143,130 @@ def parse_date(value):
             if value > 10**12:
                 value /= 1000
             return datetime.fromtimestamp(value, timezone.utc)
-        s = str(value).strip()
-        if s.isdigit():
-            return parse_date(int(s))
-        d = datetime.fromisoformat(s.replace("Z", "+00:00"))
-        if d.tzinfo is None:
-            d = d.replace(tzinfo=timezone.utc)
-        return d.astimezone(timezone.utc)
+
+        value = str(value).strip()
+        if value.isdigit():
+            return parse_date(int(value))
+
+        result = datetime.fromisoformat(value.replace("Z", "+00:00"))
+        if result.tzinfo is None:
+            result = result.replace(tzinfo=timezone.utc)
+        return result.astimezone(timezone.utc)
     except (ValueError, TypeError, OverflowError, OSError):
         return None
 
 
 def valid_url(url, hosts):
-    p = urlparse(clean(url))
-    return bool(p.scheme == "https" and p.hostname and any(
-        p.hostname == h or p.hostname.endswith("." + h)
-        for h in hosts
-    ))
+    parsed = urlparse(clean(url))
+    return bool(
+        parsed.scheme == "https"
+        and parsed.hostname
+        and any(
+            parsed.hostname == host
+            or parsed.hostname.endswith("." + host)
+            for host in hosts
+        )
+    )
 
 
-def resolve_countries(location):
+def resolve_countries(location, eligible_countries=None):
     loc = clean(location).lower()
-    found = [c for c, rx in COUNTRY_RX.items() if rx.search(loc)]
+
+    # Explicit country names take priority over broad regional labels.
+    found = [country for country, rx in COUNTRY_RX.items() if rx.search(loc)]
     if found:
-        return found, "country"
-    if RESTRICT.search(loc):
+        if eligible_countries:
+            found = [c for c in found if c in eligible_countries]
+        return found, "country" if found else ""
+
+    # Regional labels do not prove eligibility in every target country.
+    if REGION.search(loc) or RESTRICT.search(loc):
         return [], ""
+
+    # Accept worldwide only when the listing explicitly says so.
     if WORLD.search(loc):
-        return ALL6[:], "worldwide"
-    if REGION.search(loc):
-        return ALL6[:], "region"
+        allowed = [
+            c for c in ALL6
+            if not eligible_countries or c in eligible_countries
+        ]
+        return allowed, "worldwide" if allowed else ""
+
+    # A company allowlist alone is not proof that a job is open in those
+    # countries when the listing gives no usable location or scope.
     return [], ""
 
 
-def consider(r):
-    title = clean(r.get("title")).strip()
-    tl = title.lower()
-    loc = clean(r.get("location"))
-    desc = plain(r.get("desc"))
+def consider(job_raw):
+    title = clean(job_raw.get("title")).strip()
+    title_lower = title.lower()
+    location = clean(job_raw.get("location"))
+    description = plain(job_raw.get("desc"))
+    company = clean(job_raw.get("company")).strip()
 
-    if not title or not r.get("url") or not r.get("id"):
+    if not title or not job_raw.get("url") or not job_raw.get("id"):
         return False, "missing data", None
 
-    if clean(r.get("company")).lower() in BLOCKED:
+    if company.lower() in BLOCKED:
         return False, "blocked company", None
 
-    countries, scope = resolve_countries(loc)
-    allowed = r.get("eligible_countries")
-    if allowed:
-        countries = [c for c in countries if c in allowed]
+    allowed = job_raw.get("eligible_countries")
+    countries, scope = resolve_countries(location, allowed)
     if not countries:
-        return False, "country/location", None
+        return False, "country/location not verified", None
 
-    if not r.get("remote_verified"):
-        if not (REMOTE_LOC.search(tl + " " + loc.lower())
-                or REMOTE_DESC.search(desc)):
+    remote_text = title + " " + location
+    if not job_raw.get("remote_verified"):
+        if not (
+            REMOTE_LOC.search(remote_text)
+            or REMOTE_DESC.search(description)
+        ):
             return False, "remote not confirmed", None
 
-    if HYBRID.search(tl + " " + loc.lower()):
+    if HYBRID.search(remote_text):
         return False, "onsite/hybrid", None
 
-    if SENIOR.search(tl) or r.get("level") == "senior":
+    if SENIOR.search(title_lower) or job_raw.get("level") == "senior":
         return False, "experienced title", None
 
-    text = tl + " " + desc
-    if any(rx.search(text) for rx in EXP):
+    combined = title_lower + " " + description
+    if any(pattern.search(combined) for pattern in EXP):
         return False, "experience requirement", None
 
-    if r.get("entry_required", True):
-        if not (r.get("level") == "entry"
-                or ENTRY_TITLE.search(tl)
-                or ENTRY_DESC.search(desc)
-                or FRIENDLY.search(tl)):
+    if job_raw.get("entry_required", True):
+        explicit_entry = (
+            job_raw.get("level") == "entry"
+            or ENTRY_TITLE.search(title_lower)
+            or ENTRY_DESC.search(description)
+        )
+        relevant_role = FRIENDLY.search(title_lower)
+
+        # Generic words like "assistant" and "associate" alone are
+        # deliberately not entry-level evidence.
+        if not (explicit_entry or relevant_role):
             return False, "not clearly entry-level", None
 
-    d = parse_date(r.get("posted"))
-    if not (d and NOW - timedelta(days=MAX_AGE_DAYS) <= d
-            <= NOW + timedelta(days=1)):
+    posted = parse_date(job_raw.get("posted"))
+    if not (
+        posted
+        and NOW - timedelta(days=MAX_AGE_DAYS) <= posted
+        <= NOW + timedelta(days=1)
+    ):
         return False, "missing/old posting date", None
 
-    job = {
-        "id": clean(r["id"]),
+    result = {
+        "id": clean(job_raw["id"]),
         "title": title,
-        "company": clean(r.get("company")),
-        "url": clean(r["url"]),
-        "location": loc,
-        "category": clean(r.get("category")),
+        "company": company,
+        "url": clean(job_raw["url"]),
+        "location": location,
+        "category": clean(job_raw.get("category")),
         "type": "Remote",
-        "salary": clean(r.get("salary")),
-        "logo": clean(r.get("logo")),
-        "source": r["source"],
-        "description": desc[:1500],
-        "postedAt": d.isoformat(),
+        "salary": clean(job_raw.get("salary")),
+        "logo": clean(job_raw.get("logo")),
+        "source": job_raw["source"],
+        "description": description[:1500],
+        "postedAt": posted.isoformat(),
         "countries": countries,
         "scope": scope,
     }
-    return True, "accepted", job
+    return True, "accepted", result
