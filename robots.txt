@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://sohilbaitha.github.io/Switchremote/sitemap.xml
