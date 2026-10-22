@@ -5,6 +5,7 @@ accepted = []
 stats = {}
 errors = []
 MAX_SMARTRECRUITERS_PAGES = 10
+MIN_PUBLISH_JOBS = 5
 
 
 def run(key, label, raws):
@@ -195,7 +196,6 @@ def employer_items(emp):
     else:
         raise ValueError("Unsupported source type: " + kind)
 
-    # Carry employer policy metadata into the shared filter.
     for item in out:
         item["eligible_countries"] = allowed
         item["entry_required"] = entry_required
@@ -308,7 +308,7 @@ def remoteok_items():
 
 
 def keep_fresh_old_jobs(old_jobs, failed_keys):
-    """Keep only recent cached jobs belonging to failed sources."""
+    """Keep recent cached jobs belonging to failed sources."""
     kept = []
     cutoff = NOW - timedelta(days=MAX_AGE_DAYS)
 
@@ -397,10 +397,8 @@ def main():
     if cached:
         print(f"Kept {len(cached)} fresh jobs from failed sources")
 
-    # Do not replace the dataset with an empty or near-empty result.
-    # Inspect the logs and correct the filters before publishing it.
     if not accepted:
-        print("No qualifying jobs found; jobs.json left unchanged.")
+        print("No qualifying jobs found; keeping existing jobs.json.")
         raise SystemExit(1)
 
     seen_urls = set()
@@ -427,6 +425,16 @@ def main():
         key=lambda job: parse_date(job.get("postedAt")) or epoch,
         reverse=True,
     )
+
+    # Fail-safe: avoid replacing a healthy existing feed with a sudden
+    # near-empty result. Return successfully so scheduled runs stay green.
+    if old_jobs and len(final_jobs) < MIN_PUBLISH_JOBS:
+        print(
+            f"FAIL-SAFE: only {len(final_jobs)} qualifying jobs found; "
+            f"minimum is {MIN_PUBLISH_JOBS}. "
+            "Existing jobs.json will be kept unchanged."
+        )
+        return
 
     coverage = {
         country: sum(
