@@ -1,496 +1,312 @@
-
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#ffffff">
-<meta name="description" content="Switchremote: Find fresh remote jobs for India, Indonesia, Philippines, Vietnam, Malaysia and Thailand.">
-<title>Switchremote | Fresh Remote Jobs</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='20' y='4' width='24' height='56' rx='12'/%3E%3Ccircle cx='32' cy='17' r='8' fill='%23f3f3f3'/%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@700;800&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Discover remote opportunities around the world with SwitchRemote." />
+  <title>SwitchRemote | Find work without borders</title>
+  <style>
+    :root {
+      --bg: #f7f8fc;
+      --surface: #ffffff;
+      --text: #172033;
+      --muted: #68738a;
+      --line: #e4e8f0;
+      --primary: #5b5ce2;
+      --primary-dark: #4647c5;
+      --soft: #eeefff;
+      --green: #16876b;
+      --shadow: 0 14px 38px rgba(28, 38, 75, 0.07);
+      --radius: 20px;
+    }
 
-<style>
-:root{--ink:#111318;--muted:#68717c;--blue:#3cb8ff;--line:#e9edf1;--soft:#eff9ff}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{margin:0;color:var(--ink);background:#fff;font:15px/1.55 "DM Sans",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
-a{color:inherit;text-decoration:none}
-button,input,select{font:inherit}
-.wrap{width:min(1080px,calc(100% - 32px));margin:auto}
-.mark{display:block;position:relative;overflow:hidden;width:calc(var(--h)*1.78);height:var(--h)}
-.mark img{position:absolute;display:block;max-width:none;width:calc(var(--h)*2.5);left:calc(var(--h)*-.35);top:calc(var(--h)*-.75)}
-header{position:sticky;top:0;z-index:10;background:#fffffff2;backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
-.nav{height:70px;display:flex;align-items:center;justify-content:space-between;gap:16px}
-.links{display:flex;align-items:center;gap:22px;font-size:13px;font-weight:600;color:#555e68}
-.cta{background:var(--ink);color:#fff;border-radius:999px;padding:9px 16px}
-.hero{padding:54px 0 24px}
-h1{font:800 clamp(34px,5.5vw,56px)/1.06 Manrope,sans-serif;letter-spacing:-.055em;margin:0 0 14px;max-width:720px}
-h1 span{color:#159fe9}
-.lead{max-width:560px;color:var(--muted);font-size:17px;margin:0 0 6px}
-.section{padding:24px 0}
-h2{font:800 clamp(22px,3vw,28px)/1.15 Manrope,sans-serif;letter-spacing:-.04em;margin:0 0 6px}
-.sub{font-size:14px;color:var(--muted);margin:0 0 14px}
-.bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-.field{flex:1;min-width:180px;min-height:46px;padding:0 13px;border:1px solid #c8d5e0;border-radius:12px;outline:none;background:#f5f9fc;color:#111318}
-.field:focus{background:#fff;border-color:var(--blue);box-shadow:0 0 0 3px #3cb8ff25}
-.btn{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:8px 15px;border:1px solid #dfe4e9;border-radius:999px;font-size:13px;font-weight:700;cursor:pointer;background:#fff;color:var(--ink)}
-.btn.dark{background:var(--ink);color:#fff;border-color:var(--ink)}
-.btn:disabled{opacity:.45;cursor:default}
-.meta{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:12px;color:#7d8690;margin:9px 0 12px;min-height:25px;align-items:center}
-.status{font-size:12px;color:var(--muted);margin:0 0 8px}
-.jobs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.job{border:1px solid var(--line);border-radius:15px;padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0}
-.job:hover{border-color:#bfe6fb}
-.top{display:flex;gap:12px;align-items:center;min-width:0}
-.avatar{flex:none;width:46px;height:46px;border-radius:11px;background:#fff;border:1px solid var(--line);display:grid;place-items:center;overflow:hidden}
-.avatar img{width:100%;height:100%;object-fit:contain;padding:4px}
-.jobheading{min-width:0}
-h3{font:700 16px/1.3 Manrope,sans-serif;margin:0 0 4px;overflow-wrap:anywhere}
-.co{font-size:13px;color:#626b75;overflow-wrap:anywhere}
-.tags{display:flex;gap:5px;flex-wrap:wrap}
-.tags span{font-size:11px;color:#555e68;background:#f7f9fa;border:1px solid #edf0f2;border-radius:6px;padding:3px 7px}
-.foot{display:flex;align-items:center;justify-content:space-between;gap:8px;border-top:1px solid #f0f2f4;padding-top:10px;margin-top:auto}
-.foot small{font-size:11px;color:#838b95;overflow-wrap:anywhere}
-.apply{font-size:13px;font-weight:700;color:#fff;background:var(--ink);border-radius:999px;padding:8px 14px;white-space:nowrap}
-.pager{display:flex;gap:9px;align-items:center;justify-content:center;margin-top:18px;flex-wrap:wrap}
-.pageinfo{font-size:13px;color:var(--muted);min-width:100px;text-align:center}
-.empty{padding:22px;border:1px dashed #dbe1e6;border-radius:14px;text-align:center;color:var(--muted);grid-column:1/-1}
-.disclaimer{background:#f8fafb;border:1px solid var(--line);border-radius:16px;padding:20px 22px}
-.disclaimer h2{font-size:20px}
-.disclaimer ul{margin:10px 0 0;padding-left:18px;color:#4d5661;font-size:13.5px}
-.disclaimer li{margin-bottom:6px}
-.submit{border-radius:18px;background:#f4faff;padding:22px;display:flex;align-items:center;justify-content:space-between;gap:16px}
-.submit p{margin:0;font-size:13px;color:var(--muted)}
-footer{border-top:1px solid var(--line);margin-top:30px;padding:22px 0;font-size:12px;color:#828a94}
-.footrow{display:flex;align-items:center;justify-content:center;text-align:center;gap:18px;flex-wrap:wrap}
-.social-links{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:12px}
-.social-links a{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border:1px solid #dfe4e9;border-radius:50%;color:#68717c}
-.social-links a:hover{color:#111318;border-color:#111318}
-.social-links svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
-.footer-pages{display:flex;justify-content:center;gap:18px;flex-wrap:wrap;margin-top:14px;font-size:13px}
-.footer-pages a{color:var(--muted)}
-.footer-pages a:hover{color:var(--ink);text-decoration:underline}
-@media(max-width:700px){
-.jobs{grid-template-columns:1fr}
-.links a:not(.cta){display:none}
-.submit{flex-direction:column;align-items:flex-start}
-.hero{padding:34px 0 16px}
-.foot{align-items:flex-start}
-.apply{flex-shrink:0}
-}
-@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
-</style>
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--text);
+      background: var(--bg);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.5;
+    }
+    a { color: inherit; text-decoration: none; }
+    button, input { font: inherit; }
+
+    .container { width: min(1120px, calc(100% - 40px)); margin: 0 auto; }
+    .nav {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 20px; padding: 22px 0;
+    }
+    .brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.22rem; letter-spacing: -0.04em; }
+    .brand-mark {
+      display: grid; place-items: center; width: 36px; height: 36px; border-radius: 12px;
+      color: white; background: var(--primary); font-size: 1.1rem; font-weight: 900;
+    }
+    .nav-link { color: var(--muted); font-weight: 650; font-size: 0.94rem; }
+    .nav-link:hover { color: var(--primary); }
+
+    .hero {
+      position: relative; overflow: hidden; padding: 78px 0 70px;
+      background: radial-gradient(circle at 82% 18%, rgba(146, 148, 255, .24), transparent 27%),
+                  radial-gradient(circle at 12% 95%, rgba(127, 223, 204, .16), transparent 26%),
+                  #fff;
+      border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+    }
+    .hero-inner { max-width: 820px; margin: 0 auto; text-align: center; position: relative; z-index: 1; }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px; padding: 7px 12px;
+      color: var(--primary-dark); background: var(--soft); border-radius: 999px;
+      font-size: .8rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase;
+    }
+    .eyebrow-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
+    h1 { margin: 22px 0 16px; font-size: clamp(2.7rem, 7vw, 5.2rem); line-height: 1.02; letter-spacing: -.065em; }
+    h1 span { color: var(--primary); }
+    .hero p { max-width: 620px; margin: 0 auto; color: var(--muted); font-size: clamp(1rem, 2vw, 1.15rem); }
+    .hero-actions { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 30px; }
+    .button {
+      display: inline-flex; justify-content: center; align-items: center; gap: 9px;
+      min-height: 48px; padding: 0 19px; border: 1px solid transparent; border-radius: 13px;
+      font-weight: 750; cursor: pointer; transition: transform .18s ease, background .18s ease;
+    }
+    .button:hover { transform: translateY(-2px); }
+    .button-primary { color: #fff; background: var(--primary); box-shadow: 0 8px 20px rgba(91, 92, 226, .2); }
+    .button-primary:hover { background: var(--primary-dark); }
+    .button-secondary { color: var(--text); background: #fff; border-color: var(--line); }
+    .hero-note { margin-top: 18px; color: #8790a3; font-size: .85rem; }
+
+    main { padding: 62px 0 80px; }
+    .section-heading { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: 25px; }
+    .section-heading h2 { margin: 0 0 7px; font-size: clamp(1.65rem, 4vw, 2.15rem); letter-spacing: -.045em; }
+    .section-heading p { margin: 0; color: var(--muted); }
+    .count { color: var(--muted); font-size: .9rem; white-space: nowrap; }
+
+    .search-wrap {
+      display: flex; align-items: center; gap: 12px; padding: 10px;
+      margin-bottom: 24px; border: 1px solid var(--line); border-radius: 16px;
+      background: var(--surface); box-shadow: 0 5px 20px rgba(28, 38, 75, .035);
+    }
+    .search-icon { padding-left: 8px; color: #8a93a6; font-size: 1.25rem; }
+    .search-wrap input {
+      flex: 1; min-width: 0; border: 0; outline: 0; color: var(--text);
+      background: transparent; padding: 10px 0;
+    }
+    .search-wrap input::placeholder { color: #9aa2b2; }
+    .clear-button { border: 0; border-radius: 10px; padding: 9px 12px; color: var(--muted); background: #f1f3f8; cursor: pointer; font-weight: 700; }
+    .clear-button:hover { background: #e7eaf2; }
+
+    .job-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+    .job-card {
+      display: flex; flex-direction: column; min-height: 285px; padding: 23px;
+      border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface);
+      box-shadow: var(--shadow); transition: transform .2s ease, border-color .2s ease;
+    }
+    .job-card:hover { transform: translateY(-4px); border-color: #c9cafb; }
+    .job-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .company-icon {
+      display: grid; place-items: center; width: 46px; height: 46px; flex: 0 0 auto;
+      border-radius: 14px; background: var(--soft); color: var(--primary); font-size: 1.1rem; font-weight: 850;
+    }
+    .demo-tag { padding: 5px 8px; border-radius: 8px; color: #7c5b15; background: #fff4d9; font-size: .7rem; font-weight: 800; }
+    .job-card h3 { margin: 19px 0 5px; font-size: 1.15rem; letter-spacing: -.025em; }
+    .company-name { color: var(--muted); font-size: .93rem; }
+    .job-meta { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0; }
+    .tag { padding: 6px 9px; border-radius: 8px; background: #f3f5f9; color: #536078; font-size: .78rem; font-weight: 650; }
+    .job-bottom { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: auto; padding-top: 15px; border-top: 1px solid #edf0f5; }
+    .salary { font-size: .88rem; font-weight: 800; }
+    .apply-link { color: var(--primary); font-size: .88rem; font-weight: 800; }
+    .apply-link:hover { color: var(--primary-dark); }
+    .empty-state { display: none; padding: 45px 20px; text-align: center; border: 1px dashed #cfd4e2; border-radius: var(--radius); color: var(--muted); background: #fff; }
+    .empty-state strong { display: block; color: var(--text); font-size: 1.1rem; margin-bottom: 6px; }
+
+    .bottom-cta {
+      display: flex; align-items: center; justify-content: space-between; gap: 24px;
+      margin-top: 54px; padding: 30px 34px; border-radius: 22px;
+      background: #1c2340; color: white;
+    }
+    .bottom-cta h2 { margin: 0 0 6px; font-size: 1.45rem; letter-spacing: -.035em; }
+    .bottom-cta p { margin: 0; color: #c0c7dc; }
+    .bottom-cta .button { flex: 0 0 auto; color: #24265e; background: #fff; }
+    footer { padding: 24px 0 34px; border-top: 1px solid var(--line); color: var(--muted); font-size: .86rem; }
+    .footer-inner { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+
+    @media (max-width: 850px) {
+      .job-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .job-card:last-child { grid-column: 1 / -1; }
+      .hero { padding: 65px 0 60px; }
+    }
+    @media (max-width: 580px) {
+      .container { width: min(100% - 28px, 1120px); }
+      .nav { padding: 16px 0; }
+      .nav-link { font-size: .85rem; }
+      .hero { padding: 54px 0 50px; }
+      h1 { font-size: clamp(2.65rem, 13vw, 4rem); }
+      main { padding: 45px 0 55px; }
+      .section-heading { align-items: flex-start; flex-direction: column; gap: 8px; }
+      .search-wrap { gap: 8px; }
+      .clear-button { padding: 8px 9px; }
+      .job-grid { grid-template-columns: 1fr; }
+      .job-card:last-child { grid-column: auto; }
+      .job-card { min-height: 265px; }
+      .bottom-cta { align-items: flex-start; flex-direction: column; padding: 25px; }
+      .bottom-cta .button { width: 100%; }
+      .footer-inner { flex-direction: column; }
+    }
+  </style>
 </head>
-
 <body>
-<header>
-  <div class="wrap nav">
-    <a href="#top" aria-label="Switchremote home">
-      <span class="mark" style="--h:30px"><img src="Logo.png" alt="Switchremote"></span>
-    </a>
-    <nav class="links"><a class="cta" href="#jobs">Find remote jobs</a></nav>
-  </div>
-</header>
+  <header class="container">
+    <nav class="nav" aria-label="Main navigation">
+      <a class="brand" href="#" aria-label="SwitchRemote home">
+        <span class="brand-mark">S</span>
+        <span>SwitchRemote</span>
+      </a>
+      <a class="nav-link" href="#jobs">Explore jobs <span aria-hidden="true">↗</span></a>
+    </nav>
+  </header>
 
-<main id="top">
   <section class="hero">
-    <div class="wrap">
-      <h1>Connecting talent with <span>remote opportunities.</span></h1>
-      <p class="lead">Fresh remote jobs updated automatically. Explore opportunities in India, Indonesia, Philippines, Vietnam, Malaysia and Thailand.</p>
+    <div class="container hero-inner">
+      <div class="eyebrow"><span class="eyebrow-dot"></span> Work from anywhere</div>
+      <h1>Find work <span>without borders.</span></h1>
+      <p>Discover remote opportunities built around your skills, your lifestyle, and where you want to go next.</p>
+      <div class="hero-actions">
+        <a class="button button-primary" href="#jobs">Explore remote jobs <span aria-hidden="true">→</span></a>
+        <a class="button button-secondary" href="#how-it-works">How it works</a>
+      </div>
+      <div class="hero-note">Global opportunities. Clear details. Your next move starts here.</div>
     </div>
   </section>
 
-  <section class="section" id="jobs">
-    <div class="wrap">
-      <h2>Latest remote jobs</h2>
-      <p class="sub">Only recently posted jobs with company logos. Always check eligibility on the employer's listing.</p>
-
-      <div class="bar">
-        <input class="field" id="q" type="search" placeholder="Search by job title, company or skill" aria-label="Search jobs">
-
-        <select class="field" id="country" aria-label="Filter by country">
-          <option value="all">All locations</option>
-          <option value="India">India</option>
-          <option value="Indonesia">Indonesia</option>
-          <option value="Philippines">Philippines</option>
-          <option value="Vietnam">Vietnam</option>
-          <option value="Malaysia">Malaysia</option>
-          <option value="Thailand">Thailand</option>
-          <option value="worldwide">Worldwide / anywhere</option>
-        </select>
-
-        <button class="btn" id="refresh" type="button">↻ Refresh</button>
+  <main class="container" id="jobs">
+    <div class="section-heading">
+      <div>
+        <h2>Remote roles to explore</h2>
+        <p>Find a role that fits your skills and the way you work.</p>
       </div>
-
-      <div class="meta">
-        <span id="count" aria-live="polite">Loading jobs…</span>
-        <span id="updated"></span>
-      </div>
-
-      <p class="status" id="status" role="status" aria-live="polite"></p>
-      <div class="jobs" id="grid"></div>
-      <div class="pager" id="pager"></div>
+      <div class="count" id="resultCount" aria-live="polite">3 sample roles</div>
     </div>
-  </section>
 
-  <section class="section" id="disclaimer">
-    <div class="wrap">
-      <div class="disclaimer">
-        <h2>Disclaimer</h2>
-        <ul>
-          <li>Switchremote is a job discovery service, not an employer or recruiter.</li>
-          <li>Listings are collected automatically from third-party sources. Availability and country eligibility can change.</li>
-          <li>Verify every role on the employer's official listing before applying.</li>
-          <li>Never pay money or share OTPs or banking details to get a job.</li>
-          <li>Company names, logos and trademarks belong to their respective owners.</li>
-        </ul>
-      </div>
-    </div>
-  </section>
+    <label class="search-wrap" for="jobSearch">
+      <span class="search-icon" aria-hidden="true">⌕</span>
+      <input id="jobSearch" type="search" placeholder="Search job titles, e.g. Designer..." autocomplete="off" />
+      <button class="clear-button" id="clearSearch" type="button">Clear</button>
+    </label>
 
-  <section class="section" id="employers">
-    <div class="wrap">
-      <div class="submit">
-        <div>
-          <h2>Hiring for a remote role?</h2>
-          <p>Send us the job link and eligible countries for review.</p>
+    <div class="job-grid" id="jobGrid">
+      <article class="job-card" data-title="frontend developer">
+        <div class="job-top">
+          <div class="company-icon" aria-hidden="true">N</div>
+          <span class="demo-tag">Sample listing</span>
         </div>
-        <a class="btn dark" href="./contact.html">Suggest a job</a>
+        <h3>Frontend Developer</h3>
+        <div class="company-name">Northstar Labs</div>
+        <div class="job-meta">
+          <span class="tag">🌍 Remote worldwide*</span>
+          <span class="tag">Full-time</span>
+          <span class="tag">Junior–Mid</span>
+        </div>
+        <div class="job-bottom">
+          <span class="salary">$45k–$65k / year</span>
+          <a class="apply-link" href="#how-it-works" data-demo-apply>View role ↗</a>
+        </div>
+      </article>
+
+      <article class="job-card" data-title="product designer">
+        <div class="job-top">
+          <div class="company-icon" aria-hidden="true">P</div>
+          <span class="demo-tag">Sample listing</span>
+        </div>
+        <h3>Product Designer</h3>
+        <div class="company-name">Pixel &amp; Form</div>
+        <div class="job-meta">
+          <span class="tag">🌍 Remote, Europe*</span>
+          <span class="tag">Full-time</span>
+          <span class="tag">Mid-level</span>
+        </div>
+        <div class="job-bottom">
+          <span class="salary">$55k–$75k / year</span>
+          <a class="apply-link" href="#how-it-works" data-demo-apply>View role ↗</a>
+        </div>
+      </article>
+
+      <article class="job-card" data-title="content marketing specialist">
+        <div class="job-top">
+          <div class="company-icon" aria-hidden="true">G</div>
+          <span class="demo-tag">Sample listing</span>
+        </div>
+        <h3>Content Marketing Specialist</h3>
+        <div class="company-name">Goodkind Digital</div>
+        <div class="job-meta">
+          <span class="tag">🌍 Remote, Americas*</span>
+          <span class="tag">Contract</span>
+          <span class="tag">Entry-level</span>
+        </div>
+        <div class="job-bottom">
+          <span class="salary">$30–$40 / hour</span>
+          <a class="apply-link" href="#how-it-works" data-demo-apply>View role ↗</a>
+        </div>
+      </article>
+    </div>
+
+    <div class="empty-state" id="emptyState">
+      <strong>No matching job titles</strong>
+      Try another keyword, such as “developer”, “designer”, or “content”.
+    </div>
+
+    <section class="bottom-cta" id="how-it-works">
+      <div>
+        <h2>Your next opportunity can be anywhere.</h2>
+        <p>Search by role, compare the details, and apply directly when a verified listing is added.</p>
       </div>
+      <a class="button" href="#jobs">Browse sample roles <span aria-hidden="true">→</span></a>
+    </section>
+    <p style="margin:18px 2px 0; color:#8992a5; font-size:.8rem;">* Demo content only. Remote eligibility and compensation are illustrative and must be verified before publishing.</p>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <span>© <span id="year"></span> SwitchRemote</span>
+      <span>Find work without borders.</span>
     </div>
-  </section>
-</main>
+  </footer>
 
-<footer>
-  <div class="wrap footrow">
-    <div>
-      <p style="margin:0;max-width:520px">Job listings are sourced from public job APIs and participating employers’ career pages. Please verify job details on the employer’s official website before applying.</p>
+  <script>
+    const searchInput = document.getElementById("jobSearch");
+    const clearButton = document.getElementById("clearSearch");
+    const jobCards = Array.from(document.querySelectorAll(".job-card"));
+    const resultCount = document.getElementById("resultCount");
+    const emptyState = document.getElementById("emptyState");
 
-      <div class="social-links" aria-label="Follow Switchremote">
-        <a href="https://www.linkedin.com/company/switchremote-in/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="9" width="4" height="12" rx="1"/><path d="M4 4v.01M10 21V9h4v2a4 4 0 0 1 8 2v8h-4v-8a2 2 0 0 0-4 0v8z"/></svg>
-        </a>
-        <a href="https://www.instagram.com/switchremote.world?obrf=em54OXFhZXRmcWtw" target="_blank" rel="noopener noreferrer" aria-label="Instagram" title="Instagram">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="18" cy="6" r=".8"/></svg>
-        </a>
-        <a href="https://youtube.com/@switchremote?si=t6LurBbL2Ho3LpFT" target="_blank" rel="noopener noreferrer" aria-label="YouTube" title="YouTube">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="4"/><path d="m10 9 5 3-5 3z"/></svg>
-        </a>
-        <a href="https://x.com/switchremote" target="_blank" rel="noopener noreferrer" aria-label="X" title="X">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3h4.5l11.5 18h-4.5L4 3zM4 21 10.5 13M13.5 11 20 3"/></svg>
-        </a>
-        <a href="https://in.pinterest.com/switchremoteworld/" target="_blank" rel="noopener noreferrer" aria-label="Pinterest" title="Pinterest">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 0 0-3.3 17.4c0-.8 0-1.8.2-2.7l1.2-5.1s-.3-.6-.3-1.5c0-1.4.8-2.4 1.8-2.4.9 0 1.3.7 1.3 1.5 0 .9-.6 2.3-.9 3.6-.3 1.1.5 2 1.6 2 1.9 0 3.3-2.5 3.3-5.5 0-2.3-1.6-4-4.4-4-3.2 0-5.2 2.4-5.2 5.1 0 .9.3 1.9.7 2.4.2.3.3.4.1.7l-.2.9c-.1.3-.3.4-.6.3-1.3-.5-1.9-2-1.9-3.7 0-2.8 2.4-6.2 7.2-6.2 3.9 0 6.5 2.8 6.5 5.9 0 4-2.2 7-5.4 7-1.1 0-2.2-.6-2.6-1.3l-.7 2.8c-.3 1-.9 2-1.3 2.8A9 9 0 1 0 12 3z"/></svg>
-        </a>
-        <a href="https://t.me/switchremote" target="_blank" rel="noopener noreferrer" aria-label="Telegram" title="Telegram">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.5 3.5 18.3 20c-.2 1.2-.9 1.5-1.8.9l-5-3.7-2.4 2.3c-.3.3-.5.5-1 .5l.4-5.1 9.3-8.4c.4-.4-.1-.6-.6-.2L5.7 13.6.8 12c-1.1-.3-1.1-1.1.2-1.6L20 3c.9-.3 1.7.2 1.5.5Z"/></svg>
-        </a>
-      </div>
-    </div>
+    function filterJobs() {
+      const query = searchInput.value.trim().toLowerCase();
+      let visibleCount = 0;
 
-    <div class="footer-pages" aria-label="Site pages">
-      <a href="./about.html">About</a>
-      <a href="./contact.html">Contact</a>
-      <a href="./privacy.html">Privacy Policy</a>
-    </div>
-  </div>
-</footer>
+      jobCards.forEach((card) => {
+        const title = card.dataset.title || "";
+        const matches = title.includes(query);
+        card.hidden = !matches;
+        if (matches) visibleCount++;
+      });
 
-<script>
-"use strict";
+      resultCount.textContent = `${visibleCount} ${visibleCount === 1 ? "sample role" : "sample roles"}`;
+      emptyState.style.display = visibleCount === 0 ? "block" : "none";
+    }
 
-const PER_PAGE = 10;
-const MAX_AGE_MS = 72 * 60 * 60 * 1000;
-const TARGET_COUNTRIES = [
-  "India",
-  "Indonesia",
-  "Philippines",
-  "Vietnam",
-  "Malaysia",
-  "Thailand"
-];
-
-const $ = id => document.getElementById(id);
-let ALL_JOBS = [];
-let currentPage = 0;
-let loading = false;
-
-const esc = value => String(value ?? "").replace(/[&<>"']/g, char => ({
-  "&": "&amp;",
-  "<": "&lt;",
-  ">": "&gt;",
-  '"': "&quot;",
-  "'": "&#39;"
-}[char]));
-
-function httpsUrl(value) {
-  try {
-    const url = new URL(String(value || ""));
-    return url.protocol === "https:" ? url.href : "";
-  } catch {
-    return "";
-  }
-}
-
-function textValue(value) {
-  if (Array.isArray(value)) {
-    return value.map(item => String(item ?? "")).join(", ").trim();
-  }
-  return String(value ?? "").trim();
-}
-
-function normalize(item) {
-  const countries = Array.isArray(item.countries)
-    ? item.countries.map(textValue)
-    : [];
-
-  return {
-    ...item,
-    title: textValue(item.title),
-    company: textValue(item.company || item.company_name),
-    url: httpsUrl(item.url || item.apply_url),
-    location: textValue(
-      item.location || item.loc || item.candidate_required_location
-    ),
-    category: textValue(item.category || item.cat || item.tags),
-    source: textValue(item.source || item.src) || "Job source",
-    postedAt: item.postedAt || item.posted || item.date || item.publication_date || "",
-    logo: httpsUrl(item.logo || item.company_logo || item.companyLogo),
-    type: textValue(item.type || item.job_type).replace(/_/g, " "),
-    salary: textValue(item.salary),
-    countries,
-    scope: textValue(item.scope).toLowerCase(),
-    description: textValue(item.description || item.desc)
-  };
-}
-
-function postedWithin72Hours(dateValue) {
-  if (!dateValue) return false;
-
-  const timestamp = new Date(dateValue).getTime();
-  const age = Date.now() - timestamp;
-
-  return Number.isFinite(timestamp) && age >= 0 && age <= MAX_AGE_MS;
-}
-
-function isWorldwide(job) {
-  return job.scope === "worldwide" ||
-    /\b(worldwide|world wide|anywhere|globally|all countries|work from anywhere)\b/i.test(
-      job.location
-    );
-}
-
-function hasEligibleCountry(job, selectedCountry = "all") {
-  const listedCountries = job.countries.filter(country =>
-    TARGET_COUNTRIES.includes(country)
-  );
-
-  if (selectedCountry === "worldwide") {
-    return isWorldwide(job);
-  }
-
-  if (selectedCountry !== "all") {
-    return listedCountries.includes(selectedCountry) ||
-      (
-        listedCountries.length === 0 &&
-        isWorldwide(job)
-      );
-  }
-
-  return listedCountries.length > 0 || isWorldwide(job);
-}
-
-function ageLabel(dateValue) {
-  const timestamp = new Date(dateValue).getTime();
-  if (!Number.isFinite(timestamp)) return "Recently posted";
-
-  const minutes = Math.max(0, Math.floor((Date.now() - timestamp) / 60000));
-
-  if (minutes < 60) return `${Math.max(1, minutes)} min ago`;
-  if (minutes < 1440) return `${Math.floor(minutes / 60)} hr ago`;
-
-  const days = Math.floor(minutes / 1440);
-  return `${days} ${days === 1 ? "day" : "days"} ago`;
-}
-
-function filteredJobs() {
-  const query = $("q").value.trim().toLowerCase();
-  const selectedCountry = $("country").value;
-
-  return ALL_JOBS.filter(job => {
-    const searchable = [
-      job.title,
-      job.company,
-      job.category,
-      job.location,
-      job.description
-    ].join(" ").toLowerCase();
-
-    return (
-      (!query || searchable.includes(query)) &&
-      hasEligibleCountry(job, selectedCountry)
-    );
-  });
-}
-
-function render() {
-  const jobs = filteredJobs();
-  const totalPages = Math.max(1, Math.ceil(jobs.length / PER_PAGE));
-
-  currentPage = Math.min(currentPage, totalPages - 1);
-
-  const start = currentPage * PER_PAGE;
-  const visible = jobs.slice(start, start + PER_PAGE);
-
-  $("count").textContent = jobs.length
-    ? `${jobs.length} fresh jobs · showing ${start + 1}–${start + visible.length}`
-    : "0 matching jobs";
-
-  if (!visible.length) {
-    $("grid").innerHTML =
-      '<div class="empty">No matching fresh jobs right now. Try another country or search term.</div>';
-  } else {
-    $("grid").innerHTML = visible.map(job => {
-      const tags = [
-        "<span>Remote</span>",
-        `<span>${esc(job.location || "Check employer listing")}</span>`,
-        job.type ? `<span>${esc(job.type)}</span>` : "",
-        job.salary ? `<span>${esc(job.salary)}</span>` : "",
-        job.category ? `<span>${esc(job.category)}</span>` : ""
-      ].join("");
-
-      return `
-        <article class="job">
-          <div class="top">
-            <div class="avatar">
-              <img
-                src="${esc(job.logo)}"
-                alt="${esc(job.company)} logo"
-                loading="lazy"
-                referrerpolicy="no-referrer"
-              >
-            </div>
-            <div class="jobheading">
-              <h3>${esc(job.title)}</h3>
-              <div class="co">${esc(job.company)}</div>
-            </div>
-          </div>
-          <div class="tags">${tags}</div>
-          <div class="foot">
-            <small>${esc(ageLabel(job.postedAt))} · via ${esc(job.source)}</small>
-            <a class="apply"
-               href="${esc(job.url)}"
-               target="_blank"
-               rel="noopener noreferrer">View job ↗</a>
-          </div>
-        </article>
-      `;
-    }).join("");
-
-    // If a logo fails to load, hide that entire job card.
-    $("grid").querySelectorAll(".avatar img").forEach(img => {
-      img.addEventListener("error", () => {
-        img.closest(".job")?.remove();
-      }, { once: true });
-    });
-  }
-
-  let pagination = "";
-
-  if (totalPages > 1) {
-    pagination += `
-      <button class="btn" data-page="${currentPage - 1}" ${currentPage === 0 ? "disabled" : ""}>
-        Previous
-      </button>
-      <span class="pageinfo">Page ${currentPage + 1} of ${totalPages}</span>
-      <button class="btn" data-page="${currentPage + 1}" ${currentPage >= totalPages - 1 ? "disabled" : ""}>
-        Next
-      </button>
-    `;
-  }
-
-  $("pager").innerHTML = pagination;
-}
-
-async function loadJobs(manual = false) {
-  if (loading) return;
-
-  loading = true;
-  const button = $("refresh");
-
-  button.disabled = true;
-  button.textContent = "↻ Loading…";
-  $("status").textContent = manual ? "Reloading the saved job feed…" : "";
-
-  try {
-    const response = await fetch(`jobs.json?ts=${Date.now()}`, {
-      cache: "no-store"
+    searchInput.addEventListener("input", filterJobs);
+    clearButton.addEventListener("click", () => {
+      searchInput.value = "";
+      filterJobs();
+      searchInput.focus();
     });
 
-    if (!response.ok) {
-      throw new Error(`Feed request failed: ${response.status}`);
-    }
+    document.querySelectorAll("[data-demo-apply]").forEach((link) => {
+      link.addEventListener("click", (event) => {
+        event.preventDefault();
+        alert("This is a sample listing. Add a verified employer application URL before publishing this role.");
+      });
+    });
 
-    const data = await response.json();
-
-    const rawJobs = Array.isArray(data)
-      ? data
-      : Array.isArray(data.jobs)
-        ? data.jobs
-        : null;
-
-    if (!rawJobs) {
-      throw new Error("Unexpected jobs.json format");
-    }
-
-    ALL_JOBS = rawJobs
-      .map(normalize)
-      .filter(job =>
-        job.title &&
-        job.company &&
-        job.url &&
-        job.logo &&
-        job.postedAt &&
-        postedWithin72Hours(job.postedAt) &&
-        hasEligibleCountry(job)
-      );
-
-    currentPage = 0;
-    render();
-
-    const updatedAt = data.updatedAt || data.updated || "";
-
-    $("updated").textContent = updatedAt
-      ? `Feed updated ${ageLabel(updatedAt)}`
-      : "Feed loaded";
-
-    $("status").textContent = manual
-      ? "Saved job feed reloaded."
-      : "";
-  } catch (error) {
-    console.error("Switchremote feed error:", error);
-
-    if (ALL_JOBS.length) {
-      render();
-      $("status").textContent =
-        "Could not reload the feed. Previously loaded jobs are shown.";
-    } else {
-      $("count").textContent = "Jobs could not be loaded";
-      $("grid").innerHTML = `
-        <div class="empty">
-          Unable to load jobs.json. Check that the file exists and the GitHub Actions workflow has run successfully.
-        </div>
-      `;
-      $("status").textContent = "Please try Refresh again shortly.";
-    }
-  } finally {
-    loading = false;
-    button.disabled = false;
-    button.textContent = "↻ Refresh";
-  }
-}
-
-$("pager").addEventListener
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
