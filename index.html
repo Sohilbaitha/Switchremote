@@ -198,7 +198,8 @@ function normalize(item) {
     postedAt: item.postedAt || item.date || item.publication_date || "",
     logo: textValue(item.logo || item.company_logo || item.companyLogo),
     type: textValue(item.type || item.job_type).replace(/_/g, " "),
-    salary: textValue(item.salary)
+    salary: textValue(item.salary),
+    countries: Array.isArray(item.countries) ? item.countries : []
   };
 }
 
@@ -246,8 +247,10 @@ function filtered() {
     const loc = j.location.toLowerCase();
     const countryMatch = country === "all" ||
       (country === "worldwide"
-        ? isWorldwide(j.location)
-        : loc.includes(country.toLowerCase()) || isWorldwide(j.location));
+        ? (j.scope === "worldwide" || isWorldwide(j.location))
+        : j.countries.length
+          ? j.countries.includes(country)
+          : loc.includes(country.toLowerCase()) || isWorldwide(j.location));
 
     return searchMatch && countryMatch;
   });
