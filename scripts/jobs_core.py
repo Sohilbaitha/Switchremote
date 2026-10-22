@@ -9,7 +9,7 @@ from datetime import datetime, timezone, timedelta
 from urllib.parse import urlparse
 
 NOW = datetime.now(timezone.utc)
-MAX_AGE_DAYS = 30
+MAX_AGE_DAYS = 3
 BLOCKED = {"pratham international"}
 
 COUNTRIES = {
