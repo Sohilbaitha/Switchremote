@@ -65,16 +65,20 @@ SENIOR = re.compile(
 
 EXP = [
     re.compile(
-        r"\b(?:[2-9]|1\d)\s*\+?\s*(?:(?:-|–|to)\s*\d+\s*)?"
-        r"years?\b[^.]{0,60}\bexperience\b", re.I
+        r"\b(?:[4-9]|1\d)\s*\+?\s*"
+        r"(?:(?:-|–|to)\s*\d+\s*)?"
+        r"years?\b[^.]{0,60}\bexperience\b",
+        re.I
     ),
     re.compile(
-        r"\bexperience\b[^.]{0,40}\b(?:[2-9]|1\d)\s*\+?\s*years?\b",
+        r"\bexperience\b[^.]{0,40}\b"
+        r"(?:[4-9]|1\d)\s*\+?\s*years?\b",
         re.I
     ),
     re.compile(
         r"\b(?:minimum|min\.?|at least)\s+(?:of\s+)?"
-        r"(?:[2-9]|1\d)\s*\+?\s*years?\b", re.I
+        r"(?:[4-9]|1\d)\s*\+?\s*years?\b",
+        re.I
     ),
 ]
 
@@ -88,12 +92,27 @@ ENTRY_DESC = re.compile(
     r"no prior experience|0[-–]1 years?|0 years of experience)\b", re.I
 )
 FRIENDLY = re.compile(
-    r"\b(customer support|customer service|customer care|"
+    r"\b("
+    r"customer support|customer service|customer care|"
     r"customer success|support agent|support representative|"
-    r"support associate|helpdesk|help desk|technical support|"
-    r"it support|data entry|annotator|annotation|content moderator|"
-    r"moderator|sales development|sdr|bdr|virtual assistant|"
-    r"social media|content writer|copywriter)\b", re.I
+    r"support associate|technical support|it support|helpdesk|help desk|"
+    r"data entry|data analyst|business analyst|"
+    r"annotator|annotation|content moderator|moderator|"
+    r"sales development|sales representative|account executive|"
+    r"sdr|bdr|virtual assistant|"
+    r"social media|content writer|copywriter|"
+    r"digital marketing|marketing associate|seo specialist|"
+    r"recruiter|talent acquisition|operations associate|"
+    r"operations analyst|qa tester|quality assurance|"
+    r"software developer|software engineer|web developer|"
+    r"frontend developer|front-end developer|"
+    r"backend developer|back-end developer|"
+    r"graphic designer|ui designer|ux designer|"
+    r"product support|implementation specialist|"
+    r"account manager|project coordinator|"
+    r"research assistant|research associate"
+    r")\b",
+    re.I
 )
 
 
