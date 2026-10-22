@@ -4,67 +4,75 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#ffffff">
-<meta name="description" content="Learn how Switchremote helps people discover remote job opportunities and understand listing eligibility.">
+<meta name="description" content="About Switchremote, an independent website for discovering remote job listings.">
 <link rel="canonical" href="https://sohilbaitha.github.io/Switchremote/about.html">
 <meta property="og:type" content="website">
-<meta property="og:title" content="About Switchremote">
-<meta property="og:description" content="Learn about Switchremote, an independent remote job discovery website.">
-<meta property="og:url" content="https://sohilbaitha.github.io/Switchremote/about.html">
-<title>About Switchremote | Remote job discovery</title>
+<meta property="og:title" content="About | Switchremote">
+<meta property="og:description" content="About Switchremote, an independent website for discovering remote job listings.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@700;800&display=swap" rel="stylesheet">
+<title>About | Switchremote</title>
 <style>
-:root{--ink:#111318;--muted:#68717c;--blue:#159fe9;--line:#e9edf1;--soft:#f4faff}
+:root{--ink:#111318;--muted:#68717c;--blue:#3cb8ff;--line:#e9edf1;--soft:#eff9ff}
 *{box-sizing:border-box}
 body{margin:0;color:var(--ink);background:#fff;font:15px/1.65 "DM Sans",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
 a{color:inherit}
-.wrap{width:min(900px,calc(100% - 32px));margin:auto}
-header{border-bottom:1px solid var(--line)}
-.nav{min-height:70px;display:flex;align-items:center;justify-content:space-between;gap:16px}
-.brand{font:800 20px Manrope,sans-serif;text-decoration:none;letter-spacing:-.04em}
-.brand span{color:var(--blue)}
-.back{font-size:13px;font-weight:700;text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:8px 14px}
-.content{padding:48px 0 60px}
+.wrap{width:min(1080px,calc(100% - 32px));margin:auto}
+.mark{display:block;position:relative;overflow:hidden;width:calc(var(--h)*1.78);height:var(--h)}
+.mark img{position:absolute;display:block;max-width:none;width:calc(var(--h)*2.5);left:calc(var(--h)*-.35);top:calc(var(--h)*-.75)}
+header{position:sticky;top:0;z-index:10;background:#fffffff2;backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav{height:70px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.navlink{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:#fff;text-decoration:none;border-radius:999px;padding:10px 16px;font-size:13px;font-weight:700}
+main{padding:48px 0 60px}
 h1{font:800 clamp(32px,5vw,48px)/1.1 Manrope,sans-serif;letter-spacing:-.05em;margin:0 0 14px}
 h2{font:800 22px/1.2 Manrope,sans-serif;letter-spacing:-.03em;margin:28px 0 8px}
-.lead{font-size:18px;color:var(--muted);max-width:680px}
-.note{background:var(--soft);border:1px solid #e0f2ff;border-radius:14px;padding:16px;margin:22px 0}
-footer{border-top:1px solid var(--line);padding:20px 0;color:var(--muted);font-size:13px}
-.foot{display:flex;gap:18px;flex-wrap:wrap;align-items:center}
-.foot a{color:var(--muted)}
-@media(max-width:600px){.content{padding:34px 0 44px}}
+.lead{font-size:18px;color:var(--muted);max-width:720px}
+.note{background:var(--soft);border:1px solid #dff2ff;border-radius:14px;padding:16px;margin:22px 0}
+.panel{border:1px solid var(--line);border-radius:16px;padding:20px;margin:18px 0;background:#fff}
+.panel h2{margin-top:0}
+footer{border-top:1px solid var(--line);padding:22px 0 28px;color:var(--muted);font-size:13px}
+.footer-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.footer-links{display:flex;gap:18px;flex-wrap:wrap}
+.footer-links a{text-decoration:none;color:var(--muted)}
+.footer-links a:hover{color:var(--ink);text-decoration:underline}
+@media(max-width:600px){main{padding:34px 0 44px}.footer-inner{align-items:flex-start;flex-direction:column}}
 </style>
 </head>
 <body>
-<header>
-  <div class="wrap nav">
-    <a class="brand" href="./">Switch<span>remote</span></a>
-    <a class="back" href="./">← Back to jobs</a>
-  </div>
-</header>
-<main class="wrap content">
-  <h1>About Switchremote</h1>
-  <p class="lead">Switchremote is an independent job-discovery website designed to help people find remote opportunities and check where a role may be available.</p>
-  <h2>What we do</h2>
-  <p>We collect selected remote job listings from public job APIs and employer career pages, then display available details such as the role title, company, source, location and application link. The job feed is updated automatically when the scheduled job workflow runs successfully.</p>
-  <h2>Who can use it?</h2>
-  <p>Listings may be relevant to applicants in India, Indonesia, the Philippines, Vietnam, Malaysia and Thailand, as well as roles described by their source as worldwide. Eligibility varies by role. A country filter or general “worldwide” label is not a guarantee that an employer will accept every applicant from that country.</p>
-  <h2>Check before applying</h2>
-  <p>Job information can change or expire after it is collected. Always open the original employer or job-source listing to confirm that the vacancy is still open, the location is eligible, and the role details are accurate. Switchremote is not an employer, recruiter or hiring representative and cannot guarantee an interview or job offer.</p>
-  <div class="note"><strong>Stay safe:</strong> Never pay a fee to secure a job, and never share an OTP, password or banking credentials with someone claiming to recruit you.</div>
-  <h2>Independence and transparency</h2>
-  <p>Switchremote is an independent discovery service. Company names, logos and trademarks belong to their respective owners. Their appearance on this website does not necessarily mean they endorse or partner with Switchremote.</p>
-  <h2>Corrections and questions</h2>
-  <p>If a listing looks incorrect or expired, please use one of the social links on the homepage to reach Switchremote. A dedicated email contact may be added later.</p>
+<header><div class="wrap nav">
+<a href="./index.html" aria-label="Switchremote home"><span class="mark" style="--h:30px"><img src="Logo.png" alt="Switchremote"></span></a>
+<a class="navlink" href="./index.html">← Browse jobs</a>
+</div></header>
+<main class="wrap">
+<h1>About Switchremote</h1>
+<p class="lead">Switchremote is an independent job-discovery website that helps visitors explore remote job listings and check the original source before applying.</p>
+<section class="panel">
+<h2>What this website does</h2>
+<p>Switchremote displays selected remote job listings collected from public job APIs and employer career pages. Listings may show the role title, company, source, location, and an application link. The job feed is refreshed by the site's automated workflow when that workflow runs successfully.</p>
+</section>
+<section class="panel">
+<h2>Check each role before applying</h2>
+<p>Remote does not always mean worldwide. Locations, country eligibility, salary, and vacancy status can change. Open the original employer or job-source listing to confirm the details before sharing personal information or applying.</p>
+</section>
+<section class="panel">
+<h2>Independent job discovery</h2>
+<p>Switchremote is not an employer, recruiter, or hiring representative. A listing on this website does not mean that the company endorses or partners with Switchremote. Company names, logos, and trademarks belong to their respective owners.</p>
+</section>
+<div class="note"><strong>Stay safe:</strong> Never pay a fee to secure a job. Do not share passwords, OTPs, or banking credentials with someone claiming to recruit you.</div>
+<section class="panel">
+<h2>Report a problem</h2>
+<p>If a listing looks expired or incorrect, use the <a href="./contact.html">Contact page</a> to reach Switchremote through its listed social channels.</p>
+</section>
 </main>
-<footer>
-  <div class="wrap foot">
-    <a href="./">Home / Jobs</a>
-    <a href="./contact.html">Contact</a>
-    <a href="./privacy.html">Privacy</a>
-    <span>© 2026 Switchremote</span>
-  </div>
-</footer>
+<footer><div class="wrap footer-inner">
+<span>© 2026 Switchremote</span>
+<nav class="footer-links" aria-label="Site pages">
+<a href="./index.html">Home / Jobs</a>
+<a href="./about.html">About</a>
+<a href="./contact.html">Contact</a>
+<a href="./privacy.html">Privacy Policy</a>
+</nav>
+</div></footer>
 </body>
 </html>
