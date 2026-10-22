@@ -31,6 +31,7 @@ jobs:
 
           NOW = datetime.now(timezone.utc)
           MAX_AGE_DAYS = 45
+          BLOCKED = {"pratham international"}
 
           COUNTRIES = {
               "India": ["india", "bengaluru", "bangalore", "mumbai",
@@ -171,6 +172,9 @@ jobs:
 
               if not title or not r.get("url") or not r.get("id"):
                   return False, "missing data", None
+
+              if clean(r.get("company")).lower() in BLOCKED:
+                  return False, "blocked company", None
 
               countries, scope = resolve_countries(loc)
               allowed = r.get("eligible_countries")
@@ -422,10 +426,8 @@ jobs:
           try:
               with open("jobs.json", encoding="utf-8") as f:
                   old_jobs = json.load(f).get("jobs", [])
-                    except Exception:
+          except Exception:
               old_jobs = []
-
-          BLOCKED = {"pratham international"}
           old_jobs = [j for j in old_jobs
                       if clean(j.get("company")).lower() not in BLOCKED]
 
@@ -451,67 +453,4 @@ jobs:
                           ("RemoteOK", remoteok_items)):
               try:
                   run(key, key, fn())
-              except Exception as exc:
-                  stats[key] = False
-                  errors.append(f"{key}: {exc}")
-
-          for e in errors:
-              print("SOURCE ERROR:", e)
-
-          if stats and not any(stats.values()):
-              print("ALL SOURCES FAILED - keeping old jobs.json")
-              sys.exit(1)
-
-          kept = 0
-          for key in [k for k, ok in stats.items() if not ok]:
-              for j in old_jobs:
-                  if (j.get("sourceKey") == key or j.get("company") == key
-                          or j.get("source") == key):
-                      accepted.append(j)
-                      kept += 1
-          if kept:
-              print(f"Kept {kept} old jobs from failed sources")
-
-          if not accepted and old_jobs:
-              print("WARNING: 0 jobs found, keeping old jobs")
-              accepted = old_jobs
-
-          seen_url, seen_sig, final = set(), set(), []
-          for j in accepted:
-              u = j["url"].split("?")[0].rstrip("/").lower()
-              sig = (j["title"].lower().strip(),
-                     j["company"].lower().strip(),
-                     ",".join(sorted(j.get("countries", []))))
-              if u in seen_url or sig in seen_sig:
-                  continue
-              seen_url.add(u)
-              seen_sig.add(sig)
-              final.append(j)
-
-          final.sort(key=lambda j: (parse_date(j.get("postedAt"))
-                                    or datetime(1970, 1, 1, tzinfo=timezone.utc)),
-                     reverse=True)
-
-          cover = {c: sum(1 for j in final if c in j.get("countries", []))
-                   for c in ALL6}
-          print("Country coverage:", cover)
-
-          with open("jobs.json", "w", encoding="utf-8") as f:
-              json.dump({"updatedAt": NOW.isoformat(), "jobs": final},
-                        f, ensure_ascii=False, indent=2)
-
-          print(f"Saved {len(final)} qualifying jobs")
-          PY
-
-      - name: Commit updated jobs
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add jobs.json
-          if ! git diff --cached --quiet; then
-            git commit -m "Update trusted remote jobs"
-            git pull --rebase
-            git push
-          else
-            echo "No changes to commit"
-          fi
+     
