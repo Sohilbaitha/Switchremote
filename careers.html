@@ -1,0 +1,404 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#ffffff">
+<meta name="description" content="Explore official company career pages for remote opportunities across India and Southeast Asia.">
+<title>Company Careers | Switchremote</title>
+
+<style>
+:root {
+  --ink:#111318;
+  --muted:#68717c;
+  --blue:#159fe9;
+  --line:#e9edf1;
+  --soft:#f4faff;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0;
+  color:var(--ink);
+  background:#fff;
+  font:15px/1.55 system-ui,-apple-system,sans-serif;
+}
+a { color:inherit; text-decoration:none; }
+.wrap { width:min(1000px,calc(100% - 32px)); margin:auto; }
+header {
+  position:sticky;
+  top:0;
+  z-index:5;
+  background:#fffffff2;
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.nav {
+  min-height:66px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+}
+.brand { font-size:20px; font-weight:800; letter-spacing:-.6px; }
+.brand span { color:var(--blue); }
+.back { font-size:13px; font-weight:700; }
+.hero { padding:42px 0 20px; }
+h1 {
+  font-size:clamp(30px,5vw,46px);
+  line-height:1.1;
+  letter-spacing:-1.8px;
+  margin:0 0 12px;
+}
+h1 span { color:var(--blue); }
+.lead { color:var(--muted); max-width:680px; margin:0; }
+.notice {
+  margin:18px 0;
+  padding:14px 16px;
+  background:var(--soft);
+  border:1px solid #e1f1fb;
+  border-radius:12px;
+  color:#46525e;
+  font-size:13px;
+}
+.filters {
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin:20px 0;
+}
+input,select {
+  min-height:45px;
+  padding:10px 12px;
+  border:1px solid #d8e0e7;
+  border-radius:11px;
+  background:white;
+  color:var(--ink);
+  font:inherit;
+}
+input { flex:1; min-width:190px; }
+select { min-width:180px; }
+.heading {
+  font-size:21px;
+  font-weight:800;
+  letter-spacing:-.5px;
+  margin:26px 0 12px;
+}
+.grid {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+}
+.card {
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  gap:11px;
+  padding:17px;
+  border:1px solid var(--line);
+  border-radius:15px;
+}
+.card h2 { font-size:17px; line-height:1.3; margin:0; }
+.card p { color:var(--muted); font-size:13px; margin:0; }
+.tags { display:flex; flex-wrap:wrap; gap:6px; }
+.tag {
+  font-size:11px;
+  padding:4px 8px;
+  background:#f7f9fa;
+  border:1px solid #edf0f2;
+  border-radius:7px;
+  color:#555e68;
+}
+.cardfoot {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-top:auto;
+  padding-top:8px;
+}
+.cardfoot small { font-size:11px; color:var(--muted); }
+.btn {
+  display:inline-flex;
+  justify-content:center;
+  align-items:center;
+  padding:9px 14px;
+  border-radius:999px;
+  background:var(--ink);
+  color:white;
+  font-size:12px;
+  font-weight:700;
+  white-space:nowrap;
+}
+.btn:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible {
+  outline:3px solid #159fe966;
+  outline-offset:3px;
+}
+.empty {
+  grid-column:1/-1;
+  padding:20px;
+  border:1px dashed var(--line);
+  border-radius:12px;
+  color:var(--muted);
+  text-align:center;
+}
+.count { font-size:12px; color:var(--muted); margin:0 0 10px; }
+footer {
+  margin-top:36px;
+  padding:20px 0;
+  border-top:1px solid var(--line);
+  color:var(--muted);
+  font-size:12px;
+}
+footer a { text-decoration:underline; }
+@media(max-width:650px) {
+  .grid { grid-template-columns:1fr; }
+  .hero { padding-top:30px; }
+  .cardfoot { align-items:flex-start; }
+  .back { font-size:12px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  * { scroll-behavior:auto!important; }
+}
+</style>
+</head>
+
+<body>
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="./index.html" aria-label="Switchremote home">
+      Switch<span>remote</span>
+    </a>
+    <a class="back" href="./index.html">← Browse remote jobs</a>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <h1>Explore <span>company careers.</span></h1>
+    <p class="lead">
+      Discover official employer career pages for remote opportunities.
+      Verify the location, language, experience and work-authorisation
+      requirements on every individual job listing.
+    </p>
+  </section>
+
+  <div class="notice">
+    <strong>Important:</strong> These are links to employer career pages,
+    not a guarantee that a vacancy is currently open or available in your
+    country. Remote does not always mean worldwide. Apply through the
+    employer's official website and never pay money to secure a job.
+  </div>
+
+  <div class="filters">
+    <input
+      id="search"
+      type="search"
+      placeholder="Search company or job type"
+      aria-label="Search companies"
+    >
+    <select id="country" aria-label="Filter by country">
+      <option value="all">All six countries</option>
+      <option value="India">India</option>
+      <option value="Indonesia">Indonesia</option>
+      <option value="Philippines">Philippines</option>
+      <option value="Vietnam">Vietnam</option>
+      <option value="Malaysia">Malaysia</option>
+      <option value="Thailand">Thailand</option>
+    </select>
+  </div>
+
+  <h2 class="heading">Official career pages</h2>
+  <p class="count" id="count" aria-live="polite"></p>
+  <div class="grid" id="results" aria-live="polite"></div>
+
+  <h2 class="heading">Search remote jobs</h2>
+  <div class="grid">
+    <article class="card">
+      <h2>LinkedIn Jobs</h2>
+      <p>
+        Search remote vacancies and use the location filter. Check the
+        original employer listing before applying. Switchremote does not
+        scrape LinkedIn.
+      </p>
+      <div class="tags">
+        <span class="tag">Manual job search</span>
+        <span class="tag">Location filters</span>
+      </div>
+      <div class="cardfoot">
+        <small>Check each vacancy</small>
+        <a class="btn" href="https://www.linkedin.com/jobs/"
+           target="_blank" rel="noopener noreferrer">Search jobs ↗</a>
+      </div>
+    </article>
+
+    <article class="card">
+      <h2>Amazon Remote Jobs</h2>
+      <p>
+        Browse Amazon's official remote-job page. Confirm that each role
+        accepts applications from your country and is genuinely remote.
+      </p>
+      <div class="tags">
+        <span class="tag">Official careers page</span>
+        <span class="tag">Country restrictions apply</span>
+      </div>
+      <div class="cardfoot">
+        <small>Verify individual listings</small>
+        <a class="btn"
+           href="https://www.amazon.jobs/content/en/locations/remote-jobs"
+           target="_blank" rel="noopener noreferrer">Explore jobs ↗</a>
+      </div>
+    </article>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    Switchremote is an independent job discovery website and is not
+    affiliated with the employers listed here. Company names and trademarks
+    belong to their respective owners.
+    <p>
+      <a href="./index.html">Home</a> ·
+      <a href="./about.html">About</a> ·
+      <a href="./contact.html">Contact</a> ·
+      <a href="./privacy.html">Privacy</a>
+    </p>
+  </div>
+</footer>
+
+<script>
+"use strict";
+
+const companies = [
+  {
+    name: "Influx",
+    url: "https://influx.com/careers/jobs",
+    description: "Remote customer support and technical support opportunities. Check the current vacancy for country, shift and language requirements.",
+    countries: ["India", "Indonesia"],
+    countryNote: "Verify current openings",
+    tags: ["Customer support", "Technical support"]
+  },
+  {
+    name: "5CA",
+    url: "https://jobs.5ca.com/",
+    description: "Remote customer support and gaming support opportunities. Some vacancies require specific languages or residence in a particular country.",
+    countries: ["Indonesia", "Philippines", "Vietnam", "Malaysia", "Thailand"],
+    countryNote: "Language-specific roles",
+    tags: ["Customer support", "Gaming support"]
+  },
+  {
+    name: "CareFront",
+    url: "https://www.carefront.co.uk/apply/careers/job/tier-1-customer-care-representative/",
+    description: "A Tier 1 Customer Care Representative listing has specified fully remote work in India, the Philippines or the EU. Confirm that the vacancy remains open.",
+    countries: ["India", "Philippines"],
+    countryNote: "Specific role; recheck availability",
+    tags: ["Customer care", "Entry-level-friendly"]
+  },
+  {
+    name: "SupportYourApp",
+    url: "https://supportyourapp.com/career/",
+    description: "Explore customer care and technical support roles. Check the exact eligible countries, experience and language requirements for each opening.",
+    countries: [],
+    countryNote: "Check each vacancy",
+    tags: ["Customer care", "Technical support"]
+  },
+  {
+    name: "Yocket",
+    url: "https://careers.yocket.com/jobs/Careers",
+    description: "Explore careers in education and counselling. Verify current vacancies and whether remote work is available from your country.",
+    countries: [],
+    countryNote: "Check each vacancy",
+    tags: ["Education", "Counselling"]
+  },
+  {
+    name: "Fresh Prints",
+    url: "https://job-boards.greenhouse.io/freshprints",
+    description: "Official Greenhouse careers board. Check each vacancy's location, experience level and country restrictions.",
+    countries: [],
+    countryNote: "Check each vacancy",
+    tags: ["Company careers", "Greenhouse"]
+  }
+];
+
+const searchInput = document.getElementById("search");
+const countrySelect = document.getElementById("country");
+const results = document.getElementById("results");
+const count = document.getElementById("count");
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, character => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[character]);
+}
+
+function render() {
+  const query = searchInput.value.trim().toLowerCase();
+  const selectedCountry = countrySelect.value;
+
+  const filtered = companies.filter(company => {
+    const searchable = [
+      company.name,
+      company.description,
+      ...company.tags,
+      ...company.countries
+    ].join(" ").toLowerCase();
+
+    const matchesSearch = !query || searchable.includes(query);
+
+    // An empty country list means the company page is available,
+    // but country eligibility must be checked on individual vacancies.
+    const matchesCountry =
+      selectedCountry === "all" ||
+      company.countries.includes(selectedCountry) ||
+      company.countries.length === 0;
+
+    return matchesSearch && matchesCountry;
+  });
+
+  count.textContent = `${filtered.length} career pages`;
+
+  if (!filtered.length) {
+    results.innerHTML =
+      '<div class="empty">No matches. Try a different search or country.</div>';
+    return;
+  }
+
+  results.innerHTML = filtered.map(company => {
+    const tags = company.tags
+      .map(tag => `<span class="tag">${escapeHTML(tag)}</span>`)
+      .join("");
+
+    const countryTags = company.countries.length
+      ? company.countries.map(name =>
+          `<span class="tag">${escapeHTML(name)}</span>`
+        ).join("")
+      : '<span class="tag">Check job location</span>';
+
+    return `
+      <article class="card">
+        <h2>${escapeHTML(company.name)}</h2>
+        <p>${escapeHTML(company.description)}</p>
+        <div class="tags">${tags}</div>
+        <div class="tags">${countryTags}</div>
+        <div class="cardfoot">
+          <small>${escapeHTML(company.countryNote)}</small>
+          <a class="btn"
+             href="${escapeHTML(company.url)}"
+             target="_blank"
+             rel="noopener noreferrer">Official careers ↗</a>
+        </div>
+      </article>
+    `;
+  }).join("");
+}
+
+searchInput.addEventListener("input", render);
+countrySelect.addEventListener("change", render);
+render();
+</script>
+</body>
+</html>
