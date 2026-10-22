@@ -169,31 +169,44 @@ def valid_url(url, hosts):
     )
 
 
-def resolve_countries(location, eligible_countries=None):
-    loc = clean(location).lower()
 
-    # Explicit country names take priority over broad regional labels.
-    found = [country for country, rx in COUNTRY_RX.items() if rx.search(loc)]
+def resolve_countries(location, eligible_countries=None):
+    loc = clean(location).lower().strip()
+
+    # Only allow country names present in our supported list.
+    configured = [
+        country for country in (eligible_countries or [])
+        if country in ALL6
+    ]
+
+    # Explicit country names take priority.
+    found = [
+        country for country, pattern in COUNTRY_RX.items()
+        if pattern.search(loc)
+    ]
+
     if found:
-        if eligible_countries:
-            found = [c for c in found if c in eligible_countries]
+        if configured:
+            found = [country for country in found if country in configured]
         return found, "country" if found else ""
 
-    # Regional labels do not prove eligibility in every target country.
+    # A regional label does not prove eligibility in every country.
     if REGION.search(loc) or RESTRICT.search(loc):
         return [], ""
 
-    # Accept worldwide only when the listing explicitly says so.
+    # Worldwide jobs can be shown for all six countries only when no
+    # narrower employer allowlist has been supplied.
     if WORLD.search(loc):
-        allowed = [
-            c for c in ALL6
-            if not eligible_countries or c in eligible_countries
-        ]
-        return allowed, "worldwide" if allowed else ""
+        countries = configured if configured else ALL6[:]
+        return countries, "worldwide" if countries else ""
 
-    # A company allowlist alone is not proof that a job is open in those
-    # countries when the listing gives no usable location or scope.
+    # Generic remote roles may use a configured employer country allowlist.
+    # This must only be configured after checking the employer's hiring policy.
+    if REMOTE_LOC.search(loc) and configured:
+        return configured, "employer_allowlist"
+
     return [], ""
+
 
 
 def consider(job_raw):
