@@ -1,4 +1,3 @@
-
 {
   "employers": [
     {
@@ -16,15 +15,6 @@
       "board_token": "xendit",
       "careers_url": "https://job-boards.greenhouse.io/xendit",
       "eligible_countries": ["Indonesia", "Philippines", "Thailand", "Malaysia"],
-      "entry_level_only": true,
-      "approved": true
-    },
-    {
-      "company": "Pratham International",
-      "source_type": "greenhouse",
-      "board_token": "prathaminternational",
-      "careers_url": "https://job-boards.greenhouse.io/prathaminternational",
-      "eligible_countries": ["India"],
       "entry_level_only": true,
       "approved": true
     },
