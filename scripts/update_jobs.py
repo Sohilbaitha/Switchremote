@@ -60,7 +60,10 @@ def employer_items(emp):
                 "url": url,
                 "location": (item.get("location") or {}).get("name"),
                 "desc": item.get("content"),
-                "posted": item.get("first_published"),
+                "posted": (
+    item.get("first_published")
+    or item.get("updated_at")
+),
                 "source": "Greenhouse",
             })
 
