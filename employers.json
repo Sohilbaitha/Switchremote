@@ -1,3 +1,4 @@
+
 {
   "employers": [
     {
@@ -23,7 +24,12 @@
       "source_type": "greenhouse",
       "board_token": "xendit",
       "careers_url": "https://job-boards.greenhouse.io/xendit",
-      "eligible_countries": ["Indonesia", "Philippines", "Thailand", "Malaysia"],
+      "eligible_countries": [
+        "Indonesia",
+        "Philippines",
+        "Thailand",
+        "Malaysia"
+      ],
       "entry_level_only": true,
       "approved": true
     },
@@ -32,7 +38,14 @@
       "source_type": "lever",
       "board_token": "weloglobal",
       "careers_url": "https://jobs.lever.co/weloglobal",
-      "eligible_countries": ["India", "Indonesia", "Philippines", "Vietnam", "Malaysia", "Thailand"],
+      "eligible_countries": [
+        "India",
+        "Indonesia",
+        "Philippines",
+        "Vietnam",
+        "Malaysia",
+        "Thailand"
+      ],
       "entry_level_only": true,
       "approved": true
     },
@@ -50,7 +63,14 @@
       "source_type": "ashby",
       "board_token": "worldly",
       "careers_url": "https://jobs.ashbyhq.com/worldly",
-      "eligible_countries": ["India", "Indonesia", "Philippines", "Vietnam", "Malaysia", "Thailand"],
+      "eligible_countries": [
+        "India",
+        "Indonesia",
+        "Philippines",
+        "Vietnam",
+        "Malaysia",
+        "Thailand"
+      ],
       "entry_level_only": true,
       "approved": true
     },
@@ -68,16 +88,30 @@
       "source_type": "greenhouse",
       "board_token": "remotecom",
       "careers_url": "https://job-boards.greenhouse.io/remotecom",
-      "eligible_countries": ["India", "Indonesia", "Philippines", "Vietnam", "Malaysia", "Thailand"],
+      "eligible_countries": [
+        "India",
+        "Indonesia",
+        "Philippines",
+        "Vietnam",
+        "Malaysia",
+        "Thailand"
+      ],
       "entry_level_only": true,
-      "approved": true
+      "approved": false
     },
     {
       "company": "Deel",
       "source_type": "ashby",
       "board_token": "deel",
       "careers_url": "https://jobs.ashbyhq.com/deel",
-      "eligible_countries": ["India", "Indonesia", "Philippines", "Vietnam", "Malaysia", "Thailand"],
+      "eligible_countries": [
+        "India",
+        "Indonesia",
+        "Philippines",
+        "Vietnam",
+        "Malaysia",
+        "Thailand"
+      ],
       "entry_level_only": true,
       "approved": true
     },
@@ -86,7 +120,14 @@
       "source_type": "greenhouse",
       "board_token": "canonical",
       "careers_url": "https://job-boards.greenhouse.io/canonical",
-      "eligible_countries": ["India", "Indonesia", "Philippines", "Vietnam", "Malaysia", "Thailand"],
+      "eligible_countries": [
+        "India",
+        "Indonesia",
+        "Philippines",
+        "Vietnam",
+        "Malaysia",
+        "Thailand"
+      ],
       "entry_level_only": true,
       "approved": true
     },
@@ -95,7 +136,14 @@
       "source_type": "greenhouse",
       "board_token": "gitlab",
       "careers_url": "https://job-boards.greenhouse.io/gitlab",
-      "eligible_countries": ["India", "Indonesia", "Philippines", "Vietnam", "Malaysia", "Thailand"],
+      "eligible_countries": [
+        "India",
+        "Indonesia",
+        "Philippines",
+        "Vietnam",
+        "Malaysia",
+        "Thailand"
+      ],
       "entry_level_only": true,
       "approved": true
     }
