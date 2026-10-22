@@ -1,23 +1,29 @@
+
 from jobs_core import *
 
 accepted = []
 stats = {}
 errors = []
+MAX_SMARTRECRUITERS_PAGES = 10
 
 
 def run(key, label, raws):
-    checked, got, rej = 0, 0, {}
-    for r in raws:
+    checked, got, rejected = 0, 0, {}
+    for raw in raws:
         checked += 1
-        ok, reason, job = consider(r)
+        ok, reason, job = consider(raw)
         if ok:
             job["sourceKey"] = key
             accepted.append(job)
             got += 1
         else:
-            rej[reason] = rej.get(reason, 0) + 1
+            rejected[reason] = rejected.get(reason, 0) + 1
+
     stats[key] = True
-    print(f"{label}: checked {checked}, accepted {got}, rejected {rej}")
+    print(
+        f"{label}: checked {checked}, accepted {got}, "
+        f"rejected {rejected}"
+    )
 
 
 def employer_items(emp):
@@ -25,99 +31,163 @@ def employer_items(emp):
     kind = clean(emp.get("source_type")).lower()
     token = clean(emp.get("board_token"))
     allowed = emp.get("eligible_countries") or None
-    entry_req = emp.get("entry_level_only") is not False
+    entry_required = emp.get("entry_level_only") is not False
     out = []
 
     if kind == "greenhouse":
-        data = fetch("https://boards-api.greenhouse.io/v1/boards/"
-                     + token + "/jobs?content=true")
-        hosts = ["boards.greenhouse.io", "job-boards.greenhouse.io"]
-        for it in data.get("jobs", []):
-            url = clean(it.get("absolute_url"))
-            if not valid_url(url, hosts):
+        data = fetch(
+            "https://boards-api.greenhouse.io/v1/boards/"
+            + token + "/jobs?content=true"
+        )
+        for item in data.get("jobs", []):
+            url = clean(item.get("absolute_url"))
+            if not valid_url(
+                url, ["boards.greenhouse.io", "job-boards.greenhouse.io"]
+            ):
                 continue
-            out.append(dict(
-                id=name + "-" + clean(it.get("id")),
-                title=it.get("title"), company=name, url=url,
-                location=(it.get("location") or {}).get("name"),
-                desc=it.get("content"),
-                posted=it.get("first_published"),
-                source="Greenhouse"))
+            out.append({
+                "id": name + "-" + clean(item.get("id")),
+                "title": item.get("title"),
+                "company": name,
+                "url": url,
+                "location": (item.get("location") or {}).get("name"),
+                "desc": item.get("content"),
+                "posted": item.get("first_published"),
+                "source": "Greenhouse",
+            })
 
     elif kind == "lever":
-        data = fetch("https://api.lever.co/v0/postings/"
-                     + token + "?mode=json")
+        data = fetch(
+            "https://api.lever.co/v0/postings/" + token + "?mode=json"
+        )
         if not isinstance(data, list):
             data = []
-        for it in data:
-            url = clean(it.get("hostedUrl"))
+
+        for item in data:
+            url = clean(item.get("hostedUrl"))
             if not valid_url(url, ["jobs.lever.co"]):
                 continue
-            cat = it.get("categories") or {}
-            locs = [clean(cat.get("location"))]
-            for extra in cat.get("allLocations") or []:
-                if clean(extra) not in locs:
-                    locs.append(clean(extra))
-            out.append(dict(
-                id=name + "-" + clean(it.get("id")),
-                title=it.get("text"), company=name, url=url,
-                location=", ".join(x for x in locs if x),
-                desc=it.get("descriptionPlain") or it.get("description"),
-                posted=it.get("createdAt"),
-                remote_verified=(
-                    clean(it.get("workplaceType")).lower() == "remote"),
-                source="Lever"))
+
+            categories = item.get("categories") or {}
+            locations = [clean(categories.get("location"))]
+            for extra in categories.get("allLocations") or []:
+                if clean(extra) and clean(extra) not in locations:
+                    locations.append(clean(extra))
+
+            out.append({
+                "id": name + "-" + clean(item.get("id")),
+                "title": item.get("text"),
+                "company": name,
+                "url": url,
+                "location": ", ".join(x for x in locations if x),
+                "desc": (
+                    item.get("descriptionPlain")
+                    or item.get("description")
+                ),
+                "posted": item.get("createdAt"),
+                "remote_verified": (
+                    clean(item.get("workplaceType")).lower() == "remote"
+                ),
+                "source": "Lever",
+            })
 
     elif kind == "ashby":
-        data = fetch("https://api.ashbyhq.com/posting-api/job-board/"
-                     + token)
-        for it in data.get("jobs", []):
-            if it.get("isListed") is not True:
+        data = fetch(
+            "https://api.ashbyhq.com/posting-api/job-board/" + token
+        )
+        for item in data.get("jobs", []):
+            if item.get("isListed") is not True:
                 continue
-            url = clean(it.get("jobUrl"))
+
+            url = clean(item.get("jobUrl"))
             if not valid_url(url, ["jobs.ashbyhq.com"]):
                 continue
-            secs = [clean(s.get("location"))
-                    for s in (it.get("secondaryLocations") or [])
-                    if isinstance(s, dict)]
-            locs = [clean(it.get("location"))] + secs
-            comp = it.get("compensation") or {}
-            out.append(dict(
-                id=name + "-" + url, title=it.get("title"),
-                company=name, url=url,
-                location=", ".join(x for x in locs if x),
-                desc=it.get("descriptionPlain")
-                     or it.get("descriptionHtml"),
-                posted=it.get("publishedAt"),
-                salary=comp.get("scrapeableCompensationSalarySummary"),
-                remote_verified=(
-                    it.get("isRemote") is True
-                    or clean(it.get("workplaceType")).lower() == "remote"),
-                source="Ashby"))
+
+            secondary = [
+                clean(loc.get("location"))
+                for loc in (item.get("secondaryLocations") or [])
+                if isinstance(loc, dict)
+            ]
+            locations = [clean(item.get("location"))] + secondary
+            compensation = item.get("compensation") or {}
+
+            out.append({
+                "id": name + "-" + url,
+                "title": item.get("title"),
+                "company": name,
+                "url": url,
+                "location": ", ".join(x for x in locations if x),
+                "desc": (
+                    item.get("descriptionPlain")
+                    or item.get("descriptionHtml")
+                ),
+                "posted": item.get("publishedAt"),
+                "salary": compensation.get(
+                    "scrapeableCompensationSalarySummary"
+                ),
+                "remote_verified": (
+                    item.get("isRemote") is True
+                    or clean(item.get("workplaceType")).lower() == "remote"
+                ),
+                "source": "Ashby",
+            })
 
     elif kind == "smartrecruiters":
-        data = fetch("https://api.smartrecruiters.com/v1/companies/"
-                     + token + "/postings?limit=100")
-        for it in data.get("content", []):
-            url = clean(it.get("ref"))
-            if not valid_url(url, ["jobs.smartrecruiters.com"]):
-                continue
-            ld = it.get("location")
-            sections = (it.get("jobAd") or {}).get("sections") or {}
-            out.append(dict(
-                id=name + "-" + clean(it.get("id")),
-                title=it.get("name"), company=name, url=url,
-                location=(ld.get("fullLocation")
-                          if isinstance(ld, dict) else ld),
-                desc=(sections.get("jobDescription") or {}).get("text", ""),
-                posted=it.get("releasedDate"),
-                source="SmartRecruiters"))
-    else:
-        raise ValueError("unsupported source " + kind)
+        # Fetch multiple pages rather than silently stopping at 100 jobs.
+        limit = 100
+        offset = 0
 
-    for o in out:
-        o["eligible_countries"] = allowed
-        o["entry_required"] = entry_req
+        for _ in range(MAX_SMARTRECRUITERS_PAGES):
+            url = (
+                "https://api.smartrecruiters.com/v1/companies/"
+                + token
+                + f"/postings?limit={limit}&offset={offset}"
+            )
+            data = fetch(url)
+            items = data.get("content", [])
+            if not items:
+                break
+
+            for item in items:
+                job_url = clean(item.get("ref"))
+                if not valid_url(job_url, ["jobs.smartrecruiters.com"]):
+                    continue
+
+                location_data = item.get("location") or {}
+                sections = (item.get("jobAd") or {}).get("sections") or {}
+                description = (
+                    sections.get("jobDescription") or {}
+                ).get("text", "")
+
+                out.append({
+                    "id": name + "-" + clean(item.get("id")),
+                    "title": item.get("name"),
+                    "company": name,
+                    "url": job_url,
+                    "location": (
+                        location_data.get("fullLocation")
+                        if isinstance(location_data, dict)
+                        else location_data
+                    ),
+                    "desc": description,
+                    "posted": item.get("releasedDate"),
+                    "source": "SmartRecruiters",
+                })
+
+            offset += len(items)
+            total = data.get("totalFound")
+            if len(items) < limit:
+                break
+            if isinstance(total, int) and offset >= total:
+                break
+
+    else:
+        raise ValueError("Unsupported source type: " + kind)
+
+    for item in out:
+        item["eligible_countries"] = allowed
+        item["entry_required"] = entry_required
+
     return out
 
 
@@ -126,159 +196,241 @@ def jobicy_items():
         data = fetch("https://jobicy.com/api/v2/remote-jobs?count=100")
     except Exception:
         data = fetch("https://jobicy.com/api/jobs?count=200")
+
     out = []
-    for it in data.get("jobs", []):
-        url = clean(it.get("url"))
+    for item in data.get("jobs", []):
+        url = clean(item.get("url"))
         if not valid_url(url, ["jobicy.com"]):
             continue
-        level = clean(it.get("jobLevel")).lower()
-        types = clean(it.get("jobType")).lower()
-        lv = ""
-        if any(w in level for w in ("senior", "mid", "manager", "lead")):
-            lv = "senior"
-        elif (any(w in level for w in
-                  ("junior", "entry", "intern", "graduate"))
-              or "intern" in types):
-            lv = "entry"
-        out.append(dict(
-            id="Jobicy-" + clean(it.get("id")),
-            title=it.get("jobTitle"),
-            company=it.get("companyName"), url=url,
-            location=it.get("jobGeo"),
-            desc=it.get("jobDescription"),
-            posted=it.get("pubDate"),
-            logo=it.get("companyLogo"),
-            category=it.get("jobIndustry"),
-            remote_verified=True, level=lv, source="Jobicy"))
+
+        level = clean(item.get("jobLevel")).lower()
+        types = clean(item.get("jobType")).lower()
+        job_level = ""
+
+        if any(word in level for word in (
+            "senior", "mid", "manager", "lead"
+        )):
+            job_level = "senior"
+        elif any(word in level for word in (
+            "junior", "entry", "intern", "graduate"
+        )) or "intern" in types:
+            job_level = "entry"
+
+        out.append({
+            "id": "Jobicy-" + clean(item.get("id")),
+            "title": item.get("jobTitle"),
+            "company": item.get("companyName"),
+            "url": url,
+            "location": item.get("jobGeo"),
+            "desc": item.get("jobDescription"),
+            "posted": item.get("pubDate"),
+            "logo": item.get("companyLogo"),
+            "category": item.get("jobIndustry"),
+            "remote_verified": True,
+            "level": job_level,
+            "source": "Jobicy",
+        })
     return out
 
 
 def remotive_items():
     data = fetch("https://remotive.com/api/remote-jobs")
     out = []
-    for it in data.get("jobs", []):
-        url = clean(it.get("url"))
+
+    for item in data.get("jobs", []):
+        url = clean(item.get("url"))
         if not valid_url(url, ["remotive.com"]):
             continue
-        out.append(dict(
-            id="Remotive-" + clean(it.get("id")),
-            title=it.get("title"),
-            company=it.get("company_name"), url=url,
-            location=it.get("candidate_required_location"),
-            desc=it.get("description"),
-            posted=it.get("publication_date"),
-            logo=it.get("company_logo"),
-            category=it.get("category"),
-            salary=it.get("salary"),
-            remote_verified=True, source="Remotive"))
+
+        out.append({
+            "id": "Remotive-" + clean(item.get("id")),
+            "title": item.get("title"),
+            "company": item.get("company_name"),
+            "url": url,
+            "location": item.get("candidate_required_location"),
+            "desc": item.get("description"),
+            "posted": item.get("publication_date"),
+            "logo": item.get("company_logo"),
+            "category": item.get("category"),
+            "salary": item.get("salary"),
+            "remote_verified": True,
+            "source": "Remotive",
+        })
     return out
 
 
 def remoteok_items():
     data = fetch("https://remoteok.com/api")
     out = []
-    for it in data:
-        if (not isinstance(it, dict) or not it.get("id")
-                or not it.get("position")):
+
+    for item in data:
+        if (
+            not isinstance(item, dict)
+            or not item.get("id")
+            or not item.get("position")
+        ):
             continue
-        url = clean(it.get("url"))
+
+        url = clean(item.get("url"))
         if not valid_url(url, ["remoteok.com"]):
             continue
-        out.append(dict(
-            id="RemoteOK-" + clean(it.get("id")),
-            title=it.get("position"),
-            company=it.get("company"), url=url,
-            location=it.get("location"),
-            desc=it.get("description"),
-            posted=it.get("date") or it.get("epoch"),
-            logo=it.get("logo"),
-            category=", ".join((it.get("tags") or [])[:3]),
-            remote_verified=True, source="RemoteOK"))
+
+        out.append({
+            "id": "RemoteOK-" + clean(item.get("id")),
+            "title": item.get("position"),
+            "company": item.get("company"),
+            "url": url,
+            "location": item.get("location"),
+            "desc": item.get("description"),
+            "posted": item.get("date") or item.get("epoch"),
+            "logo": item.get("logo"),
+            "category": ", ".join((item.get("tags") or [])[:3]),
+            "remote_verified": True,
+            "source": "RemoteOK",
+        })
     return out
+
+
+def keep_fresh_old_jobs(old_jobs, failed_keys):
+    """Keep recent cached jobs for failed sources only."""
+    kept = []
+    cutoff = NOW - timedelta(days=MAX_AGE_DAYS)
+
+    for job in old_jobs:
+        key = (
+            job.get("sourceKey")
+            or job.get("company")
+            or job.get("source")
+        )
+        if key not in failed_keys:
+            continue
+
+        posted = parse_date(job.get("postedAt"))
+        if not posted or not (cutoff <= posted <= NOW + timedelta(days=1)):
+            continue
+
+        countries = [
+            country for country in job.get("countries", [])
+            if country in ALL6
+        ]
+        if not countries:
+            continue
+
+        # Do not retain legacy regional classifications that were inferred
+        # from APAC/Asia rather than verified country eligibility.
+        if job.get("scope") == "region":
+            continue
+
+        job["countries"] = countries
+        kept.append(job)
+
+    return kept
 
 
 def main():
     try:
-        with open("jobs.json", encoding="utf-8") as f:
-            old_jobs = json.load(f).get("jobs", [])
-    except Exception:
+        with open("jobs.json", encoding="utf-8") as file:
+            old_jobs = json.load(file).get("jobs", [])
+    except (OSError, ValueError, TypeError):
         old_jobs = []
-    old_jobs = [j for j in old_jobs
-                if clean(j.get("company")).lower() not in BLOCKED]
 
-    with open("employers.json", encoding="utf-8") as f:
-        employers = json.load(f).get("employers", [])
+    old_jobs = [
+        job for job in old_jobs
+        if clean(job.get("company")).lower() not in BLOCKED
+    ]
 
-    for emp in employers:
-        if emp.get("approved") is not True:
+    with open("employers.json", encoding="utf-8") as file:
+        employers = json.load(file).get("employers", [])
+
+    for employer in employers:
+        if employer.get("approved") is not True:
             continue
-        name = clean(emp.get("company"))
-        kind = clean(emp.get("source_type")).lower()
-        if not name or not clean(emp.get("board_token")):
+
+        name = clean(employer.get("company"))
+        kind = clean(employer.get("source_type")).lower()
+
+        if not name or not clean(employer.get("board_token")):
             errors.append(f"{name or 'Employer'}: missing token")
             continue
+
         try:
-            run(name, f"{name} ({kind})", employer_items(emp))
+            run(name, f"{name} ({kind})", employer_items(employer))
         except Exception as exc:
             stats[name] = False
             errors.append(f"{name} ({kind}): {exc}")
 
-    for key, fn in (("Jobicy", jobicy_items),
-                    ("Remotive", remotive_items),
-                    ("RemoteOK", remoteok_items)):
+    for key, source_function in (
+        ("Jobicy", jobicy_items),
+        ("Remotive", remotive_items),
+        ("RemoteOK", remoteok_items),
+    ):
         try:
-            run(key, key, fn())
+            run(key, key, source_function())
         except Exception as exc:
             stats[key] = False
             errors.append(f"{key}: {exc}")
 
-    for e in errors:
-        print("SOURCE ERROR:", e)
+    for error in errors:
+        print("SOURCE ERROR:", error)
 
-    if stats and not any(stats.values()):
+    # If every configured source failed, fail the workflow and leave jobs.json
+    # untouched instead of publishing a misleading empty or stale dataset.
+    if not stats or not any(stats.values()):
         print("ALL SOURCES FAILED - keeping old jobs.json")
-        sys.exit(1)
+        raise SystemExit(1)
 
-    kept = 0
-    for key in [k for k, ok in stats.items() if not ok]:
-        for j in old_jobs:
-            if (j.get("sourceKey") == key or j.get("company") == key
-                    or j.get("source") == key):
-                accepted.append(j)
-                kept += 1
-    if kept:
-        print(f"Kept {kept} old jobs from failed sources")
+    failed_keys = {key for key, success in stats.items() if not success}
+    cached = keep_fresh_old_jobs(old_jobs, failed_keys)
+    accepted.extend(cached)
 
-    final_list = accepted
-    if not final_list and old_jobs:
-        print("WARNING: 0 jobs found, keeping old jobs")
-        final_list = old_jobs
+    if cached:
+        print(f"Kept {len(cached)} fresh jobs from failed sources")
 
-    seen_url, seen_sig, final = set(), set(), []
-    for j in final_list:
-        u = j["url"].split("?")[0].rstrip("/").lower()
-        sig = (j["title"].lower().strip(),
-               j["company"].lower().strip(),
-               ",".join(sorted(j.get("countries", []))))
-        if u in seen_url or sig in seen_sig:
+    # Deduplicate by canonical-ish URL and by title/company/country set.
+    seen_urls = set()
+    seen_signatures = set()
+    final_jobs = []
+
+    for job in accepted:
+        url = clean(job.get("url")).split("?")[0].rstrip("/").lower()
+        signature = (
+            clean(job.get("title")).lower().strip(),
+            clean(job.get("company")).lower().strip(),
+            ",".join(sorted(job.get("countries", []))),
+        )
+
+        if not url or url in seen_urls or signature in seen_signatures:
             continue
-        seen_url.add(u)
-        seen_sig.add(sig)
-        final.append(j)
+
+        seen_urls.add(url)
+        seen_signatures.add(signature)
+        final_jobs.append(job)
 
     epoch = datetime(1970, 1, 1, tzinfo=timezone.utc)
-    final.sort(key=lambda j: parse_date(j.get("postedAt")) or epoch,
-               reverse=True)
+    final_jobs.sort(
+        key=lambda job: parse_date(job.get("postedAt")) or epoch,
+        reverse=True,
+    )
 
-    cover = {c: sum(1 for j in final if c in j.get("countries", []))
-             for c in ALL6}
-    print("Country coverage:", cover)
+    coverage = {
+        country: sum(
+            1 for job in final_jobs
+            if country in job.get("countries", [])
+        )
+        for country in ALL6
+    }
+    print("Country coverage:", coverage)
 
-    with open("jobs.json", "w", encoding="utf-8") as f:
-        json.dump({"updatedAt": NOW.isoformat(), "jobs": final},
-                  f, ensure_ascii=False, indent=2)
+    with open("jobs.json", "w", encoding="utf-8") as file:
+        json.dump(
+            {"updatedAt": NOW.isoformat(), "jobs": final_jobs},
+            file,
+            ensure_ascii=False,
+            indent=2,
+        )
 
-    print(f"Saved {len(final)} qualifying jobs")
+    print(f"Saved {len(final_jobs)} qualifying jobs")
 
 
-main()
+if __name__ == "__main__":
+    main()
