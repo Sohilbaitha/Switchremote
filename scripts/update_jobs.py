@@ -1,14 +1,16 @@
 import json
-import re
+import sys
 import time
 import hashlib
 import urllib.request
 import urllib.error
+from collections import Counter
 from datetime import datetime, timezone, timedelta
+from functools import partial
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import urlparse, quote
 
-from jobs_core import NOW, MAX_AGE_DAYS, clean, parse_date, consider
+from jobs_core import NOW, ALL6, clean, parse_date, consider
 
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -23,6 +25,10 @@ LEVER_HOSTS = ("jobs.lever.co",)
 ASHBY_HOSTS = ("jobs.ashbyhq.com",)
 SMARTRECRUITERS_HOSTS = ("jobs.smartrecruiters.com",)
 
+AGGREGATOR_COUNTRIES = list(ALL6)
+
+
+# ---------------------------------------------------------------- helpers
 
 def fetch_json(url, tries=3):
     last_error = None
@@ -93,6 +99,7 @@ def make_id(source, company, title, url):
 def get_description(item):
     return clean(
         item.get("description")
+        or item.get("descriptionPlain")
         or item.get("text")
         or item.get("content")
         or item.get("jobDescription")
@@ -130,6 +137,7 @@ def get_location(item):
     return clean(
         item.get("location")
         or item.get("locationName")
+        or item.get("jobGeo")          # Jobicy
         or item.get("workplace")
         or location
     )
@@ -165,6 +173,47 @@ def get_logo(item, employer):
     )
 
 
+def get_category(item):
+    category = (
+        item.get("category")
+        or item.get("department")
+        or item.get("team")
+        or item.get("jobIndustry")      # Jobicy
+    )
+
+    if not category:
+        departments = item.get("departments")   # Greenhouse
+        if isinstance(departments, list):
+            category = ", ".join(
+                clean(d.get("name"))
+                for d in departments
+                if isinstance(d, dict) and d.get("name")
+            )
+
+    return clean(category)
+
+
+def prepare_employer(employer):
+    """Fill in a logo from `domain` when `logo` is empty.
+
+    consider() rejects every job without an https logo, and the
+    Greenhouse / Lever / Ashby APIs do not return company logos, so
+    without this every employer job is dropped as 'missing logo'.
+    """
+    employer = dict(employer)
+    logo = clean(employer.get("logo"))
+    domain = clean(employer.get("domain")).lower()
+
+    if not logo and domain:
+        logo = (
+            "https://www.google.com/s2/favicons?sz=128&domain="
+            + quote(domain, safe="")
+        )
+
+    employer["logo"] = logo
+    return employer
+
+
 def normalize_job(
     item,
     employer,
@@ -179,6 +228,7 @@ def normalize_job(
     company = clean(
         item.get("company")
         or item.get("companyName")
+        or item.get("company_name")     # Remotive
         or item.get("organization")
         or item.get("employer")
         or employer.get("company")
@@ -186,6 +236,7 @@ def normalize_job(
 
     title = clean(
         item.get("title")
+        or item.get("position")         # RemoteOK
         or item.get("name")
         or item.get("jobTitle")
     )
@@ -198,14 +249,18 @@ def normalize_job(
     if logo is None:
         logo = get_logo(item, employer)
 
-    job_id = clean(
+    raw_id = clean(
         item.get("id")
         or item.get("job_id")
         or item.get("requisitionId")
         or item.get("uuid")
     )
 
-    if not job_id:
+    if raw_id:
+        # Prefix so ids from different companies/sources never collide.
+        prefix = clean(employer.get("board_token")) or source.lower()
+        job_id = source.lower() + "-" + prefix + "-" + raw_id
+    else:
         job_id = make_id(source, company, title, url)
 
     eligible_countries = employer.get("eligible_countries") or []
@@ -216,11 +271,7 @@ def normalize_job(
         "company": company,
         "url": clean(url),
         "location": clean(location),
-        "category": clean(
-            item.get("category")
-            or item.get("department")
-            or item.get("team")
-        ),
+        "category": get_category(item),
         "salary": get_salary(item),
         "logo": clean(logo),
         "source": source,
@@ -232,6 +283,8 @@ def normalize_job(
         "entry_required": employer.get("entry_level_only", True) is not False,
     }
 
+
+# ---------------------------------------------------------------- employers
 
 def greenhouse_jobs(employer):
     token = clean(employer.get("board_token"))
@@ -268,10 +321,7 @@ def greenhouse_jobs(employer):
             )
 
         normalized = normalize_job(
-            item={
-                **item,
-                "description": description,
-            },
+            item={**item, "description": description},
             employer=employer,
             source="Greenhouse",
             posted=(
@@ -309,6 +359,12 @@ def lever_jobs(employer):
         if not valid_job_url(url, LEVER_HOSTS):
             continue
 
+        workplace_type = clean(item.get("workplaceType")).lower()
+
+        # Hybrid / on-site roles are not remote jobs.
+        if workplace_type in ("hybrid", "on-site", "onsite"):
+            continue
+
         categories = item.get("categories") or {}
         location = clean(
             categories.get("location")
@@ -316,14 +372,32 @@ def lever_jobs(employer):
             or ""
         )
 
-        workplace_type = clean(item.get("workplaceType")).lower()
         remote_verified = workplace_type == "remote"
 
+        # Requirements (e.g. "5+ years experience") live in `lists`,
+        # so include them or the experience filter never sees them.
+        list_text = " ".join(
+            clean(entry.get("text")) + " " + clean(entry.get("content"))
+            for entry in (item.get("lists") or [])
+            if isinstance(entry, dict)
+        )
+
         description = clean(
-            item.get("descriptionPlain")
-            or item.get("description")
-            or item.get("additionalPlain")
-            or item.get("additional")
+            " ".join(
+                part
+                for part in (
+                    clean(
+                        item.get("descriptionPlain")
+                        or item.get("description")
+                    ),
+                    list_text,
+                    clean(
+                        item.get("additionalPlain")
+                        or item.get("additional")
+                    ),
+                )
+                if part
+            )
         )
 
         normalized = normalize_job(
@@ -331,6 +405,7 @@ def lever_jobs(employer):
                 **item,
                 "description": description,
                 "location": location,
+                "title": item.get("text"),     # Lever calls the title `text`
             },
             employer=employer,
             source="Lever",
@@ -354,11 +429,11 @@ def ashby_jobs(employer):
     api_url = (
         "https://api.ashbyhq.com/posting-api/job-board/"
         + token
+        + "?includeCompensation=true"
     )
 
     data = fetch_json(api_url)
     jobs = data.get("jobs", [])
-
     results = []
 
     for item in jobs:
@@ -376,9 +451,18 @@ def ashby_jobs(employer):
             or ""
         )
 
-        workplace_type = clean(
-            item.get("workplaceType")
-        ).lower()
+        secondary = [
+            clean(s.get("location") if isinstance(s, dict) else s)
+            for s in (item.get("secondaryLocations") or [])
+        ]
+        secondary = [s for s in secondary if s]
+        if secondary:
+            location = ", ".join([p for p in [location] + secondary if p])
+
+        workplace_type = clean(item.get("workplaceType")).lower()
+
+        if workplace_type in ("hybrid", "onsite", "on-site"):
+            continue
 
         remote_verified = (
             item.get("isRemote") is True
@@ -386,7 +470,13 @@ def ashby_jobs(employer):
         )
 
         normalized = normalize_job(
-            item=item,
+            item={
+                **item,
+                "description": (
+                    item.get("descriptionPlain")
+                    or item.get("descriptionHtml")
+                ),
+            },
             employer=employer,
             source="Ashby",
             posted=(
@@ -452,6 +542,8 @@ def smartrecruiters_jobs(employer):
                     ]
                     if part
                 )
+                if location_data.get("remote") is True:
+                    location = (location + " Remote").strip()
             else:
                 location = clean(location_data)
 
@@ -499,6 +591,14 @@ def employer_items(employer):
     raise ValueError("Unsupported source type: " + source_type)
 
 
+# ---------------------------------------------------------------- aggregators
+
+def _aggregator_defaults(normalized):
+    normalized["eligible_countries"] = list(AGGREGATOR_COUNTRIES)
+    normalized["entry_required"] = True
+    return normalized
+
+
 def jobicy_jobs():
     urls = [
         "https://jobicy.com/api/v2/remote-jobs?count=100",
@@ -511,7 +611,6 @@ def jobicy_jobs():
         try:
             data = fetch_json(api_url)
             jobs = data.get("jobs", [])
-
             results = []
 
             for item in jobs:
@@ -558,16 +657,7 @@ def jobicy_jobs():
                     level=level,
                 )
 
-                normalized["eligible_countries"] = [
-                    "India",
-                    "Indonesia",
-                    "Philippines",
-                    "Vietnam",
-                    "Malaysia",
-                    "Thailand",
-                ]
-                normalized["entry_required"] = True
-                results.append(normalized)
+                results.append(_aggregator_defaults(normalized))
 
             return results
 
@@ -578,8 +668,7 @@ def jobicy_jobs():
 
 
 def remotive_jobs():
-    api_url = "https://remotive.com/api/remote-jobs"
-    data = fetch_json(api_url)
+    data = fetch_json("https://remotive.com/api/remote-jobs")
     results = []
 
     for item in data.get("jobs", []):
@@ -607,23 +696,13 @@ def remotive_jobs():
             level="",
         )
 
-        normalized["eligible_countries"] = [
-            "India",
-            "Indonesia",
-            "Philippines",
-            "Vietnam",
-            "Malaysia",
-            "Thailand",
-        ]
-        normalized["entry_required"] = True
-        results.append(normalized)
+        results.append(_aggregator_defaults(normalized))
 
     return results
 
 
 def remoteok_jobs():
-    api_url = "https://remoteok.com/api"
-    data = fetch_json(api_url)
+    data = fetch_json("https://remoteok.com/api")
 
     if not isinstance(data, list):
         raise ValueError("Unexpected RemoteOK API response")
@@ -657,19 +736,12 @@ def remoteok_jobs():
             level="",
         )
 
-        normalized["eligible_countries"] = [
-            "India",
-            "Indonesia",
-            "Philippines",
-            "Vietnam",
-            "Malaysia",
-            "Thailand",
-        ]
-        normalized["entry_required"] = True
-        results.append(normalized)
+        results.append(_aggregator_defaults(normalized))
 
     return results
 
+
+# ---------------------------------------------------------------- storage
 
 def read_json(path, default):
     if not path.exists():
@@ -679,129 +751,5 @@ def read_json(path, default):
         return json.load(file)
 
 
-def is_fresh_job(job):
-    posted = parse_date(
-        job.get("postedAt")
-        or job.get("posted")
-        or job.get("date")
-    )
-
-    return bool(
-        posted
-        and NOW - MAX_JOB_AGE <= posted <= NOW
-    )
-
-
-def keep_fresh_old_jobs(old_jobs, failed_sources):
-    if not failed_sources:
-        return []
-
-    kept = []
-
-    for job in old_jobs:
-        if clean(job.get("source")) not in failed_sources:
-            continue
-
-        if not is_fresh_job(job):
-            continue
-
-        if not is_https_url(job.get("logo")):
-            continue
-
-        if not is_https_url(job.get("url")):
-            continue
-
-        kept.append(job)
-
-    return kept
-
-
-def deduplicate(jobs):
-    unique = {}
-    seen_signatures = set()
-
-    for job in jobs:
-        url = clean(job.get("url")).rstrip("/").lower()
-
-        if not url:
-            continue
-
-        if url in unique:
-            continue
-
-        signature = (
-            clean(job.get("company")).lower(),
-            clean(job.get("title")).lower(),
-            clean(job.get("location")).lower(),
-        )
-
-        if signature in seen_signatures:
-            continue
-
-        unique[url] = job
-        seen_signatures.add(signature)
-
-    return list(unique.values())
-
-
-def run_source(label, source_function, stats, failures):
-    try:
-        raw_jobs = source_function()
-        accepted_count = 0
-
-        for raw_job in raw_jobs:
-            accepted, reason, normalized = consider(raw_job)
-
-            if accepted and normalized:
-                normalized["source"] = (
-                    normalized.get("source") or label
-                )
-                normalized["sourceKey"] = label
-                accepted_jobs.append(normalized)
-                accepted_count += 1
-
-        stats[label] = {
-            "fetched": len(raw_jobs),
-            "accepted": accepted_count,
-            "status": "ok",
-        }
-
-        print(
-            f"{label}: fetched={len(raw_jobs)}, "
-            f"accepted={accepted_count}"
-        )
-
-    except Exception as exc:
-        failures.add(label)
-        stats[label] = {
-            "fetched": 0,
-            "accepted": 0,
-            "status": "failed",
-            "error": str(exc),
-        }
-
-        print(f"{label}: FAILED: {exc}")
-
-
-def main():
-    global accepted_jobs
-    accepted_jobs = []
-
-    old_data = read_json(JOBS_FILE, {"jobs": []})
-    old_jobs = old_data.get("jobs", [])
-
-    employers_data = read_json(EMPLOYERS_FILE, {"employers": []})
-    employers = employers_data.get("employers", [])
-
-    stats = {}
-    failed_sources = set()
-
-    approved_employers = [
-        employer
-        for employer in employers
-        if employer.get("approved") is True
-    ]
-
-    for employer in approved_employers:
-        company = clean(employer.get("company"))
-        source_type = cl
+def write_json_atomic(path, data):
+    tmp = path.with_suffix(path.
