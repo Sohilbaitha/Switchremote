@@ -1,13 +1,25 @@
 const list = document.getElementById('list');
 const statusEl = document.getElementById('status');
+const chipsEl = document.getElementById('chips');
 const q = document.getElementById('q');
-const country = document.getElementById('country');
+const PLACES = [
+  ['', 'All jobs'],
+  ['Worldwide', '\u{1F30D} Worldwide'],
+  ['Indonesia', '\u{1F1EE}\u{1F1E9} Indonesia'],
+  ['Vietnam', '\u{1F1FB}\u{1F1F3} Vietnam'],
+  ['Malaysia', '\u{1F1F2}\u{1F1FE} Malaysia'],
+  ['Philippines', '\u{1F1F5}\u{1F1ED} Philippines'],
+  ['Thailand', '\u{1F1F9}\u{1F1ED} Thailand'],
+  ['India', '\u{1F1EE}\u{1F1F3} India']
+];
 let jobs = [];
+let place = '';
 
 fetch('data/jobs.json')
   .then(r => r.json())
   .then(d => {
     jobs = d.jobs || [];
+    document.getElementById('count').textContent = jobs.length + ' jobs live';
     if (d.updated) {
       document.getElementById('updated').textContent =
         'Last updated: ' + new Date(d.updated).toLocaleString();
@@ -16,42 +28,76 @@ fetch('data/jobs.json')
   })
   .catch(() => { statusEl.textContent = 'Could not load jobs. Please try again later.'; });
 
-function ago(iso) {
+function inPlace(j, p) {
+  if (!p) return true;
+  if (p === 'Worldwide') return j.countries.includes('Worldwide');
+  return j.countries.includes(p) || j.countries.includes('Worldwide');
+}
+
+function age(iso) {
   const d = Math.floor((Date.now() - new Date(iso)) / 864e5);
-  if (d <= 0) return 'Today';
-  return d === 1 ? '1 day ago' : d + ' days ago';
+  return d <= 0 ? 'Today' : d + 'd';
+}
+
+function tag(text) {
+  const s = document.createElement('span');
+  s.className = 'tag';
+  s.textContent = text;
+  return s;
+}
+
+function drawChips() {
+  chipsEl.replaceChildren();
+  PLACES.forEach(([value, label]) => {
+    const b = document.createElement('button');
+    b.className = 'chip' + (value === place ? ' on' : '');
+    b.textContent = label;
+    const n = document.createElement('span');
+    n.textContent = jobs.filter(j => inPlace(j, value)).length;
+    b.append(n);
+    b.addEventListener('click', () => { place = value; render(); });
+    chipsEl.append(b);
+  });
 }
 
 function render() {
+  drawChips();
   const t = q.value.trim().toLowerCase();
-  const c = country.value;
   const rows = jobs.filter(j =>
-    (!c || j.countries.includes(c) || j.countries.includes('Worldwide')) &&
-    (!t || (j.title + ' ' + j.company).toLowerCase().includes(t))
+    inPlace(j, place) && (!t || (j.title + ' ' + j.company).toLowerCase().includes(t))
   );
   list.replaceChildren();
   statusEl.textContent = rows.length
     ? rows.length + ' jobs'
     : 'No jobs found. Try another country or search.';
   rows.forEach(j => {
-    const row = document.createElement('div');
-    row.className = 'job';
-    const info = document.createElement('div');
+    const card = document.createElement('article');
+    card.className = 'job';
+    const top = document.createElement('div');
+    top.className = 'top';
     const h = document.createElement('h2');
     h.textContent = j.title;
-    const p = document.createElement('p');
-    p.textContent = j.company + ' - ' + j.countries.join(', ') + ' - ' + ago(j.posted) + ' - via ' + j.source;
-    info.append(h, p);
-    const a = document.createElement('a');
-    a.className = 'apply';
-    a.href = j.url;
-    a.target = '_blank';
-    a.rel = 'noopener noreferrer nofollow';
-    a.textContent = 'Apply now';
-    row.append(info, a);
-    list.append(row);
+    const a = document.createElement('span');
+    a.className = 'age';
+    a.textContent = age(j.posted);
+    top.append(h, a);
+    const c = document.createElement('p');
+    c.className = 'company';
+    c.textContent = j.company;
+    const tags = document.createElement('div');
+    tags.className = 'tags';
+    tags.append(tag('Remote'));
+    j.countries.forEach(x => tags.append(tag(x === 'Worldwide' ? 'Anywhere in the World' : x)));
+    tags.append(tag(j.source));
+    const apply = document.createElement('a');
+    apply.className = 'apply';
+    apply.href = j.url;
+    apply.target = '_blank';
+    apply.rel = 'noopener noreferrer nofollow';
+    apply.textContent = 'Apply now';
+    card.append(top, c, tags, apply);
+    list.append(card);
   });
 }
 
 q.addEventListener('input', render);
-country.addEventListener('change', render);
