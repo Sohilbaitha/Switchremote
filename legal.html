@@ -13,11 +13,14 @@
 <body>
 <header class="bar">
   <div class="wrap bar-in">
-    <a class="brand" href="index.html"><img class="logo" src="switchremote-logo.png" alt="Switchremote" width="80" height="46" style="height:46px;width:auto"></a>
-    <nav>
+    <a class="brand" href="index.html"><img class="logo" src="Logo.png" alt="Switchremote" height="46"></a>
+    <nav id="menu" class="menu" aria-label="Main">
       <a href="legal.html#about">About</a>
+      <a href="legal.html#disclaimer">Disclaimer</a>
+      <a href="legal.html#privacy">Privacy</a>
       <a href="legal.html#contact">Contact</a>
     </nav>
+    <button class="tgl" id="tgl" type="button" aria-label="Menu" aria-expanded="false" aria-controls="menu"><i></i></button>
   </div>
 </header>
 <div class="wrap legal">
@@ -34,7 +37,21 @@
   <p>To report a wrong or fake job, or to ask for a job to be removed, email <strong>your-email@example.com</strong>.</p>
 </div>
 <footer>
-  <div class="wrap"><p><a href="index.html">Back to jobs</a></p></div>
+  <div class="wrap">
+    <div class="social">
+      <a href="https://www.linkedin.com/company/switchremote-in/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+      <a href="https://www.instagram.com/switchremote.world/" target="_blank" rel="noopener noreferrer">Instagram</a>
+      <a href="https://youtube.com/@switchremote" target="_blank" rel="noopener noreferrer">YouTube</a>
+      <a href="https://x.com/switchremote" target="_blank" rel="noopener noreferrer">X</a>
+      <a href="https://in.pinterest.com/switchremoteworld/" target="_blank" rel="noopener noreferrer">Pinterest</a>
+      <a href="https://t.me/switchremote" target="_blank" rel="noopener noreferrer">Telegram</a>
+    </div>
+    <p>&copy; 2026 Switchremote</p>
+  </div>
 </footer>
+<script>
+var t=document.getElementById('tgl'),m=document.getElementById('menu');
+t.addEventListener('click',function(){var o=m.classList.toggle('open');t.setAttribute('aria-expanded',o);});
+</script>
 </body>
 </html>
