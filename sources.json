@@ -1,4 +1,8 @@
 {
-  "greenhouse": [],
-  "lever": []
+  "companies": [
+    "https://job-boards.greenhouse.io/gitlab",
+    "https://jobs.ashbyhq.com/elevenlabs",
+    "https://jobs.ashbyhq.com/deel",
+    "https://jobs.ashbyhq.com/zapier"
+  ]
 }
