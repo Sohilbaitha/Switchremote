@@ -19,7 +19,7 @@ fetch('data/jobs.json')
   .then(r => r.json())
   .then(d => {
     jobs = d.jobs || [];
-    document.getElementById('count').textContent = jobs.length + ' jobs live right now';
+    document.getElementById('count').textContent = jobs.length + (jobs.length === 1 ? ' job' : ' jobs') + ' live right now';
     if (d.updated) {
       document.getElementById('updated').textContent =
         'Last updated: ' + new Date(d.updated).toLocaleString();
@@ -73,7 +73,7 @@ function render() {
   );
   list.replaceChildren();
   statusEl.textContent = rows.length
-    ? rows.length + ' jobs'
+    ? rows.length + (rows.length === 1 ? ' job' : ' jobs')
     : 'No jobs found. Try another country or search.';
   rows.forEach(j => {
     const card = document.createElement('article');
