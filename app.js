@@ -19,7 +19,7 @@ fetch('data/jobs.json')
   .then(r => r.json())
   .then(d => {
     jobs = d.jobs || [];
-    document.getElementById('count').textContent = jobs.length + ' jobs live';
+    document.getElementById('count').textContent = jobs.length + ' jobs live right now';
     if (d.updated) {
       document.getElementById('updated').textContent =
         'Last updated: ' + new Date(d.updated).toLocaleString();
@@ -39,10 +39,15 @@ function age(iso) {
   return d <= 0 ? 'Today' : d + 'd';
 }
 
-function tag(text) {
+function tag(text, withSwitch) {
   const s = document.createElement('span');
   s.className = 'tag';
-  s.textContent = text;
+  if (withSwitch) {
+    const sw = document.createElement('i');
+    sw.className = 'sw';
+    s.append(sw);
+  }
+  s.append(text);
   return s;
 }
 
@@ -73,6 +78,11 @@ function render() {
   rows.forEach(j => {
     const card = document.createElement('article');
     card.className = 'job';
+    const av = document.createElement('div');
+    av.className = 'av';
+    av.textContent = (j.company || '?').trim().charAt(0).toUpperCase();
+    const body = document.createElement('div');
+    body.className = 'body';
     const top = document.createElement('div');
     top.className = 'top';
     const h = document.createElement('h2');
@@ -86,7 +96,7 @@ function render() {
     c.textContent = j.company;
     const tags = document.createElement('div');
     tags.className = 'tags';
-    tags.append(tag('Remote'));
+    tags.append(tag('Remote', true));
     j.countries.forEach(x => tags.append(tag(x === 'Worldwide' ? 'Anywhere in the World' : x)));
     tags.append(tag(j.source));
     const apply = document.createElement('a');
@@ -95,7 +105,8 @@ function render() {
     apply.target = '_blank';
     apply.rel = 'noopener noreferrer nofollow';
     apply.textContent = 'Apply now';
-    card.append(top, c, tags, apply);
+    body.append(top, c, tags, apply);
+    card.append(av, body);
     list.append(card);
   });
 }
