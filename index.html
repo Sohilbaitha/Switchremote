@@ -3,40 +3,42 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Switchremote - Remote jobs for freshers in Asia</title>
-<meta name="description" content="Work-from-home, fresher-friendly jobs for Indonesia, Vietnam, Malaysia, the Philippines, Thailand and India. Updated every 6 hours.">
+<title>Switchremote - Remote jobs for freshers across Asia and worldwide</title>
+<meta name="description" content="Work-from-home, fresher-friendly jobs for Indonesia, Vietnam, Malaysia, the Philippines, Thailand, India and worldwide. Updated every 6 hours.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <h1>Switchremote</h1>
-    <p>Work-from-home jobs for freshers in Asia. Updated every 6 hours.</p>
-  </header>
+<header class="bar">
+  <div class="wrap"><a class="logo" href="index.html">Switchremote</a></div>
+</header>
 
-  <div class="filters">
-    <input id="q" type="search" placeholder="Search job or company" aria-label="Search jobs">
-    <select id="country" aria-label="Country">
-      <option value="">All countries</option>
-      <option>Indonesia</option>
-      <option>Vietnam</option>
-      <option>Malaysia</option>
-      <option>Philippines</option>
-      <option>Thailand</option>
-      <option>India</option>
-      <option>Worldwide</option>
-    </select>
+<section class="hero">
+  <div class="wrap">
+    <p id="count" class="count"></p>
+    <h1>Remote jobs for freshers, across Asia and worldwide</h1>
+    <p class="sub">Work-from-home jobs from company career pages and trusted job feeds. Apply on the original source. No signup, no fees.</p>
   </div>
+</section>
 
+<div class="wrap">
+  <div class="search">
+    <input id="q" type="search" placeholder="Search remote jobs" aria-label="Search remote jobs">
+  </div>
+  <div id="chips" class="chips"></div>
   <p id="status" class="status">Loading jobs...</p>
   <main id="list"></main>
+</div>
 
-  <footer>
+<footer>
+  <div class="wrap">
     <p id="updated"></p>
     <p>Jobs come from Remotive, Jobicy and company career pages. Apply always opens the original source.</p>
     <p><a href="legal.html#about">About</a> &nbsp; <a href="legal.html#disclaimer">Disclaimer</a> &nbsp; <a href="legal.html#privacy">Privacy</a> &nbsp; <a href="legal.html#contact">Contact</a></p>
-  </footer>
-</div>
+  </div>
+</footer>
 <script src="app.js"></script>
 </body>
 </html>
