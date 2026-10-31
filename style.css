@@ -1,4 +1,4 @@
-:root{--blue:#38b6ff;--blue-d:#1ea0ee;--tint:#eaf6ff;--text:#1b1b1b;--muted:#5f6b76;--line:#e6eaee;--link:#0b6fae;--bar:64px}
+:root{--blue:#38b6ff;--blue-d:#1ea0ee;--tint:#eaf6ff;--text:#1b1b1b;--muted:#5f6b76;--line:#e6eaee;--link:#0b6fae;--bar:55px}
 *{box-sizing:border-box}
 body{margin:0;background:#fff;color:var(--text);font:14px/1.55 "Noto Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 a{color:var(--link)}
@@ -8,7 +8,7 @@ a{color:var(--link)}
 .bar{position:sticky;top:0;z-index:10;background:#fff;border-bottom:1px solid var(--line)}
 .bar-in{display:flex;align-items:center;justify-content:space-between;height:var(--bar)}
 .brand{display:flex;align-items:center}
-.logo{display:block;height:44px;width:auto;max-width:none}
+.logo{display:block;height:35px;width:auto;max-width:none}
 
 /* toggle button (same idea as the logo switch) */
 .tgl{position:relative;flex:none;width:52px;height:30px;padding:0;border:0;border-radius:999px;background:#000;cursor:pointer;transition:background .25s}
