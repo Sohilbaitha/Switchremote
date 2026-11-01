@@ -204,6 +204,7 @@ def main():
             print("UNKNOWN careers link (skipped):", link)
 
     found = {}
+    succeeded = 0
     cutoff = datetime.now(timezone.utc) - timedelta(days=MAX_AGE_DAYS)
     for name, task in tasks:
         kept = 0
@@ -212,13 +213,14 @@ def main():
                 if job and parse_date(job["posted"]) >= cutoff:
                     found[job["url"]] = job
                     kept += 1
+            succeeded += 1
             print(f"OK    {name}: {kept} matching jobs")
         except Exception as e:
             print(f"FAIL  {name}: {e}")
 
     jobs = sorted(found.values(), key=lambda j: j["posted"], reverse=True)[:MAX_JOBS]
-    if not jobs and OUT.exists():
-        print("No jobs found, keeping the old file.")
+    if succeeded == 0 and OUT.exists():
+        print("All sources failed, keeping the old file.")
         return
     OUT.parent.mkdir(exist_ok=True)
     OUT.write_text(json.dumps(
