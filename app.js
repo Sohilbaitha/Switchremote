@@ -15,7 +15,7 @@ const PLACES = [
 let jobs = [];
 let place = '';
 
-fetch('data/jobs.json')
+fetch('data/jobs.json?v=' + Date.now())
   .then(r => r.json())
   .then(d => {
     jobs = d.jobs || [];
