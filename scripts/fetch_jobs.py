@@ -27,6 +27,11 @@ FRESHER = ["fresher", "freshers", "entry level", "entry-level", "junior", "inter
            "internship", "trainee", "graduate", "fresh graduate", "fresh graduates",
            "no experience", "no prior experience", "0-1 year", "0-1 years",
            "0-2 years", "less than 1 year", "apprentice"]
+ROLES = ["customer support", "customer service", "customer success", "support specialist",
+         "support agent", "support representative", "chat support", "live chat",
+         "data entry", "virtual assistant", "content writer", "content moderator",
+         "social media", "appointment setter", "sales development", "community moderator",
+         "transcription", "back office", "order processing", "associate"]
 SENIOR = ["senior", "sr", "lead", "manager", "director", "principal", "head", "staff", "vp"]
 BAD = ["registration fee", "security deposit", "pay a fee", "processing fee", "investment required"]
 
@@ -73,7 +78,7 @@ def make(title, company, location, url, posted, source, text, need_remote=False)
         if need_remote and "remote" not in (location + " " + title).lower():
             return None
         body = (title + " " + text).lower()
-        if has(title.lower(), SENIOR) or has(body, BAD) or not has(body, FRESHER):
+        if has(title.lower(), SENIOR) or has(body, BAD) or not (has(body, FRESHER) or has(title.lower(), ROLES)):
             return None
         countries = countries_for(location)
         if not countries:
