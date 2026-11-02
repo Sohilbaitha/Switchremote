@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "data" / "jobs.json"
 SOURCES = ROOT / "sources.json"
 HEADERS = {"User-Agent": "SwitchremoteBot/1.0"}
-MAX_AGE_DAYS = 3
+MAX_AGE_DAYS = 14
 MAX_JOBS = 500
 
 COUNTRIES = {
