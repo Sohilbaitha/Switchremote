@@ -1,1 +1,9 @@
-{"updated": "2026-11-05T06:40:46.380433+00:00", "jobs": []}
+{
+  "companies": [
+    "https://job-boards.greenhouse.io/gitlab",
+    "https://jobs.ashbyhq.com/elevenlabs",
+    "https://jobs.ashbyhq.com/deel",
+    "https://jobs.ashbyhq.com/zapier"
+  ],
+  "sheet": "https://docs.google.com/spreadsheets/d/e/2PACX-1vSQqZkwYt_DpIDUXIZtepwwSxzNdZWzCqWB48ysDd9mox7pyDhziRU8qaeiLZ2HYwtBeBiD_4d99Yxn/pub?gid=1560256108&single=true&output=csv"
+}
