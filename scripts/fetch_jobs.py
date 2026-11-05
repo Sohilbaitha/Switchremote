@@ -1,4 +1,6 @@
+import csv
 import html
+import io
 import json
 import re
 import urllib.parse
@@ -32,7 +34,8 @@ ROLES = ["customer support", "customer service", "customer success", "support sp
          "data entry", "virtual assistant", "content writer", "content moderator",
          "social media", "appointment setter", "sales development", "community moderator",
          "transcription", "back office", "order processing", "associate"]
-SENIOR = ["senior", "sr", "lead", "manager", "director", "principal", "head", "staff", "vp"]
+SENIOR = ["senior", "sr", "lead", "manager", "director", "principal", "head", "staff", "vp",
+          "architect", "chief", "executive", "expert"]
 BAD = ["registration fee", "security deposit", "pay a fee", "processing fee", "investment required"]
 
 
@@ -47,7 +50,7 @@ def has(text, words):
 
 
 def clean(text):
-    return re.sub(r"<[^>]+>", " ", html.unescape(text or ""))[:1500]
+    return re.sub(r"<[^>]+>", " ", html.unescape(text or ""))[:4000]
 
 
 def countries_for(location):
@@ -70,15 +73,24 @@ def parse_date(value):
     return d if d.tzinfo else d.replace(tzinfo=timezone.utc)
 
 
+def min_years(text):
+    """Smallest 'N years' number asked for in the text, or None."""
+    found = re.findall(r"(\d{1,2})\s*(?:\+|-|to|\u2013)?\s*(?:\d{1,2})?\s*\+?\s*(?:years|yrs)\b", text.lower())
+    return min(int(n) for n in found) if found else None
+
+
 def make(title, company, location, url, posted, source, text, need_remote=False):
     try:
-        text = (text or "")[:1500]
+        text = (text or "")[:4000]
         if not (title and url and url.startswith("http")):
             return None
         if need_remote and "remote" not in (location + " " + title).lower():
             return None
         body = (title + " " + text).lower()
-        if has(title.lower(), SENIOR) or has(body, BAD) or not (has(body, FRESHER) or has(title.lower(), ROLES)):
+        if has(title.lower(), SENIOR) or has(body, BAD):
+            return None
+        years = min_years(text)
+        if years is not None and years >= 2:
             return None
         countries = countries_for(location)
         if not countries:
@@ -176,6 +188,55 @@ def recruitee(slug):
                    clean(j.get("description")), need_remote=True)
 
 
+# ---------- employer jobs from the Google Form sheet ----------
+
+EMPLOYER_MAX_AGE_DAYS = 30
+FORM_COUNTRIES = {"worldwide": "Worldwide", "indonesia": "Indonesia", "vietnam": "Vietnam",
+                  "malaysia": "Malaysia", "philippines": "Philippines",
+                  "thailand": "Thailand", "india": "India"}
+
+
+def get_text(url):
+    req = urllib.request.Request(url, headers=HEADERS)
+    with urllib.request.urlopen(req, timeout=30) as r:
+        return r.read().decode("utf-8-sig")
+
+
+def sheet_date(value):
+    """Form timestamps look like 5/11/2026 18:20:15. If day/month is unclear, use now."""
+    now = datetime.now(timezone.utc)
+    try:
+        date_part, _, time_part = value.strip().partition(" ")
+        a, b, year = [int(x) for x in date_part.split("/")]
+        if a > 12:
+            day, month = a, b
+        elif b > 12:
+            month, day = a, b
+        else:
+            return now
+        h, m, sec = ([int(x) for x in time_part.split(":")] + [0, 0, 0])[:3]
+        d = datetime(year, month, day, h, m, sec, tzinfo=timezone.utc)
+        return min(d, now)
+    except Exception:
+        return now
+
+
+def employer_sheet(url):
+    cutoff = datetime.now(timezone.utc) - timedelta(days=EMPLOYER_MAX_AGE_DAYS)
+    rows = list(csv.reader(io.StringIO(get_text(url))))
+    for row in rows[1:]:
+        row = [c.strip() for c in row] + [""] * 5
+        stamp, company, title, country, link = row[:5]
+        place = FORM_COUNTRIES.get(country.lower())
+        if not (company and title and place and link.startswith("http")):
+            continue
+        posted = sheet_date(stamp)
+        if posted < cutoff:
+            continue
+        yield {"title": title, "company": company, "countries": [place], "url": link,
+               "posted": posted.isoformat(), "source": "Employer"}
+
+
 READERS = {"greenhouse": greenhouse, "lever": lever, "ashby": ashby,
            "workable": workable, "recruitee": recruitee}
 
@@ -222,6 +283,17 @@ def main():
             print(f"OK    {name}: {kept} matching jobs")
         except Exception as e:
             print(f"FAIL  {name}: {e}")
+
+    if cfg.get("sheet"):
+        kept = 0
+        try:
+            for job in employer_sheet(cfg["sheet"]):
+                found[job["url"]] = job
+                kept += 1
+            succeeded += 1
+            print(f"OK    employer form: {kept} approved jobs")
+        except Exception as e:
+            print(f"FAIL  employer form: {e}")
 
     jobs = sorted(found.values(), key=lambda j: j["posted"], reverse=True)[:MAX_JOBS]
     if succeeded == 0 and OUT.exists():
