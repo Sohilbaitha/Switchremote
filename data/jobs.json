@@ -1,9 +1,1 @@
-{
-  "companies": [
-    "https://job-boards.greenhouse.io/gitlab",
-    "https://jobs.ashbyhq.com/elevenlabs",
-    "https://jobs.ashbyhq.com/deel",
-    "https://jobs.ashbyhq.com/zapier"
-  ],
-  "sheet": "https://docs.google.com/spreadsheets/d/e/2PACX-1vSQqZkwYt_DpIDUXIZtepwwSxzNdZWzCqWB48ysDd9mox7pyDhziRU8qaeiLZ2HYwtBeBiD_4d99Yxn/pub?gid=1560256108&single=true&output=csv"
-}
+{"updated": "2026-11-05T13:17:51.507906+00:00", "jobs": [{"title": "AI Data Specialist - Indonesia", "company": "RWS Group", "countries": ["India"], "url": "https://himalayas.app/companies/rws-group/jobs/ai-data-specialist-indonesia-597039201?utm_source=api", "posted": "2026-11-05T11:37:21+00:00", "source": "Himalayas"}, {"title": "B2B Marketing - India", "company": "Elevenlabs", "countries": ["India"], "url": "https://jobs.ashbyhq.com/elevenlabs/258de005-ab84-4cc7-9a59-1df0c74a12b8", "posted": "2026-10-29T16:29:43.550000+00:00", "source": "Company site"}, {"title": "AI Trainer - Video Annotation", "company": "iMerit Technology", "countries": ["Worldwide"], "url": "https://remotive.com/remote-jobs/artificial-intelligence/ai-trainer-video-annotation-2091161", "posted": "2026-10-22T18:40:19+00:00", "source": "Remotive"}]}
