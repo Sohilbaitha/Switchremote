@@ -80,6 +80,7 @@ function render() {
     link.href = POST_URL;
     link.target = '_blank';
     link.rel = 'noopener noreferrer';
+    link.setAttribute('data-track', 'post_job_click');
     link.textContent = 'Post your job for free';
     statusEl.replaceChildren('No jobs found here yet. Try another country or search, or ', link, '.');
   }
@@ -113,6 +114,9 @@ function render() {
     apply.target = '_blank';
     apply.rel = 'noopener noreferrer nofollow';
     apply.textContent = 'Apply now';
+    apply.addEventListener('click', () => {
+      if (window.track) track('apply_click', { job_title: j.title, company: j.company, source: j.source, country: j.countries.join(',') });
+    });
     body.append(top, c, tags, apply);
     card.append(av, body);
     list.append(card);
