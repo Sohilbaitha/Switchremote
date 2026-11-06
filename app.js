@@ -12,6 +12,7 @@ const PLACES = [
   ['Thailand', '\u{1F1F9}\u{1F1ED} Thailand'],
   ['India', '\u{1F1EE}\u{1F1F3} India']
 ];
+const POST_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSeFsL9SU7VFMi27pCQri7ZziHbTVDPguEFP6cJvhidkb2psNQ/viewform';
 let jobs = [];
 let place = '';
 
@@ -72,9 +73,16 @@ function render() {
     inPlace(j, place) && (!t || (j.title + ' ' + j.company).toLowerCase().includes(t))
   );
   list.replaceChildren();
-  statusEl.textContent = rows.length
-    ? rows.length + (rows.length === 1 ? ' job' : ' jobs')
-    : 'No jobs found. Try another country or search.';
+  if (rows.length) {
+    statusEl.textContent = rows.length + (rows.length === 1 ? ' job' : ' jobs');
+  } else {
+    const link = document.createElement('a');
+    link.href = POST_URL;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.textContent = 'Post your job for free';
+    statusEl.replaceChildren('No jobs found here yet. Try another country or search, or ', link, '.');
+  }
   rows.forEach(j => {
     const card = document.createElement('article');
     card.className = 'job';
