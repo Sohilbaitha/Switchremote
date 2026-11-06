@@ -11,12 +11,14 @@ a{color:var(--link)}
 .logo{display:block;height:44px;width:auto;max-width:none}
 
 /* toggle button (same idea as the logo switch) */
-.tgl{position:relative;flex:none;width:52px;height:30px;padding:0;border:0;border-radius:999px;background:#000;cursor:pointer;transition:background .25s}
-.tgl::before{content:"";position:absolute;inset:-10px}
+.tgl-wrap{position:relative;display:flex;align-items:center;gap:10px;padding:0;border:0;background:none;cursor:pointer;font:inherit;color:#1b1b1b}
+.tgl-wrap::before{content:"";position:absolute;inset:-10px}
+.tgl-label{font-size:.8125rem;font-weight:600}
+.tgl{position:relative;display:block;flex:none;width:52px;height:30px;border-radius:999px;background:#000;transition:background .25s}
 .tgl i{position:absolute;top:4px;left:4px;width:22px;height:22px;border-radius:50%;background:#f4f4f4;transition:transform .25s}
-.tgl[aria-expanded="true"]{background:var(--blue)}
-.tgl[aria-expanded="true"] i{transform:translateX(22px)}
-.tgl:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+.tgl-wrap[aria-expanded="true"] .tgl{background:var(--blue)}
+.tgl-wrap[aria-expanded="true"] .tgl i{transform:translateX(22px)}
+.tgl-wrap:focus-visible{outline:2px solid var(--blue);outline-offset:4px;border-radius:999px}
 
 /* dropdown menu (mobile) */
 .menu{position:absolute;top:100%;right:12px;width:min(280px,calc(100% - 24px));margin-top:8px;padding:8px;background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:0 14px 36px rgba(0,0,0,.12);opacity:0;visibility:hidden;transform:translateY(-6px) scale(.98);transform-origin:top right;transition:opacity .18s,transform .18s,visibility .18s}
@@ -32,7 +34,7 @@ a{color:var(--link)}
 .scrim.open{opacity:1;visibility:visible}
 
 @media (min-width:640px){
-.tgl,.scrim{display:none}
+.tgl-wrap,.scrim{display:none}
 .menu,.menu.open{position:static;display:flex;gap:24px;margin:0;padding:0;background:none;border:0;border-radius:0;box-shadow:none;opacity:1;visibility:visible;transform:none}
 .menu a{padding:6px 0;border-radius:0;font-size:.875rem;font-weight:500;color:#3d4954;border-bottom:2px solid transparent}
 .menu a::after{display:none}
@@ -136,5 +138,3 @@ footer a{color:inherit}
 #list{grid-template-columns:repeat(4,minmax(0,1fr))}
 .wrap.legal{max-width:820px}
 }
-
-
