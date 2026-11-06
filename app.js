@@ -117,7 +117,15 @@ function render() {
     apply.addEventListener('click', () => {
       if (window.track) track('apply_click', { job_title: j.title, company: j.company, source: j.source, country: j.countries.join(',') });
     });
-    body.append(top, c, tags, apply);
+    const actions = document.createElement('div');
+    actions.className = 'actions';
+    const report = document.createElement('a');
+    report.className = 'report';
+    report.href = 'mailto:contact@switchremote.world?subject=' + encodeURIComponent('Report a job: ' + j.title) +
+      '&body=' + encodeURIComponent('Job: ' + j.title + ' at ' + j.company + '\nLink: ' + j.url + '\n\nWhat is wrong with this job?\n');
+    report.textContent = 'Report';
+    actions.append(apply, report);
+    body.append(top, c, tags, actions);
     card.append(av, body);
     list.append(card);
   });
