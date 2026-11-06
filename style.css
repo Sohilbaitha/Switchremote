@@ -101,3 +101,31 @@ footer a{color:inherit}
 .cookie button{font:inherit;font-size:.8125rem;font-weight:600;padding:8px 18px;border-radius:999px;cursor:pointer}
 .cookie .yes{border:0;background:var(--blue);color:#000}
 .cookie .no{border:1px solid var(--line);background:#fff;color:#1b1b1b}
+
+/* responsive: use the space on tablets, laptops and big screens */
+.wrap{width:100%}
+.wrap.legal{max-width:760px}
+#list{display:block}
+@media (min-width:700px){
+.wrap{max-width:1000px;padding:0 24px}
+.hero{padding:48px 0 42px}
+.hero h1{font-size:2rem;max-width:680px}
+.sub{font-size:1rem;max-width:640px}
+.chips{flex-wrap:wrap;overflow:visible}
+.search input{max-width:520px}
+#list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.job{padding:18px;border:1px solid var(--line);border-bottom:1px solid var(--line);border-radius:16px;transition:border-color .2s,box-shadow .2s}
+.job:hover{border-color:var(--blue);box-shadow:0 8px 24px rgba(0,0,0,.06)}
+.wrap.legal{padding:0 24px}
+}
+@media (min-width:1100px){
+.wrap{max-width:1180px}
+.hero h1{font-size:2.25rem}
+#list{grid-template-columns:repeat(3,minmax(0,1fr))}
+.wrap.legal{max-width:760px}
+}
+@media (min-width:1600px){
+.wrap{max-width:1360px}
+#list{grid-template-columns:repeat(4,minmax(0,1fr))}
+.wrap.legal{max-width:820px}
+}
