@@ -136,3 +136,5 @@ footer a{color:inherit}
 #list{grid-template-columns:repeat(4,minmax(0,1fr))}
 .wrap.legal{max-width:820px}
 }
+
+
