@@ -8,7 +8,7 @@ a{color:var(--link)}
 .bar{position:sticky;top:0;z-index:10;background:#fff;border-bottom:1px solid var(--line)}
 .bar-in{display:flex;align-items:center;justify-content:space-between;height:var(--bar)}
 .brand{display:flex;align-items:center;text-decoration:none}
-.logo{display:block;height:44px;width:auto;max-width:none}
+.logo{display:block;height:34px;width:auto;max-width:none}
 
 /* menu button (mobile) */
 .mbtn{position:relative;display:flex;align-items:center;justify-content:center;width:42px;height:42px;padding:0;border:1px solid var(--line);border-radius:12px;background:#fff;cursor:pointer;transition:background .2s,border-color .2s}
