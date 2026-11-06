@@ -36,6 +36,9 @@ ROLES = ["customer support", "customer service", "customer success", "support sp
          "transcription", "back office", "order processing", "associate"]
 SENIOR = ["senior", "sr", "lead", "manager", "director", "principal", "head", "staff", "vp",
           "architect", "chief", "executive", "expert"]
+TECH = ["engineer", "developer", "devops", "sre", "scientist", "analyst", "architect",
+        "programmer", "security", "data engineer", "machine learning", "backend", "frontend",
+        "full stack", "fullstack", "software"]
 BAD = ["registration fee", "security deposit", "pay a fee", "processing fee", "investment required"]
 
 
@@ -91,6 +94,13 @@ def make(title, company, location, url, posted, source, text, need_remote=False)
             return None
         years = min_years(text)
         if years is not None and years >= 2:
+            return None
+        title_l = title.lower()
+        # Fresher board rule: technical roles only when the title itself says junior/intern/trainee
+        if has(title_l, TECH) and not has(title_l, FRESHER):
+            return None
+        # Every other job needs a clear fresher signal, otherwise it is not for freshers
+        if not (has(body, FRESHER) or has(title_l, ROLES) or (years is not None and years <= 1)):
             return None
         countries = countries_for(location)
         if not countries:
