@@ -10,14 +10,6 @@ a{color:var(--link)}
 .brand{display:flex;align-items:center;text-decoration:none}
 .logo{display:block;height:44px;width:auto;max-width:none}
 
-/* logo wordmark (built in code, so it always reads Switchremote) */
-.wm{display:inline-flex;flex-direction:column;align-items:flex-start;gap:3px;line-height:1;color:#38b6ff}
-.wm-top{display:inline-flex;align-items:center;font-size:26px;font-weight:700;letter-spacing:-.02em;line-height:1}
-.wm-i{display:inline-block;position:relative;width:11px;height:24px;margin:0 3px 0 4px;border-radius:6px;background:#000}
-.wm-i::after{content:"";position:absolute;top:2px;left:2px;width:7px;height:7px;border-radius:50%;background:#f4f4f4}
-.wm-pill{display:block;width:100%;padding:3px 0 4px;border-radius:8px;background:#000;color:#fff;font-size:12px;font-weight:700;letter-spacing:.02em;text-align:center}
-.wm-s .wm-top{font-size:22px}.wm-s .wm-i{height:20px;width:9px}.wm-s .wm-i::after{width:5px;height:5px}.wm-s .wm-pill{font-size:10.5px}
-
 /* menu button (mobile) */
 .mbtn{position:relative;display:flex;align-items:center;justify-content:center;width:42px;height:42px;padding:0;border:1px solid var(--line);border-radius:12px;background:#fff;cursor:pointer;transition:background .2s,border-color .2s}
 .mbtn::before{content:"";position:absolute;inset:-6px}
@@ -86,24 +78,13 @@ a{color:var(--link)}
 .apply:hover{background:var(--blue-d)}
 
 /* footer */
-footer{margin-top:40px;padding:32px 0 36px;border-top:1px solid var(--line);background:#fafcfe;color:var(--muted);font-size:.8125rem}
+footer{margin-top:24px;padding:24px 0 40px;border-top:1px solid var(--line);color:var(--muted);font-size:.8125rem}
 footer p{margin:0 0 8px}
 footer a{color:inherit}
-.f-top{display:flex;flex-direction:column;gap:22px}
-.tag-line{margin:12px 0 0;color:#3d4954;font-size:.875rem;font-weight:500}
-.f-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 16px}
-.f-links a{color:#1b1b1b;font-size:.875rem;text-decoration:none}
-.f-links a:hover{color:var(--link);text-decoration:underline}
-.social{display:flex;flex-wrap:wrap;gap:10px;margin:22px 0 0}
+.social{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px}
 .social a{display:flex;align-items:center;justify-content:center;width:40px;height:40px;border:1px solid var(--line);border-radius:50%;background:#fff;color:#1b1b1b;transition:background .2s,border-color .2s}
 .social a:hover,.social a:focus-visible{background:var(--blue);border-color:var(--blue);color:#000}
 .social svg{width:18px;height:18px;fill:currentColor}
-.f-bottom{margin-top:22px;padding-top:18px;border-top:1px solid var(--line)}
-.fine{font-size:.75rem;color:var(--muted)}
-@media (min-width:700px){
-.f-top{flex-direction:row;justify-content:space-between;align-items:flex-start}
-.f-links{grid-template-columns:repeat(3,auto);gap:12px 36px}
-}
 
 /* legal page */
 .legal h2{margin:26px 0 6px;font-size:1.0625rem;color:#000}
