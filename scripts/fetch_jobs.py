@@ -228,6 +228,8 @@ def employer_sheet(url):
         row = [c.strip() for c in row] + [""] * 5
         stamp, company, title, country, link = row[:5]
         place = FORM_COUNTRIES.get(country.lower().replace(" ", ""))
+        if link and not link.startswith("http") and "." in link and " " not in link:
+            link = "https://" + link
         if not (company and title and place and link.startswith("http")):
             continue
         posted = sheet_date(stamp)
