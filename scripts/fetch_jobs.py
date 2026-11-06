@@ -193,7 +193,7 @@ def recruitee(slug):
 EMPLOYER_MAX_AGE_DAYS = 30
 FORM_COUNTRIES = {"worldwide": "Worldwide", "indonesia": "Indonesia", "vietnam": "Vietnam",
                   "malaysia": "Malaysia", "philippines": "Philippines",
-                  "thailand": "Thailand", "india": "India"}
+                  "thailand": "Thailand", "india": "India", "philipines": "Philippines"}
 
 
 def get_text(url):
@@ -227,7 +227,7 @@ def employer_sheet(url):
     for row in rows[1:]:
         row = [c.strip() for c in row] + [""] * 5
         stamp, company, title, country, link = row[:5]
-        place = FORM_COUNTRIES.get(country.lower())
+        place = FORM_COUNTRIES.get(country.lower().replace(" ", ""))
         if not (company and title and place and link.startswith("http")):
             continue
         posted = sheet_date(stamp)
