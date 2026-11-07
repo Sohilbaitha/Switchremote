@@ -150,9 +150,19 @@ def himalayas():
 
 # ---------- company career pages ----------
 
+# Proper display names for companies whose careers link uses a short code
+NAMES = {"gohighlevel": "HighLevel", "sprinto": "Sprinto", "gleanwork": "Glean",
+         "elevenlabs": "ElevenLabs", "deel": "Deel", "zapier": "Zapier",
+         "gitlab": "GitLab", "branch": "Branch International"}
+
+
+def nice(slug, fallback=None):
+    return NAMES.get(slug.lower()) or fallback or slug.replace("-", " ").title()
+
+
 def greenhouse(slug):
     for j in get(f"https://boards-api.greenhouse.io/v1/boards/{slug}/jobs?content=true")["jobs"]:
-        yield make(j["title"], j.get("company_name") or slug,
+        yield make(j["title"], nice(slug, j.get("company_name")),
                    (j.get("location") or {}).get("name", ""), j["absolute_url"],
                    j.get("first_published") or j["updated_at"], "Company site",
                    clean(j.get("content")), need_remote=True)
@@ -163,7 +173,7 @@ def lever(slug):
         loc = (j.get("categories") or {}).get("location", "") or ""
         if j.get("workplaceType") == "remote":
             loc += " remote"
-        yield make(j["text"], slug, loc, j["hostedUrl"], j["createdAt"], "Company site",
+        yield make(j["text"], nice(slug), loc, j["hostedUrl"], j["createdAt"], "Company site",
                    j.get("descriptionPlain", ""), need_remote=True)
 
 
@@ -173,7 +183,7 @@ def ashby(slug):
         for s in j.get("secondaryLocations") or []:
             places.append(s.get("location", "") if isinstance(s, dict) else str(s))
         loc = " ".join(places) + (" remote" if j.get("isRemote") else "")
-        yield make(j["title"], slug.replace("-", " ").title(), loc,
+        yield make(j["title"], nice(slug), loc,
                    j.get("jobUrl") or j.get("applyUrl"), j.get("publishedAt"), "Company site",
                    j.get("descriptionPlain") or clean(j.get("descriptionHtml")), need_remote=True)
 
