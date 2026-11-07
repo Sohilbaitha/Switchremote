@@ -99,9 +99,6 @@ def make(title, company, location, url, posted, source, text, need_remote=False,
         # Fresher board rule: technical roles only when the title itself says junior/intern/trainee
         if has(title_l, TECH) and not has(title_l, FRESHER):
             return None
-        # Every other job needs a clear fresher signal, otherwise it is not for freshers
-        if not (has(body, FRESHER) or has(title_l, ROLES) or (years is not None and years <= 1)):
-            return None
         countries = countries_for(location)
         if not countries:
             return None
@@ -312,8 +309,8 @@ def main():
             print(f"FAIL  employer form: {e}")
 
     jobs = sorted(found.values(), key=lambda j: j["posted"], reverse=True)[:MAX_JOBS]
-    if succeeded == 0 and OUT.exists():
-        print("All sources failed, keeping the old file.")
+    if (succeeded == 0 or not jobs) and OUT.exists():
+        print("No sources worked or nothing matched, keeping the old file.")
         return
     OUT.parent.mkdir(exist_ok=True)
     OUT.write_text(json.dumps(
