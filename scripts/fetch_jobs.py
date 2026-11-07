@@ -153,7 +153,9 @@ def himalayas():
 # Proper display names for companies whose careers link uses a short code
 NAMES = {"gohighlevel": "HighLevel", "sprinto": "Sprinto", "gleanwork": "Glean",
          "elevenlabs": "ElevenLabs", "deel": "Deel", "zapier": "Zapier",
-         "gitlab": "GitLab", "branch": "Branch International"}
+         "gitlab": "GitLab", "branch": "Branch International",
+         "remotecom": "Remote", "invisibletech": "Invisible Technologies",
+         "pricelabs": "PriceLabs"}
 
 
 def nice(slug, fallback=None):
@@ -194,7 +196,7 @@ def workable(slug):
         loc = ", ".join(x for x in [j.get("city"), j.get("state"), j.get("country")] if x)
         if j.get("telecommuting"):
             loc += " remote"
-        yield make(j["title"], d.get("name") or slug, loc, j.get("url") or j.get("shortlink"),
+        yield make(j["title"], nice(slug, d.get("name")), loc, j.get("url") or j.get("shortlink"),
                    j.get("published_on") or j.get("created_at"), "Company site",
                    clean(j.get("description")), need_remote=True)
 
