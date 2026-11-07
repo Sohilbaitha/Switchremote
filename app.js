@@ -90,6 +90,11 @@ function render() {
     const av = document.createElement('div');
     av.className = 'av';
     av.textContent = (j.company || '?').trim().charAt(0).toUpperCase();
+    if (j.logo) {
+      const im = document.createElement('img');
+      im.src = j.logo; im.alt = ''; im.loading = 'lazy'; im.referrerPolicy = 'no-referrer';
+      im.onload = () => { av.textContent = ''; av.classList.add('has-logo'); av.append(im); };
+    }
     const body = document.createElement('div');
     body.className = 'body';
     const top = document.createElement('div');
