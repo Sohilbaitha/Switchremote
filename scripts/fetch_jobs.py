@@ -82,7 +82,7 @@ def min_years(text):
     return min(int(n) for n in found) if found else None
 
 
-def make(title, company, location, url, posted, source, text, need_remote=False):
+def make(title, company, location, url, posted, source, text, need_remote=False, logo=""):
     try:
         text = (text or "")[:4000]
         if not (title and url and url.startswith("http")):
@@ -112,6 +112,7 @@ def make(title, company, location, url, posted, source, text, need_remote=False)
             "url": url,
             "posted": parse_date(posted).isoformat(),
             "source": source,
+            **({"logo": logo} if isinstance(logo, str) and logo.startswith("https://") else {}),
         }
     except Exception:
         return None
@@ -123,7 +124,8 @@ def remotive():
     for j in get("https://remotive.com/api/remote-jobs")["jobs"]:
         yield make(j["title"], j["company_name"], j.get("candidate_required_location", ""),
                    j["url"], j["publication_date"], "Remotive",
-                   clean(j.get("description")) + " " + j.get("category", ""))
+                   clean(j.get("description")) + " " + j.get("category", ""),
+                   logo=j.get("company_logo") or "")
 
 
 def jobicy():
@@ -133,7 +135,8 @@ def jobicy():
         level = j.get("jobLevel", "")
         level = " ".join(level) if isinstance(level, list) else level
         yield make(j["jobTitle"], j["companyName"], geo, j["url"], j["pubDate"], "Jobicy",
-                   clean(j.get("jobDescription")) + " " + level)
+                   clean(j.get("jobDescription")) + " " + level,
+                   logo=j.get("companyLogo") or "")
 
 
 def himalayas():
@@ -144,7 +147,8 @@ def himalayas():
             level = " ".join(j.get("seniority") or [])
             yield make(j["title"], j["companyName"], loc,
                        j.get("applicationLink") or j.get("guid"), j.get("pubDate"), "Himalayas",
-                       clean(j.get("description") or j.get("excerpt")) + " " + level)
+                       clean(j.get("description") or j.get("excerpt")) + " " + level,
+                       logo=j.get("companyLogo") or "")
 
 
 # ---------- company career pages ----------
