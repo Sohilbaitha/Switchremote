@@ -70,7 +70,7 @@ function render() {
   drawChips();
   const t = q.value.trim().toLowerCase();
   const rows = jobs.filter(j =>
-    inPlace(j, place) && (!t || (j.title + ' ' + j.company).toLowerCase().includes(t))
+    inPlace(j, place) && (!t || t.split(/\s+/).every(w => (j.title + ' ' + j.company + ' ' + j.countries.join(' ') + ' ' + j.source + (j.countries.includes('Worldwide') ? ' anywhere world' : '')).toLowerCase().includes(w)))
   );
   list.replaceChildren();
   if (rows.length) {
@@ -91,9 +91,16 @@ function render() {
     av.className = 'av';
     av.textContent = (j.company || '?').trim().charAt(0).toUpperCase();
     if (j.logo) {
+      // The image sits inside the box from the start (hidden), so the browser always loads it
       const im = document.createElement('img');
-      im.src = j.logo; im.alt = ''; im.loading = 'lazy'; im.referrerPolicy = 'no-referrer';
-      im.onload = () => { av.textContent = ''; av.classList.add('has-logo'); av.append(im); };
+      im.alt = '';
+      im.referrerPolicy = 'no-referrer';
+      im.decoding = 'async';
+      im.hidden = true;
+      im.onload = () => { if (im.naturalWidth > 1) { av.firstChild.remove(); im.hidden = false; av.classList.add('has-logo'); } else { im.remove(); } };
+      im.onerror = () => im.remove();
+      av.append(im);
+      im.src = j.logo;
     }
     const body = document.createElement('div');
     body.className = 'body';
@@ -137,3 +144,5 @@ function render() {
 }
 
 q.addEventListener('input', render);
+q.addEventListener('search', render);
+q.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); q.blur(); } });
