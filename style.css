@@ -141,14 +141,17 @@ footer a{color:inherit}
 .av.has-logo{background:#fff;border:1px solid var(--line)}
 .av img{width:100%;height:100%;object-fit:contain;border-radius:9px;display:block}
 
-/* New today chip, New label, WhatsApp share */
-.chip-new{display:inline-flex;align-items:center;border-color:var(--blue);background:var(--tint)}
-.chip-new .dot{width:8px;height:8px;margin-right:8px;border-radius:50%;background:var(--blue);animation:live 1.6s ease-out infinite}
-.chip.on.chip-new{background:#000;border-color:#000}
-@keyframes live{0%{box-shadow:0 0 0 0 rgba(56,182,255,.7)}75%{box-shadow:0 0 0 7px rgba(56,182,255,0)}100%{box-shadow:0 0 0 0 rgba(56,182,255,0)}}
-@media (prefers-reduced-motion:reduce){.chip-new .dot{animation:none}}
-.age.new{align-self:flex-start;background:var(--blue);color:#000;border-radius:999px;padding:1px 10px;font-size:.75rem;font-weight:600}
-.share{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border:1px solid var(--line);border-radius:50%;text-decoration:none}
-.share svg{width:16px;height:16px;fill:#000}
-.share:hover{border-color:var(--blue);background:var(--tint)}
+/* New today chip, New label, Share */
+.chip-new{display:inline-flex;align-items:center;border:1.5px solid var(--blue);background:#fff;animation:ring 1.4s ease-out .6s 3}
+.chip-new .dot{width:7px;height:7px;margin-right:8px;border-radius:50%;background:var(--blue)}
+.chip.on.chip-new{background:#000;border-color:var(--blue);color:#fff}
+@keyframes ring{0%{box-shadow:0 0 0 0 rgba(56,182,255,.55)}80%{box-shadow:0 0 0 8px rgba(56,182,255,0)}100%{box-shadow:0 0 0 0 rgba(56,182,255,0)}}
+@media (prefers-reduced-motion:reduce){.chip-new{animation:none}}
+.age.new{align-self:flex-start;border:1.5px solid var(--blue);background:#fff;color:#000;border-radius:999px;padding:0 9px;font-size:.75rem;font-weight:600}
+.share{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;padding:0;border:1px solid var(--line);border-radius:50%;background:#fff;cursor:pointer}
+.share svg{width:16px;height:16px;fill:none;stroke:#000;stroke-width:1.8;stroke-linecap:round}
+.share svg circle{fill:#000;stroke:none;r:2.4px}
+.share:hover,.share:focus-visible{border-color:var(--blue);background:var(--tint);outline:none}
 .actions .report{margin-left:auto}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:#000;color:#fff;padding:10px 18px;border-radius:999px;font-size:.8125rem;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:30}
+.toast.show{opacity:1;transform:translate(-50%,0)}
