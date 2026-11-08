@@ -16,24 +16,38 @@ const PLACES = [
 const POST_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSeFsL9SU7VFMi27pCQri7ZziHbTVDPguEFP6cJvhidkb2psNQ/viewform';
 let jobs = [];
 let place = '';
-try { const s = new URLSearchParams(location.search).get('q'); if (s) q.value = s.slice(0, 80); } catch (e) {}
+// A shared link (?job=...) pins that job at the top once, then the page behaves normally
+let sharedKey = null, shared = null;
+try {
+  const sp = new URLSearchParams(location.search);
+  sharedKey = sp.get('job') || sp.get('q');
+  if (sharedKey) history.replaceState(null, '', location.pathname + location.hash);
+} catch (e) {}
+
+function jobId(j) {
+  let h = 2166136261;
+  for (const ch of j.url) { h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619); }
+  return (h >>> 0).toString(36);
+}
 
 fetch('data/jobs.json?v=' + Date.now())
   .then(r => r.json())
   .then(d => {
     jobs = d.jobs || [];
+    if (sharedKey) shared = jobs.find(j => jobId(j) === sharedKey || j.title === sharedKey) || null;
     document.getElementById('count').textContent = jobs.length + (jobs.length === 1 ? ' job' : ' jobs') + ' live right now';
     if (d.updated) {
       document.getElementById('updated').textContent =
         'Last updated: ' + new Date(d.updated).toLocaleString();
     }
     render();
+    if (shared) list.scrollIntoView({ block: 'start' });
   })
   .catch(() => { statusEl.textContent = 'Could not load jobs. Please try again later.'; });
 
 function shareJob(j) {
   const where = j.countries.includes('Worldwide') ? 'anywhere in the world' : j.countries.join(', ');
-  const url = 'https://switchremote.world/?q=' + encodeURIComponent(j.title);
+  const url = 'https://switchremote.world/?job=' + jobId(j);
   const text = j.title + ' at ' + j.company + ' (remote, ' + where + '). Free remote jobs for freshers on Switchremote.';
   if (window.track) track('share_click', { job_title: j.title, company: j.company });
   if (navigator.share) {
@@ -100,7 +114,7 @@ function drawChips() {
     const n = document.createElement('span');
     n.textContent = jobs.filter(j => inPlace(j, value)).length;
     b.append(n);
-    b.addEventListener('click', () => { place = value; render(); });
+    b.addEventListener('click', () => { place = value; shared = null; render(); });
     chipsEl.append(b);
   });
 }
@@ -111,6 +125,7 @@ function render() {
   const rows = jobs.filter(j =>
     inPlace(j, place) && (!t || t.split(/\s+/).every(w => (j.title + ' ' + j.company + ' ' + j.countries.join(' ') + ' ' + j.source + (j.countries.includes('Worldwide') ? ' anywhere world' : '')).toLowerCase().includes(w)))
   );
+  if (shared && !t && !place) { rows.splice(rows.indexOf(shared), 1); rows.unshift(shared); }
   list.replaceChildren();
   if (rows.length) {
     statusEl.textContent = rows.length + (rows.length === 1 ? ' job' : ' jobs');
@@ -126,6 +141,13 @@ function render() {
   rows.forEach(j => {
     const card = document.createElement('article');
     card.className = 'job';
+    if (j === shared) {
+      card.classList.add('shared');
+      const lb = document.createElement('p');
+      lb.className = 'shared-label';
+      lb.textContent = 'Shared with you';
+      card.append(lb);
+    }
     const av = document.createElement('div');
     av.className = 'av';
     av.textContent = (j.company || '?').trim().charAt(0).toUpperCase();
@@ -189,6 +211,6 @@ function render() {
   });
 }
 
-q.addEventListener('input', render);
+q.addEventListener('input', () => { shared = null; render(); });
 q.addEventListener('search', render);
 q.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); q.blur(); } });
