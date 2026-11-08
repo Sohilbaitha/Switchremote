@@ -30,7 +30,6 @@ Hiring remotely and open to freshers? You can list your job for free. Email **co
 
 - Website: [switchremote.world](https://switchremote.world)
 - Email: contact@switchremote.world
-- LinkedIn: [Switchremote](https://www.linkedin.com/company/switchremote.world)
 - Instagram: [@switchremote.world](https://www.instagram.com/switchremote.world)
 
 Built by [Sohil Baitha](https://github.com/Sohilbaitha).
