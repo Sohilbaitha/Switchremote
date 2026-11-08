@@ -342,6 +342,21 @@ def main():
         except Exception as e:
             print(f"FAIL  employer form: {e}")
 
+    # Keep jobs from earlier refreshes until they are MAX_AGE_DAYS old.
+    # Feeds only return their newest jobs, so without this good jobs vanish after a few hours.
+    # Employer jobs are not carried over: they always follow the Sheet.
+    carried = 0
+    if OUT.exists():
+        try:
+            for job in json.loads(OUT.read_text()).get("jobs", []):
+                if (job.get("source") != "Employer" and job.get("url") not in found
+                        and parse_date(job["posted"]) >= cutoff):
+                    found[job["url"]] = job
+                    carried += 1
+        except Exception as e:
+            print("Could not read old jobs:", e)
+    print(f"Kept {carried} jobs from earlier refreshes")
+
     jobs = sorted(found.values(), key=lambda j: j["posted"], reverse=True)[:MAX_JOBS]
     if (succeeded == 0 or not jobs) and OUT.exists():
         print("No sources worked or nothing matched, keeping the old file.")
