@@ -40,9 +40,6 @@ fetch('data/jobs.json?v=' + Date.now())
       document.getElementById('updated').textContent =
         'Last updated: ' + new Date(d.updated).toLocaleString();
     }
-    const sj = document.getElementById('st-jobs'), sn = document.getElementById('st-new');
-    if (sj) sj.textContent = jobs.length;
-    if (sn) sn.textContent = jobs.filter(isNew).length;
     render();
     if (shared) list.scrollIntoView({ block: 'start' });
   })
@@ -212,17 +209,6 @@ function render() {
     card.append(av, body);
     list.append(card);
   });
-  if (rows.length) {
-    // Desktop only (hidden on phones by CSS): fills the grid and invites employers
-    const cta = document.createElement('a');
-    cta.className = 'hire-card';
-    cta.href = POST_URL;
-    cta.target = '_blank';
-    cta.rel = 'noopener noreferrer';
-    cta.setAttribute('data-track', 'post_job_click');
-    cta.innerHTML = '<b>Hiring freshers?</b><span>Post your remote job on Switchremote for free.</span><i>Post a job</i>';
-    list.append(cta);
-  }
 }
 
 q.addEventListener('input', () => { shared = null; render(); });
