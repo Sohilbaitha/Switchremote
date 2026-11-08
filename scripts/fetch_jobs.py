@@ -126,7 +126,17 @@ def remotive():
 
 
 def jobicy():
-    for j in get("https://jobicy.com/api/v2/remote-jobs?count=100")["jobs"]:
+    seen = set()
+    # All remote jobs, then Asia-Pacific jobs as a separate call
+    batch = get("https://jobicy.com/api/v2/remote-jobs?count=100")["jobs"]
+    try:
+        batch += get("https://jobicy.com/api/v2/remote-jobs?count=50&geo=apac")["jobs"]
+    except Exception as e:
+        print("Jobicy APAC skipped:", e)
+    for j in batch:
+        if j.get("id") in seen:
+            continue
+        seen.add(j.get("id"))
         geo = j.get("jobGeo", "")
         geo = " ".join(geo) if isinstance(geo, list) else geo
         level = j.get("jobLevel", "")
@@ -137,7 +147,7 @@ def jobicy():
 
 
 def himalayas():
-    for offset in (0, 20, 40):
+    for offset in (0, 20, 40, 60, 80):
         for j in get(f"https://himalayas.app/jobs/api?limit=20&offset={offset}")["jobs"]:
             places = j.get("locationRestrictions") or []
             loc = " ".join(places) if places else "Worldwide"
@@ -148,6 +158,17 @@ def himalayas():
                        logo=j.get("companyLogo") or "")
 
 
+def remoteok():
+    # Remote OK terms: credit Remote OK and link to the job's Remote OK page (followed link).
+    # We do not use the Remote OK logo.
+    for j in get("https://remoteok.com/api"):
+        if not isinstance(j, dict) or not j.get("position"):
+            continue
+        yield make(j["position"], j.get("company", ""), j.get("location") or "Worldwide",
+                   j.get("url"), j.get("date"), "Remote OK",
+                   clean(j.get("description")) + " " + " ".join(j.get("tags") or []))
+
+
 # ---------- company career pages ----------
 
 # Proper display names for companies whose careers link uses a short code
@@ -155,7 +176,7 @@ NAMES = {"gohighlevel": "HighLevel", "sprinto": "Sprinto", "gleanwork": "Glean",
          "elevenlabs": "ElevenLabs", "deel": "Deel", "zapier": "Zapier",
          "gitlab": "GitLab", "branch": "Branch International",
          "remotecom": "Remote", "invisibletech": "Invisible Technologies",
-         "pricelabs": "PriceLabs"}
+         "pricelabs": "PriceLabs", "canonical": "Canonical"}
 
 
 def nice(slug, fallback=None):
@@ -286,7 +307,8 @@ def detect(link):
 
 def main():
     cfg = json.loads(SOURCES.read_text())
-    tasks = [("Remotive", remotive), ("Jobicy", jobicy), ("Himalayas", himalayas)]
+    tasks = [("Remotive", remotive), ("Jobicy", jobicy), ("Himalayas", himalayas),
+             ("Remote OK", remoteok)]
     for link in cfg.get("companies", []):
         kind, slug = detect(link)
         if kind:
