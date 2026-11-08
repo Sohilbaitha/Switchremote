@@ -34,3 +34,4 @@ Hiring remotely and open to freshers? You can list your job for free. Email **co
 - Instagram: [@switchremote.world](https://www.instagram.com/switchremote.world)
 
 Built by [Sohil Baitha](https://github.com/Sohilbaitha).
+
