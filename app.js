@@ -117,7 +117,7 @@ function render() {
     apply.className = 'apply';
     apply.href = j.url;
     apply.target = '_blank';
-    apply.rel = 'noopener noreferrer nofollow';
+    apply.rel = j.source === 'Remote OK' ? 'noopener' : 'noopener noreferrer nofollow';
     apply.textContent = 'Apply now';
     apply.addEventListener('click', () => {
       if (window.track) track('apply_click', { job_title: j.title, company: j.company, source: j.source, country: j.countries.join(',') });
