@@ -140,3 +140,9 @@ footer a{color:inherit}
 
 .av.has-logo{background:#fff;border:1px solid var(--line)}
 .av img{width:100%;height:100%;object-fit:contain;border-radius:9px;display:block}
+
+/* New badge + WhatsApp share */
+.tag.new{background:var(--blue);border-color:var(--blue);color:#000;font-weight:600}
+.share{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid var(--line);border-radius:999px;color:#1b1b1b;font-size:.8125rem;font-weight:500;text-decoration:none}
+.share svg{width:15px;height:15px;fill:#000}
+.share:hover{border-color:var(--blue);background:var(--tint)}
