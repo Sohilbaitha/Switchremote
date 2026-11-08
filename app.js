@@ -65,6 +65,12 @@ function drawChips() {
     const b = document.createElement('button');
     b.className = 'chip' + (value === place ? ' on' : '');
     b.textContent = label;
+    if (value === 'new') {
+      b.classList.add('chip-new');
+      const dot = document.createElement('i');
+      dot.className = 'dot';
+      b.prepend(dot);
+    }
     const n = document.createElement('span');
     n.textContent = jobs.filter(j => inPlace(j, value)).length;
     b.append(n);
@@ -117,14 +123,13 @@ function render() {
     h.textContent = j.title;
     const a = document.createElement('span');
     a.className = 'age';
-    a.textContent = age(j.posted);
+    if (isNew(j)) { a.classList.add('new'); a.textContent = 'New'; } else { a.textContent = age(j.posted); }
     top.append(h, a);
     const c = document.createElement('p');
     c.className = 'company';
     c.textContent = j.company;
     const tags = document.createElement('div');
     tags.className = 'tags';
-    if (isNew(j)) { const nt = tag('New'); nt.classList.add('new'); tags.append(nt); }
     tags.append(tag('Remote', true));
     j.countries.forEach(x => tags.append(tag(x === 'Worldwide' ? 'Anywhere in the World' : x)));
     tags.append(tag(j.source));
@@ -152,7 +157,8 @@ function render() {
     share.target = '_blank';
     share.rel = 'noopener noreferrer';
     share.setAttribute('aria-label', 'Share this job on WhatsApp');
-    share.innerHTML = '<svg viewBox="0 0 448 512" aria-hidden="true"><path d="M380.9 97.1A223.5 223.5 0 0 0 222 31C98.3 31-2.4 131.7-2.4 255.4c0 39.5 10.3 78.1 29.9 112L-4 480l115.6-30.4a223 223 0 0 0 106.4 27.1h.1c123.6 0 224.4-100.7 224.4-224.4 0-60-23.3-116.3-61.6-155.2zM222 438.6c-33.4 0-66.2-9-94.7-25.9l-6.8-4-68.6 18 18.3-66.9-4.4-6.9a185.8 185.8 0 0 1-28.5-99.4c0-102.8 83.7-186.5 186.7-186.5 49.8 0 96.6 19.4 131.8 54.7a185.4 185.4 0 0 1 54.6 131.9c0 102.9-83.8 186.6-188.4 186.6zm102.2-139.7c-5.6-2.8-33.1-16.3-38.2-18.2-5.1-1.9-8.8-2.8-12.6 2.8-3.7 5.6-14.4 18.2-17.7 22-3.3 3.7-6.5 4.2-12.1 1.4-33.3-16.6-55.1-29.7-77.1-67.3-5.8-10 5.8-9.3 16.6-30.9 1.8-3.7.9-7-.5-9.8-1.4-2.8-12.6-30.3-17.2-41.5-4.5-10.9-9.1-9.4-12.6-9.6-3.2-.2-7-.2-10.7-.2-3.7 0-9.8 1.4-15 7-5.1 5.6-19.6 19.2-19.6 46.7s20.1 54.2 22.9 57.9c2.8 3.7 39.5 60.3 95.7 84.6 35.5 15.3 49.4 16.6 67.2 14 10.8-1.6 33.1-13.5 37.8-26.6 4.7-13.1 4.7-24.3 3.3-26.6-1.3-2.5-5-3.9-10.6-6.6z"/></svg>Share';
+    share.title = 'Share on WhatsApp';
+    share.innerHTML = '<svg viewBox="0 0 448 512" aria-hidden="true"><path d="M380.9 97.1A223.5 223.5 0 0 0 222 31C98.3 31-2.4 131.7-2.4 255.4c0 39.5 10.3 78.1 29.9 112L-4 480l115.6-30.4a223 223 0 0 0 106.4 27.1h.1c123.6 0 224.4-100.7 224.4-224.4 0-60-23.3-116.3-61.6-155.2zM222 438.6c-33.4 0-66.2-9-94.7-25.9l-6.8-4-68.6 18 18.3-66.9-4.4-6.9a185.8 185.8 0 0 1-28.5-99.4c0-102.8 83.7-186.5 186.7-186.5 49.8 0 96.6 19.4 131.8 54.7a185.4 185.4 0 0 1 54.6 131.9c0 102.9-83.8 186.6-188.4 186.6zm102.2-139.7c-5.6-2.8-33.1-16.3-38.2-18.2-5.1-1.9-8.8-2.8-12.6 2.8-3.7 5.6-14.4 18.2-17.7 22-3.3 3.7-6.5 4.2-12.1 1.4-33.3-16.6-55.1-29.7-77.1-67.3-5.8-10 5.8-9.3 16.6-30.9 1.8-3.7.9-7-.5-9.8-1.4-2.8-12.6-30.3-17.2-41.5-4.5-10.9-9.1-9.4-12.6-9.6-3.2-.2-7-.2-10.7-.2-3.7 0-9.8 1.4-15 7-5.1 5.6-19.6 19.2-19.6 46.7s20.1 54.2 22.9 57.9c2.8 3.7 39.5 60.3 95.7 84.6 35.5 15.3 49.4 16.6 67.2 14 10.8-1.6 33.1-13.5 37.8-26.6 4.7-13.1 4.7-24.3 3.3-26.6-1.3-2.5-5-3.9-10.6-6.6z"/></svg>';
     share.addEventListener('click', () => {
       if (window.track) track('share_click', { job_title: j.title, company: j.company });
     });
