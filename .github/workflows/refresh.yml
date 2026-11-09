@@ -20,11 +20,8 @@ jobs:
         env:
           # Optional: a free Himalayas API key, only needed if we ever get rate limited
           HIMALAYAS_API_KEY: ${{ secrets.HIMALAYAS_API_KEY }}
-      # Writes feed.xml and posts new jobs to Telegram (only if the Telegram secrets are set)
+      # Writes feed.xml (RSS feed of the newest jobs)
       - run: python scripts/share_jobs.py
-        env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
       # Writes the country pages (remote-jobs-india.html and so on) and sitemap.xml
       - run: python scripts/build_pages.py
         continue-on-error: true
@@ -32,5 +29,4 @@ jobs:
           git config user.name "switchremote-bot"
           git config user.email "bot@users.noreply.github.com"
           git add data/jobs.json feed.xml sitemap.xml remote-jobs-*.html
-          if [ -f data/shared.json ]; then git add data/shared.json; fi
           git diff --staged --quiet || (git commit -m "Update jobs" && git push)

@@ -1,16 +1,9 @@
-"""Shares new jobs automatically after every refresh.
-
-1. Writes feed.xml (an RSS feed) that social media tools can read.
-2. Posts new jobs to the Switchremote Telegram channel, if the two
-   GitHub secrets TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID are set.
+"""Writes feed.xml (an RSS feed of the newest jobs) after every refresh.
 
 Remotive, Remote OK and Himalayas jobs are never shared outside the site,
 because their terms ask us not to pass their jobs on (feeds included).
 """
 import json
-import os
-import urllib.parse
-import urllib.request
 from datetime import datetime, timezone
 from email.utils import format_datetime
 from pathlib import Path
@@ -18,12 +11,9 @@ from xml.sax.saxutils import escape
 
 ROOT = Path(__file__).resolve().parent.parent
 JOBS = ROOT / "data" / "jobs.json"
-STATE = ROOT / "data" / "shared.json"
 FEED = ROOT / "feed.xml"
 SITE = "https://switchremote.world/"
 NOT_SHARED = {"Remotive", "Remote OK", "Himalayas"}
-MAX_POSTS_PER_RUN = 5      # never flood the channel
-FIRST_RUN_POSTS = 3        # on the very first run, post only the newest few
 
 
 def job_id(url):
@@ -77,53 +67,9 @@ def write_feed(jobs):
     print(f"feed.xml written with {len(items)} jobs")
 
 
-def telegram(token, chat, text):
-    data = urllib.parse.urlencode({"chat_id": chat, "text": text}).encode()
-    req = urllib.request.Request(f"https://api.telegram.org/bot{token}/sendMessage", data=data)
-    with urllib.request.urlopen(req, timeout=20) as r:
-        return json.load(r).get("ok", False)
-
-
-def message(j):
-    lines = [f"New remote job: {j['title']}", f"Company: {j['company']}", f"Where: {where(j)}"]
-    lines.append("Posted directly by the employer" if j["source"] == "Employer" else f"Source: {j['source']}")
-    lines += ["", "Details and apply: " + SITE + "?job=" + job_id(j["url"]), "",
-              "Free for freshers. A real employer never asks you to pay."]
-    return "\n".join(lines)
-
-
-def post_new(jobs):
-    token = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
-    chat = os.environ.get("TELEGRAM_CHAT_ID", "").strip()
-    if not (token and chat):
-        print("Telegram not set up yet, skipping posts")
-        return
-    first_run = not STATE.exists()
-    done = set() if first_run else set(json.loads(STATE.read_text()).get("ids", []))
-    fresh = [j for j in shareable(jobs) if job_id(j["url"]) not in done]
-    fresh.sort(key=lambda j: j["posted"], reverse=True)
-    limit = FIRST_RUN_POSTS if first_run else MAX_POSTS_PER_RUN
-    posted = 0
-    for j in fresh[:limit]:
-        try:
-            if telegram(token, chat, message(j)):
-                posted += 1
-                done.add(job_id(j["url"]))
-        except Exception as e:
-            print("Telegram post failed:", e)
-            break
-    if first_run:
-        # Do not dump the whole board on the first day; mark the rest as seen
-        done.update(job_id(j["url"]) for j in shareable(jobs))
-    current = {job_id(j["url"]) for j in jobs}
-    STATE.write_text(json.dumps({"ids": sorted(done & current)}, indent=0))
-    print(f"Posted {posted} new jobs to Telegram")
-
-
 def main():
     jobs = json.loads(JOBS.read_text()).get("jobs", [])
     write_feed(jobs)
-    post_new(jobs)
 
 
 if __name__ == "__main__":

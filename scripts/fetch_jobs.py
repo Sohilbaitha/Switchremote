@@ -14,9 +14,7 @@ ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "data" / "jobs.json"
 SOURCES = ROOT / "sources.json"
 HEADERS = {"User-Agent": "SwitchremoteBot/1.0"}
-MAX_AGE_DAYS = 14
-# A job that is still on the company's own careers board is still open, so it may stay longer
-COMPANY_MAX_AGE_DAYS = 30
+MAX_AGE_DAYS = 14   # every job leaves the site 14 days after it was posted
 MAX_JOBS = 500
 
 COUNTRIES = {
@@ -514,11 +512,9 @@ def main():
     boards_ok = set()   # company boards that answered this time
     now = datetime.now(timezone.utc)
     cutoff = now - timedelta(days=MAX_AGE_DAYS)
-    company_cutoff = now - timedelta(days=COMPANY_MAX_AGE_DAYS)
 
     def fresh(job):
-        limit = company_cutoff if job.get("source") == "Company site" else cutoff
-        return parse_date(job["posted"]) >= limit
+        return parse_date(job["posted"]) >= cutoff
 
     def board_of(job):
         if job.get("board"):
@@ -567,8 +563,8 @@ def main():
                     continue
                 if job.get("source") == "Company site":
                     board = board_of(job)
-                    # Gone from a board that answered, or no way to re-check it after 14 days
-                    if board in boards_ok or (board is None and parse_date(job["posted"]) < cutoff):
+                    # Gone from a board that answered
+                    if board in boards_ok:
                         closed += 1
                         continue
                 # Himalayas tells us when a job has closed, so ask before keeping an old one
