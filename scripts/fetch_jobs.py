@@ -373,7 +373,7 @@ def recruitee(slug):
 
 # ---------- employer jobs from the Google Form sheet ----------
 
-EMPLOYER_MAX_AGE_DAYS = 30
+EMPLOYER_MAX_AGE_DAYS = MAX_AGE_DAYS   # employer jobs follow the same 14-day rule
 FORM_COUNTRIES = {"worldwide": "Worldwide", "indonesia": "Indonesia", "vietnam": "Vietnam",
                   "malaysia": "Malaysia", "philippines": "Philippines",
                   "thailand": "Thailand", "india": "India", "philipines": "Philippines"}
@@ -386,20 +386,23 @@ def get_text(url):
 
 
 def sheet_date(value):
-    """Form timestamps look like 5/11/2026 18:20:15. If day/month is unclear, use now."""
+    """Form timestamps look like 5/11/2026 18:20:15, and the sheet may write day or month first.
+    Take the newest reading that is not in the future, so a job can never look newer than it is
+    and always leaves after 14 days."""
     now = datetime.now(timezone.utc)
     try:
         date_part, _, time_part = value.strip().partition(" ")
         a, b, year = [int(x) for x in date_part.split("/")]
-        if a > 12:
-            day, month = a, b
-        elif b > 12:
-            month, day = a, b
-        else:
-            return now
         h, m, sec = ([int(x) for x in time_part.split(":")] + [0, 0, 0])[:3]
-        d = datetime(year, month, day, h, m, sec, tzinfo=timezone.utc)
-        return min(d, now)
+        options = []
+        for day, month in ((a, b), (b, a)):
+            try:
+                d = datetime(year, month, day, h, m, sec, tzinfo=timezone.utc)
+            except ValueError:
+                continue
+            if d <= now + timedelta(days=1):
+                options.append(min(d, now))
+        return max(options) if options else now
     except Exception:
         return now
 
