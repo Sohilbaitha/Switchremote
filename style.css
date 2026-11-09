@@ -167,6 +167,7 @@ footer a{color:inherit}
 .foot .social{justify-content:center}
 .f-links .sep{margin:0 10px;color:var(--muted)}
 .f-info p{margin:0 0 6px}
+@media (max-width:899px){.f-info p{text-wrap:balance}}
 @media (min-width:900px){
 .foot{text-align:left}
 .f-top,.f-bottom{display:flex;align-items:center;justify-content:space-between;gap:40px}
