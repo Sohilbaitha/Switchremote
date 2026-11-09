@@ -116,6 +116,9 @@ def build(template, jobs, place, name, where):
     h = swap(h, r'<script type="application/ld\+json" id="faq-ld">.*?</script>\n?', "")
     h = swap(h, r"<h1>.*?</h1>", f"<h1>{escape(h1)}</h1>")
     h = swap(h, r'<p class="sub">.*?</p>', f'<p class="sub">{escape(sub)}</p>')
+    # Mark this country's chip as the selected one in the plain HTML too
+    h = h.replace('<a class="chip on" href="./">', '<a class="chip" href="./">', 1)
+    h = h.replace(f'<a class="chip" href="{name}">', f'<a class="chip on" href="{name}" aria-current="page">', 1)
     h = swap(h, r'<main id="list"></main>', '<main id="list">' + "".join(card(j) for j in rows) + "</main>")
     h = swap(h, r'<script src="app.js"></script>',
              f'<script>window.SR_PLACE={json.dumps(place)};</script>\n<script src="app.js"></script>')
@@ -129,9 +132,11 @@ def write_sitemap():
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     urls = [(SITE, today, "daily", "1.0")]
     urls += [(SITE + name, today, "daily", "0.8") for _, name, _ in PAGES]
-    urls += [(SITE + "post-a-job.html", old.get(SITE + "post-a-job.html", today), "monthly", "0.6"),
-             (SITE + "scam-check.html", old.get(SITE + "scam-check.html", today), "monthly", "0.6"),
-             (SITE + "legal.html", old.get(SITE + "legal.html", today), "monthly", "0.4")]
+    for page, pri in (("post-a-job.html", "0.6"), ("scam-check.html", "0.6"), ("about.html", "0.5"),
+                      ("contact.html", "0.4"), ("terms.html", "0.3"), ("privacy.html", "0.3"),
+                      ("disclaimer.html", "0.3")):
+        if (ROOT / page).exists():
+            urls.append((SITE + page, old.get(SITE + page, today), "monthly", pri))
     body = "".join(
         f"  <url>\n    <loc>{loc}</loc>\n    <lastmod>{mod}</lastmod>\n"
         f"    <changefreq>{freq}</changefreq>\n    <priority>{pri}</priority>\n  </url>\n"

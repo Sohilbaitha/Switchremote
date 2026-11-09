@@ -54,7 +54,10 @@ LEVEL_OK = ["entry", "entry-level", "junior", "intern", "internship", "graduate"
 TECH = ["engineer", "developer", "devops", "sre", "scientist", "analyst", "architect",
         "programmer", "security", "data engineer", "machine learning", "backend", "frontend",
         "full stack", "fullstack", "software"]
-BAD = ["registration fee", "security deposit", "pay a fee", "processing fee", "investment required"]
+BAD = ["registration fee", "security deposit", "pay a fee", "processing fee", "investment required",
+       "commission only", "commission-only", "commission based only", "unpaid internship",
+       "unpaid position", "unpaid role", "volunteer position", "volunteer role", "no salary",
+       "equity only", "pay for training", "training fee"]
 
 
 def get(url, headers=None):
@@ -130,9 +133,13 @@ SCAM = re.compile(
     r"(like|rate|review) (videos|posts|products|hotels) (and|to) earn|prepaid task|"
     r"(contact|message|text|dm|chat with) (us |me |the recruiter )?(on|via) (whatsapp|telegram)|"
     r"telegram (id|handle|username)|unlimited (income|earning)|earn (rs\.?|inr|₹|\$) ?\d[\d,]* (per|a) day)\b", re.I)
-# Recruitment / staffing agencies: allowed, but at most 2 jobs each so one agency cannot flood the board
-AGENCY = re.compile(r"staff|recruit|agency|outsourc|manpower|placement|talent|hire|hiring|consultan", re.I)
-AGENCY_MAX = 2
+# Staffing, outsourcing and virtual-assistant agencies are left out of the job feeds: the real
+# employer is hidden behind them, so we cannot tell who a fresher would be working for.
+# A company's own career board and employer posts we reviewed by hand are not affected.
+AGENCY = re.compile(r"staff|recruit|agency|agencies|outsourc|offshor|overseas|manpower|placement|talent|"
+                    r"\bhire|hiring|consultan|delegate|\bbpo\b|virtual assist|\bvas?\b|remote employee|"
+                    r"operationsarmy|workforce|headhunt", re.I)
+AGENCY_MAX = 0
 FEEDS = {"Remotive", "Jobicy", "Himalayas", "Remote OK"}
 MIN_TEXT = 300   # feed jobs with almost no description are dropped
 
@@ -222,6 +229,8 @@ def himalayas_get(url):
 
 
 def himalayas_job(j):
+    if str(j.get("employmentType") or "").lower() == "volunteer":
+        return None   # unpaid work is not a job
     places = [p.get("name", "") if isinstance(p, dict) else str(p)
               for p in (j.get("locationRestrictions") or [])]
     loc = " ".join(places) if places else "Worldwide"
@@ -548,7 +557,7 @@ def main():
         if job.get("source") != "Employer" and not title_ok(job.get("title")):
             dropped += 1
             continue
-        if job.get("source") != "Employer" and AGENCY.search(name):
+        if job.get("source") in FEEDS and AGENCY.search(name):
             per_agency[name] = per_agency.get(name, 0) + 1
             if per_agency[name] > AGENCY_MAX:
                 dropped += 1

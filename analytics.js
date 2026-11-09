@@ -49,7 +49,7 @@ function showBanner() {
   box.setAttribute('aria-label', 'Cookie choice');
   box.innerHTML =
     '<p>We would like to use Google Analytics cookies to count visits and clicks, so we can improve Switchremote. ' +
-    'You can say no and still use the whole site. <a href="legal.html#privacy">Read our privacy policy</a>.</p>' +
+    'You can say no and still use the whole site. <a href="privacy.html">Read our privacy policy</a>.</p>' +
     '<div class="cookie-btns"><button type="button" class="yes">Accept</button>' +
     '<button type="button" class="no">No thanks</button></div>';
   document.body.appendChild(box);

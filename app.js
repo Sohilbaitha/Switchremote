@@ -14,6 +14,17 @@ const PLACES = [
   ['India', '\u{1F1EE}\u{1F1F3} India']
 ];
 const POST_URL = 'post-a-job.html';
+// Every country has its own page, so the country chips are real links
+const PAGES = {
+  '': './',
+  Worldwide: 'remote-jobs-worldwide.html',
+  Indonesia: 'remote-jobs-indonesia.html',
+  Vietnam: 'remote-jobs-vietnam.html',
+  Malaysia: 'remote-jobs-malaysia.html',
+  Philippines: 'remote-jobs-philippines.html',
+  Thailand: 'remote-jobs-thailand.html',
+  India: 'remote-jobs-india.html'
+};
 // Each job feed asks us to credit it and link back, so the source label is a link
 const SOURCE_SITES = { Remotive: 'https://remotive.com', Jobicy: 'https://jobicy.com', Himalayas: 'https://himalayas.app', 'Remote OK': 'https://remoteok.com' };
 let jobs = [];
@@ -24,7 +35,9 @@ let place = HOME;
 let sharedKey = null, shared = null;
 try {
   const sp = new URLSearchParams(location.search);
-  sharedKey = sp.get('job') || sp.get('q');
+  sharedKey = sp.get('job');
+  // ?q=word opens the page with that search already typed in
+  if (sp.get('q')) q.value = sp.get('q');
   if (sharedKey) history.replaceState(null, '', location.pathname + location.hash);
 } catch (e) {}
 
@@ -38,7 +51,7 @@ fetch('data/jobs.json?v=' + Date.now())
   .then(r => r.json())
   .then(d => {
     jobs = d.jobs || [];
-    if (sharedKey) shared = jobs.find(j => jobId(j) === sharedKey || j.title === sharedKey) || null;
+    if (sharedKey) shared = jobs.find(j => jobId(j) === sharedKey) || null;
     const live = jobs.filter(j => inPlace(j, HOME)).length;
     document.getElementById('count').textContent = live + (live === 1 ? ' job' : ' jobs') + ' live right now';
     if (d.updated) {
@@ -82,7 +95,7 @@ function isNew(j) {
 
 function inPlace(j, p) {
   if (!p) return true;
-  if (p === 'new') return isNew(j);
+  if (p === 'new') return isNew(j) && inPlace(j, HOME);
   if (p === 'Worldwide') return j.countries.includes('Worldwide');
   return j.countries.includes(p) || j.countries.includes('Worldwide') || j.countries.includes('Asia');
 }
@@ -141,11 +154,18 @@ const FLAGS_OK = (() => {
 function drawChips() {
   chipsEl.replaceChildren();
   PLACES.forEach(([value, label]) => {
-    const b = document.createElement('button');
+    // The chip for this page and "New today" filter in place. Every other chip opens that country's page.
+    const isLink = value !== 'new' && value !== HOME;
+    const b = document.createElement(isLink ? 'a' : 'button');
     b.className = 'chip' + (value === place ? ' on' : '');
-    b.type = 'button';
-    b.setAttribute('aria-pressed', value === place);
-    b.textContent = FLAGS_OK ? label : label.replace(/^[\u{1F1E6}-\u{1F1FF}]{2} /u, '');
+    if (isLink) {
+      b.href = PAGES[value];
+    } else {
+      b.type = 'button';
+      b.setAttribute('aria-pressed', value === place);
+      b.addEventListener('click', () => { place = value; shared = null; render(); });
+    }
+    b.append(FLAGS_OK ? label : label.replace(/^[\u{1F1E6}-\u{1F1FF}]{2} /u, ''));
     if (value === 'new') {
       b.classList.add('chip-new');
       const dot = document.createElement('i');
@@ -155,9 +175,11 @@ function drawChips() {
     const n = document.createElement('span');
     n.textContent = jobs.filter(j => inPlace(j, value)).length;
     b.append(n);
-    b.addEventListener('click', () => { place = value; shared = null; render(); });
     chipsEl.append(b);
   });
+  // On phones the chips scroll sideways, so bring the selected one into view
+  const on = chipsEl.querySelector('.on');
+  if (on && chipsEl.scrollWidth > chipsEl.clientWidth) chipsEl.scrollLeft = on.offsetLeft - chipsEl.offsetLeft - 16;
 }
 
 function render() {
@@ -249,6 +271,17 @@ function render() {
     list.append(card);
   });
 }
+
+// "Share Switchremote" button under the job list
+const shareSite = document.getElementById('share-site');
+if (shareSite) shareSite.addEventListener('click', () => {
+  const url = 'https://switchremote.world/';
+  const text = 'Remote jobs for freshers across Asia and the world. Free, no signup.';
+  if (window.track) track('share_site_click', {});
+  if (navigator.share) { navigator.share({ title: 'Switchremote', text: text, url: url }).catch(() => {}); return; }
+  if (navigator.clipboard) navigator.clipboard.writeText(text + ' ' + url).then(() => toast('Link copied. Paste it anywhere to share.'), () => window.prompt('Copy this link:', url));
+  else window.prompt('Copy this link:', url);
+});
 
 q.addEventListener('input', () => { shared = null; render(); });
 q.addEventListener('search', render);

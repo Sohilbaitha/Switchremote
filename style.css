@@ -180,17 +180,11 @@ footer a{color:inherit}
 .f-copy{flex:none}
 }
 
-/* Links to the country pages, under the job list */
-.by{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:28px;font-size:.8125rem;color:var(--muted)}
-.by span{flex-basis:100%}
-.by a{padding:5px 12px;border:1px solid var(--line);border-radius:999px;color:#1b1b1b;font-weight:500;text-decoration:none}
-.by a:hover,.by a:focus-visible{border-color:var(--blue)}
-@media (min-width:700px){.by span{flex-basis:auto;margin-right:4px}}
 
 /* Source label that links to the job board, FAQ, footer links on phones */
 a.tag-src{text-decoration:none}
 a.tag-src:hover,a.tag-src:focus-visible{border-color:var(--blue);color:#000}
-.faq{margin-top:36px;max-width:760px}
+.faq{min-width:0}
 .faq h2{margin:0 0 8px;font-size:1.0625rem;color:#000}
 .faq details{border-bottom:1px solid var(--line)}
 .faq summary{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 0;font-size:.9375rem;font-weight:600;color:#000;cursor:pointer;list-style:none}
@@ -199,8 +193,6 @@ a.tag-src:hover,a.tag-src:focus-visible{border-color:var(--blue);color:#000}
 .faq details[open] summary::after{transform:rotate(-135deg)}
 .faq summary:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
 .faq p{margin:0 0 14px;color:#3d4954}
-.f-right p{margin:0 0 6px}
-@media (min-width:900px){.f-right{text-align:right}.f-right p:last-child{margin:0}}
 
 /* Post a job page */
 .post{max-width:760px;margin:0 auto;padding:28px 0 8px}
@@ -216,3 +208,17 @@ a.tag-src:hover,a.tag-src:focus-visible{border-color:var(--blue);color:#000}
 .formbox{margin-top:12px;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#fff}
 .formbox iframe{display:block;width:100%;height:1500px;border:0}
 .post .note{margin:12px 0 0;font-size:.8125rem;color:var(--muted)}
+
+/* Under the job list: questions on the left, two small cards on the right (stacked on phones) */
+a.chip{text-decoration:none}
+.more{display:grid;gap:28px;margin-top:36px}
+.side{display:grid;gap:16px;align-content:start}
+.card{padding:18px;border:1px solid var(--line);border-radius:16px}
+.card h2{margin:0 0 6px;font-size:1rem;color:#000}
+.card p{margin:0 0 14px;color:#3d4954}
+.card .apply{margin-top:0}
+.ghost{display:inline-block;padding:6px 18px;border:1px solid var(--line);border-radius:999px;background:#fff;color:#000;font:inherit;font-size:.8125rem;font-weight:600;text-decoration:none;cursor:pointer}
+.ghost:hover,.ghost:focus-visible{border-color:var(--blue);outline:none}
+@media (min-width:900px){.more{grid-template-columns:minmax(0,1fr) 320px;gap:48px;align-items:start}}
+.legal h2{margin-top:30px}
+.legal .toc{margin-bottom:8px}
