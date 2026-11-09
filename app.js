@@ -99,12 +99,28 @@ function tag(text, withSwitch) {
   return s;
 }
 
+// Windows does not draw flag emoji (it shows letters like "IN"), so hide flags there
+const FLAGS_OK = (() => {
+  try {
+    const c = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
+    c.canvas.width = c.canvas.height = 20;
+    c.textBaseline = 'top';
+    c.font = '16px sans-serif';
+    c.fillText('\u{1F1EE}\u{1F1F3}', 0, 0);
+    const d = c.getImageData(0, 0, 20, 20).data;
+    for (let i = 0; i < d.length; i += 4) {
+      if (d[i + 3] && (Math.abs(d[i] - d[i + 1]) > 40 || Math.abs(d[i + 1] - d[i + 2]) > 40)) return true;
+    }
+  } catch (e) {}
+  return false;
+})();
+
 function drawChips() {
   chipsEl.replaceChildren();
   PLACES.forEach(([value, label]) => {
     const b = document.createElement('button');
     b.className = 'chip' + (value === place ? ' on' : '');
-    b.textContent = label;
+    b.textContent = FLAGS_OK ? label : label.replace(/^[\u{1F1E6}-\u{1F1FF}]{2} /u, '');
     if (value === 'new') {
       b.classList.add('chip-new');
       const dot = document.createElement('i');
