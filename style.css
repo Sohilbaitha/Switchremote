@@ -161,3 +161,7 @@ footer a{color:inherit}
 
 /* Wider screens: same design, text simply uses the extra width */
 @media (min-width:700px){.hero h1{max-width:none}.sub{max-width:860px}}
+
+/* Footer centered on every screen, so wide screens have no empty side */
+footer .wrap{text-align:center}
+.social{justify-content:center}
