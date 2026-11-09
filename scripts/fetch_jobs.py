@@ -24,7 +24,9 @@ COUNTRIES = {
     "India": ["india", "bengaluru", "bangalore", "mumbai", "delhi", "hyderabad",
               "pune", "chennai", "gurgaon", "gurugram", "noida"],
 }
-GLOBAL = ["worldwide", "anywhere", "global", "apac", "asia", "southeast asia"]
+GLOBAL = ["worldwide", "anywhere", "global"]
+# Asia-only jobs get their own honest label instead of "Anywhere in the World"
+ASIA = ["apac", "asia", "asia pacific", "asia-pacific", "southeast asia", "south east asia"]
 FRESHER = ["fresher", "freshers", "entry level", "entry-level", "junior", "intern",
            "internship", "trainee", "graduate", "fresh graduate", "fresh graduates",
            "no experience", "no prior experience", "0-1 year", "0-1 years",
@@ -35,7 +37,16 @@ ROLES = ["customer support", "customer service", "customer success", "support sp
          "social media", "appointment setter", "sales development", "community moderator",
          "transcription", "back office", "order processing", "associate"]
 SENIOR = ["senior", "sr", "lead", "manager", "director", "principal", "head", "staff", "vp",
-          "architect", "chief", "executive", "expert"]
+          "architect", "chief", "executive", "expert", "ii", "iii", "mid-level", "experienced"]
+# Roles that need a licence or past experience, so they are not fresher jobs
+# (kept only when the title itself says junior/intern/trainee)
+EXPERIENCED = ["consultant", "counsel", "attorney", "lawyer", "accountant", "bookkeeper",
+               "controller", "auditor", "drafter", "nurse", "physician", "pharmacist",
+               "therapist", "supervisor"]
+# Seniority labels that job feeds attach to a job
+LEVEL_HIGH = ["senior", "mid", "mid-level", "midweight", "manager", "director", "executive",
+              "lead", "principal"]
+LEVEL_OK = ["entry", "entry-level", "junior", "intern", "internship", "graduate", "trainee", "any"]
 TECH = ["engineer", "developer", "devops", "sre", "scientist", "analyst", "architect",
         "programmer", "security", "data engineer", "machine learning", "backend", "frontend",
         "full stack", "fullstack", "software"]
@@ -61,7 +72,26 @@ def countries_for(location):
     found = [c for c, w in COUNTRIES.items() if has(t, w)]
     if not found and has(t, GLOBAL):
         found = ["Worldwide"]
+    if not found and has(t, ASIA):
+        found = ["Asia"]
     return found
+
+
+def title_ok(title):
+    """Fresher board rule for titles: no senior roles, no experience-only roles,
+    and technical roles only when the title itself says junior/intern/trainee."""
+    t = (title or "").lower()
+    if has(t, SENIOR):
+        return False
+    if (has(t, TECH) or has(t, EXPERIENCED)) and not has(t, FRESHER):
+        return False
+    return True
+
+
+def level_ok(level):
+    """Drop a job when the feed itself marks it mid-level or above."""
+    lv = (level or "").lower()
+    return not (has(lv, LEVEL_HIGH) and not has(lv, LEVEL_OK))
 
 
 def parse_date(value):
@@ -107,7 +137,8 @@ def bad_link(*links):
     return any(l and BAD_LINK.search(l) for l in links)
 
 
-def make(title, company, location, url, posted, source, text, need_remote=False, logo="", check=""):
+def make(title, company, location, url, posted, source, text, need_remote=False, logo="", check="",
+         level=""):
     try:
         text = (text or "")[:4000]
         if not (title and url and url.startswith("http")):
@@ -119,14 +150,10 @@ def make(title, company, location, url, posted, source, text, need_remote=False,
         if need_remote and "remote" not in (location + " " + title).lower():
             return None
         body = (title + " " + text).lower()
-        if has(title.lower(), SENIOR) or has(body, BAD) or SCAM.search(body):
+        if not title_ok(title) or not level_ok(level) or has(body, BAD) or SCAM.search(body):
             return None
         years = min_years(text)
         if years is not None and years >= 2:
-            return None
-        title_l = title.lower()
-        # Fresher board rule: technical roles only when the title itself says junior/intern/trainee
-        if has(title_l, TECH) and not has(title_l, FRESHER):
             return None
         countries = countries_for(location)
         if not countries:
@@ -172,7 +199,7 @@ def jobicy():
         level = " ".join(level) if isinstance(level, list) else level
         yield make(j["jobTitle"], j["companyName"], geo, j["url"], j["pubDate"], "Jobicy",
                    clean(j.get("jobDescription")) + " " + level,
-                   logo=j.get("companyLogo") or "")
+                   logo=j.get("companyLogo") or "", level=level)
 
 
 def himalayas():
@@ -184,7 +211,7 @@ def himalayas():
             yield make(j["title"], j["companyName"], loc,
                        j.get("applicationLink") or j.get("guid"), j.get("pubDate"), "Himalayas",
                        clean(j.get("description") or j.get("excerpt")) + " " + level,
-                       logo=j.get("companyLogo") or "")
+                       logo=j.get("companyLogo") or "", level=level)
 
 
 def remoteok():
@@ -390,9 +417,28 @@ def main():
     # Final safety pass on everything, including jobs kept from earlier refreshes
     blocked = [b.lower() for b in cfg.get("blocked_companies", []) if b.strip()]
     clean_jobs, per_agency, dropped = [], {}, 0
-    for job in sorted(found.values(), key=lambda j: j["posted"], reverse=True):
+    # The same job often comes from two sources. Keep one copy, preferring the employer's own post
+    # or the company's own career page over a job feed.
+    rank = {"Employer": 0, "Company site": 1}
+    seen_jobs = set()
+    ordered = sorted(found.values(), key=lambda j: j["posted"], reverse=True)
+    ordered.sort(key=lambda j: rank.get(j.get("source"), 2))
+    keep = []
+    for job in ordered:
+        key = (re.sub(r"\W+", " ", job.get("company", "").lower()).strip(),
+               re.sub(r"\W+", " ", job.get("title", "").lower()).strip())
+        if key in seen_jobs:
+            dropped += 1
+            continue
+        seen_jobs.add(key)
+        keep.append(job)
+    for job in sorted(keep, key=lambda j: j["posted"], reverse=True):
         name = job.get("company", "").lower()
         if any(b in name for b in blocked) or bad_link(job.get("url")):
+            dropped += 1
+            continue
+        # Title rules also apply to jobs kept from earlier refreshes
+        if job.get("source") != "Employer" and not title_ok(job.get("title")):
             dropped += 1
             continue
         if job.get("source") != "Employer" and AGENCY.search(name):

@@ -89,6 +89,7 @@ footer a{color:inherit}
 /* legal page */
 .legal h2{margin:26px 0 6px;font-size:1.0625rem;color:#000}
 .legal p{margin:0 0 8px}
+.legal h1{margin:24px 0 0;font-size:1.5rem;line-height:1.3;color:#000}
 
 /* safety note, legal extras, report link, cookie banner */
 .safe{margin:18px 0 0;padding:10px 14px;border-radius:10px;background:var(--tint);color:#2b3a47;font-size:.8125rem}
@@ -178,3 +179,10 @@ footer a{color:inherit}
 .f-info p:last-child,.f-copy{margin:0}
 .f-copy{flex:none}
 }
+
+/* Links to the country pages, under the job list */
+.by{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:28px;font-size:.8125rem;color:var(--muted)}
+.by span{flex-basis:100%}
+.by a{padding:5px 12px;border:1px solid var(--line);border-radius:999px;color:#1b1b1b;font-weight:500;text-decoration:none}
+.by a:hover,.by a:focus-visible{border-color:var(--blue)}
+@media (min-width:700px){.by span{flex-basis:auto;margin-right:4px}}

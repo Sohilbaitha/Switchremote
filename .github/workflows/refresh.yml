@@ -22,9 +22,12 @@ jobs:
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      # Writes the country pages (remote-jobs-india.html and so on) and sitemap.xml
+      - run: python scripts/build_pages.py
+        continue-on-error: true
       - run: |
           git config user.name "switchremote-bot"
           git config user.email "bot@users.noreply.github.com"
-          git add data/jobs.json feed.xml
+          git add data/jobs.json feed.xml sitemap.xml remote-jobs-*.html
           if [ -f data/shared.json ]; then git add data/shared.json; fi
           git diff --staged --quiet || (git commit -m "Update jobs" && git push)

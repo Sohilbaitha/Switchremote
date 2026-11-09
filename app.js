@@ -15,7 +15,9 @@ const PLACES = [
 ];
 const POST_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSeFsL9SU7VFMi27pCQri7ZziHbTVDPguEFP6cJvhidkb2psNQ/viewform';
 let jobs = [];
-let place = '';
+// Country pages (remote-jobs-india.html and so on) set SR_PLACE so they open on that country
+const HOME = window.SR_PLACE || '';
+let place = HOME;
 // A shared link (?job=...) pins that job at the top once, then the page behaves normally
 let sharedKey = null, shared = null;
 try {
@@ -35,7 +37,8 @@ fetch('data/jobs.json?v=' + Date.now())
   .then(d => {
     jobs = d.jobs || [];
     if (sharedKey) shared = jobs.find(j => jobId(j) === sharedKey || j.title === sharedKey) || null;
-    document.getElementById('count').textContent = jobs.length + (jobs.length === 1 ? ' job' : ' jobs') + ' live right now';
+    const live = jobs.filter(j => inPlace(j, HOME)).length;
+    document.getElementById('count').textContent = live + (live === 1 ? ' job' : ' jobs') + ' live right now';
     if (d.updated) {
       document.getElementById('updated').textContent =
         'Last updated: ' + new Date(d.updated).toLocaleString();
@@ -46,7 +49,7 @@ fetch('data/jobs.json?v=' + Date.now())
   .catch(() => { statusEl.textContent = 'Could not load jobs. Please try again later.'; });
 
 function shareJob(j) {
-  const where = j.countries.includes('Worldwide') ? 'anywhere in the world' : j.countries.join(', ');
+  const where = j.countries.includes('Worldwide') ? 'anywhere in the world' : j.countries.map(placeName).join(', ');
   const url = 'https://switchremote.world/?job=' + jobId(j);
   const text = j.title + ' at ' + j.company + ' (remote, ' + where + '). Free remote jobs for freshers on Switchremote.';
   if (window.track) track('share_click', { job_title: j.title, company: j.company });
@@ -79,7 +82,12 @@ function inPlace(j, p) {
   if (!p) return true;
   if (p === 'new') return isNew(j);
   if (p === 'Worldwide') return j.countries.includes('Worldwide');
-  return j.countries.includes(p) || j.countries.includes('Worldwide');
+  return j.countries.includes(p) || j.countries.includes('Worldwide') || j.countries.includes('Asia');
+}
+
+// 'Asia' marks jobs open across Asia-Pacific but not the whole world
+function placeName(x) {
+  return x === 'Worldwide' ? 'Anywhere in the World' : x === 'Asia' ? 'Asia-Pacific' : x;
 }
 
 function age(iso) {
@@ -120,6 +128,8 @@ function drawChips() {
   PLACES.forEach(([value, label]) => {
     const b = document.createElement('button');
     b.className = 'chip' + (value === place ? ' on' : '');
+    b.type = 'button';
+    b.setAttribute('aria-pressed', value === place);
     b.textContent = FLAGS_OK ? label : label.replace(/^[\u{1F1E6}-\u{1F1FF}]{2} /u, '');
     if (value === 'new') {
       b.classList.add('chip-new');
@@ -139,7 +149,7 @@ function render() {
   drawChips();
   const t = q.value.trim().toLowerCase();
   const rows = jobs.filter(j =>
-    inPlace(j, place) && (!t || t.split(/\s+/).every(w => (j.title + ' ' + j.company + ' ' + j.countries.join(' ') + ' ' + j.source + (j.countries.includes('Worldwide') ? ' anywhere world' : '')).toLowerCase().includes(w)))
+    inPlace(j, place) && (!t || t.split(/\s+/).every(w => (j.title + ' ' + j.company + ' ' + j.countries.join(' ') + ' ' + j.source + (j.countries.includes('Worldwide') ? ' anywhere world' : '') + (j.countries.includes('Asia') ? ' asia pacific apac' : '')).toLowerCase().includes(w)))
   );
   if (shared && !t && !place) { rows.splice(rows.indexOf(shared), 1); rows.unshift(shared); }
   list.replaceChildren();
@@ -195,7 +205,7 @@ function render() {
     const tags = document.createElement('div');
     tags.className = 'tags';
     tags.append(tag('Remote', true));
-    j.countries.forEach(x => tags.append(tag(x === 'Worldwide' ? 'Anywhere in the World' : x)));
+    j.countries.forEach(x => tags.append(tag(placeName(x))));
     tags.append(tag(j.source));
     const apply = document.createElement('a');
     apply.className = 'apply';

@@ -14,5 +14,5 @@
     "https://job-boards.greenhouse.io/canonical"
   ],
   "sheet": "https://docs.google.com/spreadsheets/d/e/2PACX-1vSQqZkwYt_DpIDUXIZtepwwSxzNdZWzCqWB48ysDd9mox7pyDhziRU8qaeiLZ2HYwtBeBiD_4d99Yxn/pub?gid=1560256108&single=true&output=csv",
-  "blocked_companies": []
+  "blocked_companies": ["IAPWE"]
 }
