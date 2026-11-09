@@ -31,7 +31,7 @@ a{color:var(--link)}
 .menu a:first-child{order:9;margin-top:16px;padding:13px 18px;border:0;border-radius:12px;background:var(--blue);color:#000;font-weight:600;justify-content:center}
 .menu a:first-child::after{display:none}
 .menu a:first-child:active{background:var(--blue-d)}
-@media (max-width:639px){.menu a:nth-last-child(2){border-bottom:0}}
+@media (max-width:639px){.menu a:last-child{border-bottom:0}}
 .scrim{position:fixed;inset:var(--bar) 0 0 0;z-index:9;background:rgba(0,0,0,.25);opacity:0;visibility:hidden;transition:opacity .2s,visibility .2s}
 .scrim.open{opacity:1;visibility:visible}
 
