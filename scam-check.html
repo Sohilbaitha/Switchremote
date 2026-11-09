@@ -41,6 +41,27 @@
 .again{margin-top:18px}
 .start{margin-top:4px}
 button.apply{border:0;cursor:pointer;font-family:inherit}
+.hero-r{display:flex;align-items:center;gap:16px;margin-bottom:16px}
+.ico{flex:none;width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;animation:pop .45s cubic-bezier(.2,1.4,.4,1) both}
+.ico svg{width:34px;height:34px;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.ico.high{background:#000}.ico.high svg{stroke:#fff}
+.ico.mid{background:var(--tint);border:2px solid #000}.ico.mid svg{stroke:#000}
+.ico.low{background:var(--blue)}.ico.low svg{stroke:#000}
+.cheer{margin:2px 0 0;font-size:.875rem;color:var(--muted)}
+.meter{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:4px 0 6px}
+.meter span{height:8px;border-radius:999px;background:var(--line)}
+.meter.low span:nth-child(1){background:var(--blue)}
+.meter.mid span:nth-child(-n+2){background:#000}
+.meter.high span{background:#000}
+.meter-l{display:flex;justify-content:space-between;font-size:.6875rem;color:var(--muted);margin-bottom:14px}
+.gold{margin-top:20px;padding:16px 18px;border:1.5px solid var(--blue);border-radius:16px;background:#fff}
+.gold h3{margin:0 0 8px !important}
+.gold ol{margin:0;padding-left:20px}
+.gold li{margin:0 0 6px;font-weight:500;color:#000}
+@keyframes pop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+.res > *{animation:rise .35s ease both}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.ico,.res > *{animation:none}}
 </style>
 </head>
 <body>
@@ -158,19 +179,32 @@ button.apply{border:0;cursor:pointer;font-family:inherit}
       low:  ['Few warning signs', 'We did not see the usual scam signs in your answers.', ['This does not mean the job is real. Still check the company yourself before you share personal details.', 'Apply only through the company\u2019s own page or a trusted job site.']]
     }[lvl];
     app.replaceChildren();
+    var ICON = {
+      high: '<path d="M12 3l9 16H3z"/><path d="M12 10v4"/><path d="M12 17.5v.01"/>',
+      mid:  '<circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/>',
+      low:  '<path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2.2 2.2L15.5 10"/>'
+    };
+    var CHEER = {
+      high: 'Good call checking before you went ahead. That one step can save you a lot.',
+      mid:  'Smart move to pause and check. A few minutes now can save you trouble later.',
+      low:  'Nice work being careful. Keep checking every offer like this.'
+    };
     var r = el('div','res');
-    r.append(el('span','lvl ' + lvl, T[0]));
+    var top = el('div','hero-r');
+    var ic = el('div','ico ' + lvl); ic.setAttribute('aria-hidden','true');
+    ic.innerHTML = '<svg viewBox="0 0 24 24">' + ICON[lvl] + '</svg>';
+    var tx = el('div');
+    tx.append(el('span','lvl ' + lvl, T[0]));
+    tx.append(el('p','cheer', CHEER[lvl]));
+    top.append(ic, tx); r.append(top);
+    var m = el('div','meter ' + lvl); m.setAttribute('aria-hidden','true'); m.append(el('span'), el('span'), el('span')); r.append(m);
+    var ml = el('div','meter-l'); ml.setAttribute('aria-hidden','true'); ml.append(el('span',null,'Few signs'), el('span',null,'Some signs'), el('span',null,'Many signs')); r.append(ml);
     r.append(el('h2', null, T[1]));
     if (why.length) { r.append(el('h3', null, 'What we noticed')); var u = el('ul'); why.forEach(function(w){ u.append(el('li', null, w)); }); r.append(u); }
     r.append(el('h3', null, 'What to do next'));
     var u2 = el('ul'); T[2].forEach(function(w){ u2.append(el('li', null, w)); }); r.append(u2);
-    var b = el('button','apply again','Check another job'); b.type = 'button'; b.onclick = intro; r.append(b);
-    app.append(r);
-    if (window.track) track('scam_check_done', { result: lvl });
-    app.scrollIntoView({block:'start'});
-  }
-  intro();
-})();
-</script>
-</body>
-</html>
+    var g = el('div','gold'); g.append(el('h3', null, 'Always remember'));
+    var ol = el('ol');
+    ['Never pay money to get a job, training, equipment or a "starter kit".', 'Never share OTPs, passwords or bank details with a recruiter.', 'Apply only on the company\u2019s own careers page or a trusted job site.'].forEach(function(w){ ol.append(el('li', null, w)); });
+    g.append(ol); r.append(g);
+    var b = 
