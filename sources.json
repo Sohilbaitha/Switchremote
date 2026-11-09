@@ -11,7 +11,12 @@
     "https://job-boards.greenhouse.io/remotecom",
     "https://job-boards.greenhouse.io/invisibletech",
     "https://apply.workable.com/pricelabs",
-    "https://job-boards.greenhouse.io/canonical"
+    "https://job-boards.greenhouse.io/canonical",
+    "https://job-boards.greenhouse.io/automatticcareers",
+    "https://job-boards.greenhouse.io/wikimedia",
+    "https://job-boards.greenhouse.io/mozilla",
+    "https://jobs.ashbyhq.com/supabase",
+    "https://jobs.ashbyhq.com/posthog"
   ],
   "sheet": "https://docs.google.com/spreadsheets/d/e/2PACX-1vSQqZkwYt_DpIDUXIZtepwwSxzNdZWzCqWB48ysDd9mox7pyDhziRU8qaeiLZ2HYwtBeBiD_4d99Yxn/pub?gid=1560256108&single=true&output=csv",
   "blocked_companies": ["IAPWE"]

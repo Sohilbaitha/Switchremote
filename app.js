@@ -13,7 +13,9 @@ const PLACES = [
   ['Thailand', '\u{1F1F9}\u{1F1ED} Thailand'],
   ['India', '\u{1F1EE}\u{1F1F3} India']
 ];
-const POST_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSeFsL9SU7VFMi27pCQri7ZziHbTVDPguEFP6cJvhidkb2psNQ/viewform';
+const POST_URL = 'post-a-job.html';
+// Each job feed asks us to credit it and link back, so the source label is a link
+const SOURCE_SITES = { Remotive: 'https://remotive.com', Jobicy: 'https://jobicy.com', Himalayas: 'https://himalayas.app', 'Remote OK': 'https://remoteok.com' };
 let jobs = [];
 // Country pages (remote-jobs-india.html and so on) set SR_PLACE so they open on that country
 const HOME = window.SR_PLACE || '';
@@ -107,6 +109,19 @@ function tag(text, withSwitch) {
   return s;
 }
 
+function sourceTag(source) {
+  if (source === 'Employer') return tag('Posted by employer');
+  const site = SOURCE_SITES[source];
+  if (!site) return tag(source);
+  const a = document.createElement('a');
+  a.className = 'tag tag-src';
+  a.href = site;
+  a.target = '_blank';
+  a.rel = source === 'Remote OK' ? 'noopener' : 'noopener noreferrer';
+  a.textContent = 'via ' + source;
+  return a;
+}
+
 // Windows does not draw flag emoji (it shows letters like "IN"), so hide flags there
 const FLAGS_OK = (() => {
   try {
@@ -158,8 +173,6 @@ function render() {
   } else {
     const link = document.createElement('a');
     link.href = POST_URL;
-    link.target = '_blank';
-    link.rel = 'noopener noreferrer';
     link.setAttribute('data-track', 'post_job_click');
     link.textContent = 'Post your job for free';
     statusEl.replaceChildren('No jobs found here yet. Try another country or search, or ', link, '.');
@@ -206,7 +219,7 @@ function render() {
     tags.className = 'tags';
     tags.append(tag('Remote', true));
     j.countries.forEach(x => tags.append(tag(placeName(x))));
-    tags.append(tag(j.source));
+    tags.append(sourceTag(j.source));
     const apply = document.createElement('a');
     apply.className = 'apply';
     apply.href = j.url;

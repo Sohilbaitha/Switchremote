@@ -2,7 +2,9 @@ import csv
 import html
 import io
 import json
+import os
 import re
+import urllib.error
 import urllib.parse
 import urllib.request
 from datetime import datetime, timedelta, timezone
@@ -13,6 +15,8 @@ OUT = ROOT / "data" / "jobs.json"
 SOURCES = ROOT / "sources.json"
 HEADERS = {"User-Agent": "SwitchremoteBot/1.0"}
 MAX_AGE_DAYS = 14
+# A job that is still on the company's own careers board is still open, so it may stay longer
+COMPANY_MAX_AGE_DAYS = 30
 MAX_JOBS = 500
 
 COUNTRIES = {
@@ -53,8 +57,8 @@ TECH = ["engineer", "developer", "devops", "sre", "scientist", "analyst", "archi
 BAD = ["registration fee", "security deposit", "pay a fee", "processing fee", "investment required"]
 
 
-def get(url):
-    req = urllib.request.Request(url, headers=HEADERS)
+def get(url, headers=None):
+    req = urllib.request.Request(url, headers={**HEADERS, **(headers or {})})
     with urllib.request.urlopen(req, timeout=30) as r:
         return json.load(r)
 
@@ -138,7 +142,7 @@ def bad_link(*links):
 
 
 def make(title, company, location, url, posted, source, text, need_remote=False, logo="", check="",
-         level=""):
+         level="", expires=None):
     try:
         text = (text or "")[:4000]
         if not (title and url and url.startswith("http")):
@@ -166,6 +170,7 @@ def make(title, company, location, url, posted, source, text, need_remote=False,
             "posted": parse_date(posted).isoformat(),
             "source": source,
             **({"logo": logo} if isinstance(logo, str) and logo.startswith("https://") else {}),
+            **({"expires": parse_date(expires).isoformat()} if expires else {}),
         }
     except Exception:
         return None
@@ -183,12 +188,14 @@ def remotive():
 
 def jobicy():
     seen = set()
-    # All remote jobs, then Asia-Pacific jobs as a separate call
+    # All remote jobs, then Asia-Pacific and each of our countries as separate calls.
+    # Jobicy fair use: keep Jobicy as the source, link to the Jobicy job page, poll at most hourly.
     batch = get("https://jobicy.com/api/v2/remote-jobs?count=100")["jobs"]
-    try:
-        batch += get("https://jobicy.com/api/v2/remote-jobs?count=50&geo=apac")["jobs"]
-    except Exception as e:
-        print("Jobicy APAC skipped:", e)
+    for geo in ("apac", "india", "philippines", "indonesia", "vietnam", "malaysia", "thailand"):
+        try:
+            batch += get(f"https://jobicy.com/api/v2/remote-jobs?count=50&geo={geo}").get("jobs") or []
+        except Exception as e:
+            print(f"Jobicy {geo} skipped:", e)
     for j in batch:
         if j.get("id") in seen:
             continue
@@ -202,16 +209,77 @@ def jobicy():
                    logo=j.get("companyLogo") or "", level=level)
 
 
+# Himalayas API terms: use applicationLink unchanged for Apply, show Himalayas as the source,
+# show the jobs only on our own site (never in feeds or on other platforms), remove expired jobs.
+HIMALAYAS = "https://himalayas.app/jobs/api"
+HIMALAYAS_PLACES = ["Indonesia", "Vietnam", "Malaysia", "Philippines", "Thailand", "India"]
+
+
+def himalayas_get(url):
+    # A free Himalayas API key is optional. Add it as the GitHub secret HIMALAYAS_API_KEY if we get rate limited.
+    key = os.environ.get("HIMALAYAS_API_KEY", "").strip()
+    return get(url, {"Authorization": "Bearer " + key} if key else None)
+
+
+def himalayas_job(j):
+    places = [p.get("name", "") if isinstance(p, dict) else str(p)
+              for p in (j.get("locationRestrictions") or [])]
+    loc = " ".join(places) if places else "Worldwide"
+    level = j.get("seniority") or []
+    level = " ".join(level) if isinstance(level, list) else str(level)
+    return make(j["title"], j["companyName"], loc,
+                j.get("applicationLink") or j.get("guid"), j.get("pubDate"), "Himalayas",
+                clean(j.get("description") or j.get("excerpt")) + " " + level,
+                logo=j.get("companyLogo") or "", level=level, expires=j.get("expiryDate"))
+
+
 def himalayas():
-    for offset in (0, 20, 40, 60, 80):
-        for j in get(f"https://himalayas.app/jobs/api?limit=20&offset={offset}")["jobs"]:
-            places = j.get("locationRestrictions") or []
-            loc = " ".join(places) if places else "Worldwide"
-            level = " ".join(j.get("seniority") or [])
-            yield make(j["title"], j["companyName"], loc,
-                       j.get("applicationLink") or j.get("guid"), j.get("pubDate"), "Himalayas",
-                       clean(j.get("description") or j.get("excerpt")) + " " + level,
-                       logo=j.get("companyLogo") or "", level=level)
+    """Newest jobs on Himalayas (5 pages of 20)."""
+    cursor = None
+    for page in range(5):
+        if page and not cursor:
+            url = f"{HIMALAYAS}?limit=20&offset={page * 20}"   # older paging, if no cursor is sent
+        else:
+            url = f"{HIMALAYAS}?limit=20" + ("&cursor=" + urllib.parse.quote(str(cursor)) if cursor else "")
+        d = himalayas_get(url)
+        for j in d.get("jobs") or []:
+            yield himalayas_job(j)
+        cursor = d.get("nextCursor")
+
+
+def himalayas_search():
+    """Entry-level jobs for each of our countries, plus entry-level jobs open worldwide."""
+    queries = [("country=" + urllib.parse.quote(c)) for c in HIMALAYAS_PLACES] + ["worldwide=true"]
+    worked = 0
+    for q in queries:
+        for page in (1, 2):
+            try:
+                d = himalayas_get(f"{HIMALAYAS}/search?{q}&seniority=Entry-level&sort=recent&page={page}")
+            except Exception as e:
+                print(f"Himalayas search {q} page {page} skipped:", e)
+                break
+            worked += 1
+            rows = d.get("jobs") or []
+            for j in rows:
+                yield himalayas_job(j)
+            if not rows:
+                break
+    if not worked:
+        raise RuntimeError("no Himalayas search call worked")
+
+
+def himalayas_closed(url):
+    """True only when Himalayas itself says the job is closed or gone."""
+    m = re.search(r"himalayas\.app/companies/([^/?#]+)/jobs/([^/?#]+)", url or "")
+    if not m:
+        return False
+    try:
+        himalayas_get(f"{HIMALAYAS}/companies/{m.group(1)}/jobs/{m.group(2)}")
+        return False
+    except urllib.error.HTTPError as e:
+        return e.code in (404, 410)
+    except Exception:
+        return False
 
 
 def remoteok():
@@ -229,7 +297,9 @@ def remoteok():
 # ---------- company career pages ----------
 
 # Proper display names for companies whose careers link uses a short code
-NAMES = {"gohighlevel": "HighLevel", "sprinto": "Sprinto", "gleanwork": "Glean",
+NAMES = {"automatticcareers": "Automattic", "wikimedia": "Wikimedia Foundation",
+         "mozilla": "Mozilla", "supabase": "Supabase", "posthog": "PostHog",
+         "gohighlevel": "HighLevel", "sprinto": "Sprinto", "gleanwork": "Glean",
          "elevenlabs": "ElevenLabs", "deel": "Deel", "zapier": "Zapier",
          "gitlab": "GitLab", "branch": "Branch International",
          "remotecom": "Remote", "invisibletech": "Invisible Technologies",
@@ -365,25 +435,44 @@ def detect(link):
 def main():
     cfg = json.loads(SOURCES.read_text())
     tasks = [("Remotive", remotive), ("Jobicy", jobicy), ("Himalayas", himalayas),
-             ("Remote OK", remoteok)]
+             ("Himalayas entry-level search", himalayas_search), ("Remote OK", remoteok)]
     for link in cfg.get("companies", []):
         kind, slug = detect(link)
         if kind:
-            tasks.append((f"{kind}:{slug}", lambda k=kind, s=slug: READERS[k](s)))
+            tasks.append((f"{kind}:{slug}".lower(), lambda k=kind, s=slug: READERS[k](s)))
         else:
             print("UNKNOWN careers link (skipped):", link)
 
     found = {}
     succeeded = 0
-    cutoff = datetime.now(timezone.utc) - timedelta(days=MAX_AGE_DAYS)
+    boards_ok = set()   # company boards that answered this time
+    now = datetime.now(timezone.utc)
+    cutoff = now - timedelta(days=MAX_AGE_DAYS)
+    company_cutoff = now - timedelta(days=COMPANY_MAX_AGE_DAYS)
+
+    def fresh(job):
+        limit = company_cutoff if job.get("source") == "Company site" else cutoff
+        return parse_date(job["posted"]) >= limit
+
+    def board_of(job):
+        if job.get("board"):
+            return job["board"]
+        kind, slug = detect(job.get("url", ""))
+        return f"{kind}:{slug}".lower() if kind else None
+
     for name, task in tasks:
         kept = 0
+        is_board = ":" in name
         try:
             for job in task():
-                if job and parse_date(job["posted"]) >= cutoff:
+                if job and fresh(job):
+                    if is_board:
+                        job["board"] = name
                     found[job["url"]] = job
                     kept += 1
             succeeded += 1
+            if is_board:
+                boards_ok.add(name)
             print(f"OK    {name}: {kept} matching jobs")
         except Exception as e:
             print(f"FAIL  {name}: {e}")
@@ -402,17 +491,31 @@ def main():
     # Keep jobs from earlier refreshes until they are MAX_AGE_DAYS old.
     # Feeds only return their newest jobs, so without this good jobs vanish after a few hours.
     # Employer jobs are not carried over: they always follow the Sheet.
-    carried = 0
+    # Company jobs are not carried over when their board answered: if the job is no longer
+    # on the company's own board, it is closed.
+    carried = closed = checks = 0
     if OUT.exists():
         try:
             for job in json.loads(OUT.read_text()).get("jobs", []):
-                if (job.get("source") != "Employer" and job.get("url") not in found
-                        and parse_date(job["posted"]) >= cutoff):
-                    found[job["url"]] = job
-                    carried += 1
+                if job.get("source") == "Employer" or job.get("url") in found or not fresh(job):
+                    continue
+                if job.get("source") == "Company site":
+                    board = board_of(job)
+                    # Gone from a board that answered, or no way to re-check it after 14 days
+                    if board in boards_ok or (board is None and parse_date(job["posted"]) < cutoff):
+                        closed += 1
+                        continue
+                # Himalayas tells us when a job has closed, so ask before keeping an old one
+                if job.get("source") == "Himalayas" and checks < 40:
+                    checks += 1
+                    if himalayas_closed(job.get("url")):
+                        closed += 1
+                        continue
+                found[job["url"]] = job
+                carried += 1
         except Exception as e:
             print("Could not read old jobs:", e)
-    print(f"Kept {carried} jobs from earlier refreshes")
+    print(f"Kept {carried} jobs from earlier refreshes, removed {closed} that have closed")
 
     # Final safety pass on everything, including jobs kept from earlier refreshes
     blocked = [b.lower() for b in cfg.get("blocked_companies", []) if b.strip()]
@@ -435,6 +538,10 @@ def main():
     for job in sorted(keep, key=lambda j: j["posted"], reverse=True):
         name = job.get("company", "").lower()
         if any(b in name for b in blocked) or bad_link(job.get("url")):
+            dropped += 1
+            continue
+        # Past the closing date the source gave us
+        if job.get("expires") and parse_date(job["expires"]) < now:
             dropped += 1
             continue
         # Title rules also apply to jobs kept from earlier refreshes

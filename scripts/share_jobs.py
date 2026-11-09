@@ -4,8 +4,8 @@
 2. Posts new jobs to the Switchremote Telegram channel, if the two
    GitHub secrets TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID are set.
 
-Remotive and Remote OK jobs are never shared outside the site,
-because their terms ask us not to pass their jobs on.
+Remotive, Remote OK and Himalayas jobs are never shared outside the site,
+because their terms ask us not to pass their jobs on (feeds included).
 """
 import json
 import os
@@ -21,7 +21,7 @@ JOBS = ROOT / "data" / "jobs.json"
 STATE = ROOT / "data" / "shared.json"
 FEED = ROOT / "feed.xml"
 SITE = "https://switchremote.world/"
-NOT_SHARED = {"Remotive", "Remote OK"}
+NOT_SHARED = {"Remotive", "Remote OK", "Himalayas"}
 MAX_POSTS_PER_RUN = 5      # never flood the channel
 FIRST_RUN_POSTS = 3        # on the very first run, post only the newest few
 

@@ -12,10 +12,11 @@ I built it because freshers searching for remote jobs keep running into fake lis
 
 - A Python script (`scripts/fetch_jobs.py`) collects remote jobs from:
   - company career boards on Greenhouse, Lever, Ashby and Workable (listed in `sources.json`)
-  - remote job feeds: Remotive, Jobicy, Himalayas, Remote OK and We Work Remotely
+  - remote job feeds: Remotive, Jobicy, Himalayas and Remote OK
   - jobs submitted by employers through our Google Form
-- It keeps only remote roles, removes duplicates and old listings, and saves them for the site.
-- GitHub Actions runs the script every 6 hours, so the list stays fresh without any manual work.
+- It keeps only remote roles that freshers can apply for, removes duplicates, closed and old listings, and saves them for the site.
+- `scripts/build_pages.py` writes one page per country and the sitemap.
+- A GitHub Actions workflow runs every 6 hours (triggered by cron-job.org), so the list stays fresh without any manual work.
 - The site is a static page hosted on GitHub Pages.
 
 ## Tech

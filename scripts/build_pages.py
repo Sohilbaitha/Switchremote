@@ -38,6 +38,20 @@ def place_name(x):
     return {"Worldwide": "Anywhere in the World", "Asia": "Asia-Pacific"}.get(x, x)
 
 
+SOURCE_SITES = {"Remotive": "https://remotive.com", "Jobicy": "https://jobicy.com",
+                "Himalayas": "https://himalayas.app", "Remote OK": "https://remoteok.com"}
+
+
+def source_tag(source):
+    if source == "Employer":
+        return '<span class="tag">Posted by employer</span>'
+    site = SOURCE_SITES.get(source)
+    if not site:
+        return f'<span class="tag">{escape(source)}</span>'
+    rel = "noopener" if source == "Remote OK" else "noopener noreferrer"
+    return f'<a class="tag tag-src" href="{site}" target="_blank" rel="{rel}">via {escape(source)}</a>'
+
+
 def card(j):
     tags = "".join(f'<span class="tag">{escape(place_name(c))}</span>' for c in j.get("countries", []))
     rel = "noopener" if j.get("source") == "Remote OK" else "noopener noreferrer nofollow"
@@ -48,7 +62,7 @@ def card(j):
         f'<div class="top"><h2>{escape(j["title"])}</h2></div>'
         f'<p class="company">{escape(j.get("company", ""))}</p>'
         f'<div class="tags"><span class="tag"><i class="sw"></i>Remote</span>{tags}'
-        f'<span class="tag">{escape(j.get("source", ""))}</span></div>'
+        f'{source_tag(j.get("source", ""))}</div>'
         f'<div class="actions"><a class="apply" href="{escape(j["url"], quote=True)}" target="_blank" rel="{rel}">Apply now</a></div>'
         '</div></article>')
 
@@ -66,19 +80,19 @@ def build(template, jobs, place, name, where):
     if place == "Worldwide":
         title = "Remote jobs for freshers, open worldwide | Switchremote"
         h1 = "Remote jobs for freshers, open worldwide"
-        desc = ("Work-from-home jobs that freshers can apply for from anywhere in the world, collected "
-                "from company career pages and trusted job feeds. Free, no signup, apply on the employer's own page.")
-        sub = ("These remote jobs are open to applicants anywhere in the world. We collect them from company "
-               "career pages and trusted job feeds, so you apply directly on the employer's own page. "
-               "No signup and no fees, ever.")
+        desc = ("Work-from-home jobs that freshers can apply for from anywhere in the world, gathered "
+                "from company career pages and trusted remote job boards. Free, no signup, refreshed every 6 hours.")
+        sub = ("These remote jobs are open to applicants anywhere in the world. We gather them from company "
+               "career pages and trusted remote job boards, check them for warning signs, and send you straight "
+               "to the original listing to apply. No signup and no fees, ever.")
     else:
         title = f"Remote jobs for freshers {where} | Switchremote"
         h1 = f"Remote jobs for freshers {where}"
         desc = (f"Work-from-home jobs that freshers {where} can apply for, including remote jobs open worldwide. "
-                "Collected from company career pages and trusted job feeds. Free, no signup.")
+                "Gathered from company career pages and trusted remote job boards. Free, no signup.")
         sub = (f"Work-from-home jobs that freshers {where} can apply for, including remote jobs open worldwide. "
-               "We collect them from company career pages and trusted job feeds, so you apply directly on the "
-               "employer's own page. No signup and no fees, ever.")
+               "We gather them from company career pages and trusted remote job boards, check them for warning "
+               "signs, and send you straight to the original listing to apply. No signup and no fees, ever.")
     rows = [j for j in jobs if in_place(j, place)][:MAX_STATIC]
     crumbs = json.dumps({
         "@context": "https://schema.org", "@type": "BreadcrumbList",
@@ -98,6 +112,8 @@ def build(template, jobs, place, name, where):
     # The WebSite block belongs to the homepage only; country pages get a breadcrumb instead
     h = swap(h, r'<script type="application/ld\+json">\{"@context":"https://schema.org","@type":"WebSite".*?</script>',
              f'<script type="application/ld+json">{crumbs}</script>')
+    # The FAQ data belongs to the homepage only
+    h = swap(h, r'<script type="application/ld\+json" id="faq-ld">.*?</script>\n?', "")
     h = swap(h, r"<h1>.*?</h1>", f"<h1>{escape(h1)}</h1>")
     h = swap(h, r'<p class="sub">.*?</p>', f'<p class="sub">{escape(sub)}</p>')
     h = swap(h, r'<main id="list"></main>', '<main id="list">' + "".join(card(j) for j in rows) + "</main>")
@@ -113,7 +129,8 @@ def write_sitemap():
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     urls = [(SITE, today, "daily", "1.0")]
     urls += [(SITE + name, today, "daily", "0.8") for _, name, _ in PAGES]
-    urls += [(SITE + "scam-check.html", old.get(SITE + "scam-check.html", today), "monthly", "0.6"),
+    urls += [(SITE + "post-a-job.html", old.get(SITE + "post-a-job.html", today), "monthly", "0.6"),
+             (SITE + "scam-check.html", old.get(SITE + "scam-check.html", today), "monthly", "0.6"),
              (SITE + "legal.html", old.get(SITE + "legal.html", today), "monthly", "0.4")]
     body = "".join(
         f"  <url>\n    <loc>{loc}</loc>\n    <lastmod>{mod}</lastmod>\n"

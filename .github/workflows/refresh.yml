@@ -17,6 +17,9 @@ jobs:
         with:
           python-version: "3.12"
       - run: python scripts/fetch_jobs.py
+        env:
+          # Optional: a free Himalayas API key, only needed if we ever get rate limited
+          HIMALAYAS_API_KEY: ${{ secrets.HIMALAYAS_API_KEY }}
       # Writes feed.xml and posts new jobs to Telegram (only if the Telegram secrets are set)
       - run: python scripts/share_jobs.py
         env:
