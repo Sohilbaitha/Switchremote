@@ -47,6 +47,11 @@ SENIOR = ["senior", "sr", "lead", "manager", "director", "principal", "head", "s
 EXPERIENCED = ["consultant", "counsel", "attorney", "lawyer", "accountant", "bookkeeper",
                "controller", "auditor", "drafter", "nurse", "physician", "pharmacist",
                "therapist", "supervisor"]
+# Listings that are not one real, open job
+NOT_A_JOB = re.compile(r"talent (pool|network|community|hub)|general application|future (opening|opportunit)|"
+                       r"\bphd\b|open application", re.I)
+# One company can show at most this many feed jobs, so a single bulk poster cannot fill the board
+COMPANY_MAX = 3
 # Seniority labels that job feeds attach to a job
 LEVEL_HIGH = ["senior", "mid", "mid-level", "midweight", "manager", "director", "executive",
               "lead", "principal"]
@@ -88,7 +93,7 @@ def title_ok(title):
     """Fresher board rule for titles: no senior roles, no experience-only roles,
     and technical roles only when the title itself says junior/intern/trainee."""
     t = (title or "").lower()
-    if has(t, SENIOR):
+    if has(t, SENIOR) or NOT_A_JOB.search(t):
         return False
     if (has(t, TECH) or has(t, EXPERIENCED)) and not has(t, FRESHER):
         return False
@@ -198,7 +203,7 @@ def jobicy():
     # All remote jobs, then Asia-Pacific and each of our countries as separate calls.
     # Jobicy fair use: keep Jobicy as the source, link to the Jobicy job page, poll at most hourly.
     batch = get("https://jobicy.com/api/v2/remote-jobs?count=100")["jobs"]
-    for geo in ("apac", "india", "philippines", "indonesia", "vietnam", "malaysia", "thailand"):
+    for geo in ("apac", "philippines", "vietnam", "thailand"):   # Jobicy has no slug for the other three
         try:
             batch += get(f"https://jobicy.com/api/v2/remote-jobs?count=50&geo={geo}").get("jobs") or []
         except Exception as e:
@@ -441,6 +446,58 @@ def detect(link):
     return None, None
 
 
+def job_key(job):
+    """Same company + same title = same job, even if one source adds "(Remote)" to the title."""
+    title = re.sub(r"\([^)]*\)", " ", job.get("title", "").lower())
+    title = re.sub(r"\b(remote|wfh|work from home|home based|home-based)\b", " ", title)
+    return (re.sub(r"\W+", " ", job.get("company", "").lower()).strip(), re.sub(r"\W+", " ", title).strip())
+
+
+def final_pass(all_jobs, cfg, now):
+    """Safety pass on everything, including jobs kept from earlier refreshes."""
+    blocked = [b.lower() for b in cfg.get("blocked_companies", []) if b.strip()]
+    clean_jobs, per_agency, dropped = [], {}, 0
+    # The same job often comes from two sources. Keep one copy, preferring the employer's own post
+    # or the company's own career page over a job feed.
+    rank = {"Employer": 0, "Company site": 1}
+    seen_jobs = set()
+    ordered = sorted(all_jobs, key=lambda j: j["posted"], reverse=True)
+    ordered.sort(key=lambda j: rank.get(j.get("source"), 2))
+    keep = []
+    for job in ordered:
+        key = job_key(job)
+        if key in seen_jobs:
+            dropped += 1
+            continue
+        seen_jobs.add(key)
+        keep.append(job)
+    for job in sorted(keep, key=lambda j: j["posted"], reverse=True):
+        name = job.get("company", "").lower()
+        if any(b in name for b in blocked) or bad_link(job.get("url")):
+            dropped += 1
+            continue
+        # Past the closing date the source gave us
+        if job.get("expires") and parse_date(job["expires"]) < now:
+            dropped += 1
+            continue
+        # Title rules also apply to jobs kept from earlier refreshes
+        if job.get("source") != "Employer" and not title_ok(job.get("title")):
+            dropped += 1
+            continue
+        if job.get("source") in FEEDS:
+            if AGENCY.search(name) and AGENCY_MAX == 0:
+                dropped += 1
+                continue
+            per_agency[name] = per_agency.get(name, 0) + 1
+            if per_agency[name] > COMPANY_MAX:
+                dropped += 1
+                continue
+        clean_jobs.append(job)
+    print(f"Safety pass removed {dropped} jobs")
+
+    return clean_jobs
+
+
 def main():
     cfg = json.loads(SOURCES.read_text())
     tasks = [("Remotive", remotive), ("Jobicy", jobicy), ("Himalayas", himalayas),
@@ -526,46 +583,7 @@ def main():
             print("Could not read old jobs:", e)
     print(f"Kept {carried} jobs from earlier refreshes, removed {closed} that have closed")
 
-    # Final safety pass on everything, including jobs kept from earlier refreshes
-    blocked = [b.lower() for b in cfg.get("blocked_companies", []) if b.strip()]
-    clean_jobs, per_agency, dropped = [], {}, 0
-    # The same job often comes from two sources. Keep one copy, preferring the employer's own post
-    # or the company's own career page over a job feed.
-    rank = {"Employer": 0, "Company site": 1}
-    seen_jobs = set()
-    ordered = sorted(found.values(), key=lambda j: j["posted"], reverse=True)
-    ordered.sort(key=lambda j: rank.get(j.get("source"), 2))
-    keep = []
-    for job in ordered:
-        key = (re.sub(r"\W+", " ", job.get("company", "").lower()).strip(),
-               re.sub(r"\W+", " ", job.get("title", "").lower()).strip())
-        if key in seen_jobs:
-            dropped += 1
-            continue
-        seen_jobs.add(key)
-        keep.append(job)
-    for job in sorted(keep, key=lambda j: j["posted"], reverse=True):
-        name = job.get("company", "").lower()
-        if any(b in name for b in blocked) or bad_link(job.get("url")):
-            dropped += 1
-            continue
-        # Past the closing date the source gave us
-        if job.get("expires") and parse_date(job["expires"]) < now:
-            dropped += 1
-            continue
-        # Title rules also apply to jobs kept from earlier refreshes
-        if job.get("source") != "Employer" and not title_ok(job.get("title")):
-            dropped += 1
-            continue
-        if job.get("source") in FEEDS and AGENCY.search(name):
-            per_agency[name] = per_agency.get(name, 0) + 1
-            if per_agency[name] > AGENCY_MAX:
-                dropped += 1
-                continue
-        clean_jobs.append(job)
-    print(f"Safety pass removed {dropped} jobs")
-
-    jobs = clean_jobs[:MAX_JOBS]
+    jobs = final_pass(found.values(), cfg, now)[:MAX_JOBS]
     if (succeeded == 0 or not jobs) and OUT.exists():
         print("No sources worked or nothing matched, keeping the old file.")
         return
