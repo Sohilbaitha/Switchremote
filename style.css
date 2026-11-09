@@ -162,6 +162,18 @@ footer a{color:inherit}
 /* Wider screens: same design, text simply uses the extra width */
 @media (min-width:700px){.hero h1{max-width:none}.sub{max-width:860px}}
 
-/* Footer centered on every screen, so wide screens have no empty side */
-footer .wrap{text-align:center}
-.social{justify-content:center}
+/* Footer: centered on phones, two sides on wide screens */
+.foot{text-align:center}
+.foot .social{justify-content:center}
+.f-links .sep{margin:0 10px;color:var(--muted)}
+.f-info p{margin:0 0 6px}
+@media (min-width:900px){
+.foot{text-align:left}
+.f-top,.f-bottom{display:flex;align-items:center;justify-content:space-between;gap:40px}
+.foot .social{justify-content:flex-start;margin-bottom:0}
+.f-links{margin:0}
+.f-bottom{align-items:flex-end;margin-top:20px;padding-top:18px;border-top:1px solid var(--line)}
+.f-info{max-width:640px}
+.f-info p:last-child,.f-copy{margin:0}
+.f-copy{flex:none}
+}
