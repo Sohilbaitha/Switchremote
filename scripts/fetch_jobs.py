@@ -82,15 +82,44 @@ def min_years(text):
     return min(int(n) for n in found) if found else None
 
 
-def make(title, company, location, url, posted, source, text, need_remote=False, logo=""):
+# ---------- safety rules ----------
+# Apply links that real employers almost never use: chat apps, link shorteners, forms, personal email
+BAD_LINK = re.compile(
+    r"(wa\.me|whatsapp\.com|(^|[/.])t\.me/|telegram\.(me|org)|bit\.ly|tinyurl\.com|cutt\.ly|rb\.gy|"
+    r"is\.gd|shorturl\.at|forms\.gle|docs\.google\.com/forms|linktr\.ee|"
+    r"mailto:[^ ]*@(gmail|yahoo|hotmail|outlook|ymail|rediffmail)\.)", re.I)
+# Phrases that only show up in scams (asking for money, task scams, money mules, chat-app hiring)
+SCAM = re.compile(
+    r"\b((registration|processing|training|joining|application|onboarding) (fee|charge)s?|"
+    r"(security|refundable) deposit|starter kit|pay to (apply|join)|advance payment|"
+    r"money transfer agent|payment processing agent|reshipp?ing|package forwarding|"
+    r"(like|rate|review) (videos|posts|products|hotels) (and|to) earn|prepaid task|"
+    r"(contact|message|text|dm|chat with) (us |me |the recruiter )?(on|via) (whatsapp|telegram)|"
+    r"telegram (id|handle|username)|unlimited (income|earning)|earn (rs\.?|inr|₹|\$) ?\d[\d,]* (per|a) day)\b", re.I)
+# Recruitment / staffing agencies: allowed, but at most 2 jobs each so one agency cannot flood the board
+AGENCY = re.compile(r"staff|recruit|agency|outsourc|manpower|placement|talent|hire|hiring|consultan", re.I)
+AGENCY_MAX = 2
+FEEDS = {"Remotive", "Jobicy", "Himalayas", "Remote OK"}
+MIN_TEXT = 300   # feed jobs with almost no description are dropped
+
+
+def bad_link(*links):
+    return any(l and BAD_LINK.search(l) for l in links)
+
+
+def make(title, company, location, url, posted, source, text, need_remote=False, logo="", check=""):
     try:
         text = (text or "")[:4000]
         if not (title and url and url.startswith("http")):
             return None
+        if bad_link(url, check):
+            return None
+        if source in FEEDS and len(text.strip()) < MIN_TEXT:
+            return None
         if need_remote and "remote" not in (location + " " + title).lower():
             return None
         body = (title + " " + text).lower()
-        if has(title.lower(), SENIOR) or has(body, BAD):
+        if has(title.lower(), SENIOR) or has(body, BAD) or SCAM.search(body):
             return None
         years = min_years(text)
         if years is not None and years >= 2:
@@ -166,7 +195,8 @@ def remoteok():
             continue
         yield make(j["position"], j.get("company", ""), j.get("location") or "Worldwide",
                    j.get("url"), j.get("date"), "Remote OK",
-                   clean(j.get("description")) + " " + " ".join(j.get("tags") or []))
+                   clean(j.get("description")) + " " + " ".join(j.get("tags") or []),
+                   check=j.get("apply_url") or "")
 
 
 # ---------- company career pages ----------
@@ -357,7 +387,23 @@ def main():
             print("Could not read old jobs:", e)
     print(f"Kept {carried} jobs from earlier refreshes")
 
-    jobs = sorted(found.values(), key=lambda j: j["posted"], reverse=True)[:MAX_JOBS]
+    # Final safety pass on everything, including jobs kept from earlier refreshes
+    blocked = [b.lower() for b in cfg.get("blocked_companies", []) if b.strip()]
+    clean_jobs, per_agency, dropped = [], {}, 0
+    for job in sorted(found.values(), key=lambda j: j["posted"], reverse=True):
+        name = job.get("company", "").lower()
+        if any(b in name for b in blocked) or bad_link(job.get("url")):
+            dropped += 1
+            continue
+        if job.get("source") != "Employer" and AGENCY.search(name):
+            per_agency[name] = per_agency.get(name, 0) + 1
+            if per_agency[name] > AGENCY_MAX:
+                dropped += 1
+                continue
+        clean_jobs.append(job)
+    print(f"Safety pass removed {dropped} jobs")
+
+    jobs = clean_jobs[:MAX_JOBS]
     if (succeeded == 0 or not jobs) and OUT.exists():
         print("No sources worked or nothing matched, keeping the old file.")
         return
