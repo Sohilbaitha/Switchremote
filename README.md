@@ -11,7 +11,7 @@ I built it because freshers searching for remote jobs keep running into fake lis
 ## How it works
 
 - A Python script (`scripts/fetch_jobs.py`) collects remote jobs from:
-  - company career boards on Greenhouse, Lever, Ashby, Workable, Recruitee and SmartRecruiters (listed in `sources.json`)
+  - company career boards on Greenhouse, Lever, Ashby, Workable and Recruitee (listed in `sources.json`)
   - remote job feeds: Remotive, Jobicy, Himalayas and Remote OK
   - jobs submitted by employers through our Google Form
 - It keeps only remote roles that freshers can apply for, removes duplicates, closed and old listings, and saves them for the site.

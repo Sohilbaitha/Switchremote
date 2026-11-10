@@ -12,6 +12,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "data" / "jobs.json"
+REVIEW_OUT = ROOT / "data" / "review.json"
 SOURCES = ROOT / "sources.json"
 HEADERS = {"User-Agent": "SwitchremoteBot/1.0"}
 MAX_AGE_DAYS = 14   # every job leaves the site 14 days after it was posted
@@ -323,11 +324,9 @@ NAMES = {"automatticcareers": "Automattic", "wikimedia": "Wikimedia Foundation",
          "remotecom": "Remote", "invisibletech": "Invisible Technologies",
          "pricelabs": "PriceLabs", "canonical": "Canonical", "openai": "OpenAI",
          "clickup": "ClickUp", "twilio": "Twilio", "turing": "Turing", "notion": "Notion",
-         "hostinger": "Hostinger", "linkedin3": "LinkedIn", "boschgroup": "Bosch",
-         "experian": "Experian", "grab": "Grab",
+         "hostinger": "Hostinger",
          "razorpaysoftwareprivatelimited": "Razorpay", "groww": "Groww", "paytm": "Paytm",
-         "meesho": "Meesho", "cred": "CRED", "ajaib": "Ajaib", "swiggy": "Swiggy",
-         "deliveryhero": "Delivery Hero"}
+         "meesho": "Meesho", "cred": "CRED", "ajaib": "Ajaib"}
 
 
 def nice(slug, fallback=None):
@@ -385,50 +384,6 @@ def recruitee(slug):
                    clean(j.get("description")), need_remote=True)
 
 
-SR_COUNTRIES = {"in": "India", "ph": "Philippines", "id": "Indonesia", "vn": "Vietnam",
-                "my": "Malaysia", "th": "Thailand"}
-
-
-def smartrecruiters(slug):
-    """SmartRecruiters public postings. The full description is fetched only for jobs that are
-    remote, in one of our places and have a fresher-friendly title, to keep calls low."""
-    offset = 0
-    while offset < 1000:
-        d = get(f"https://api.smartrecruiters.com/v1/companies/{slug}/postings?limit=100&offset={offset}")
-        rows = d.get("content") or []
-        for j in rows:
-            loc = j.get("location") or {}
-            code = (loc.get("country") or "").lower()
-            place = " ".join(x for x in [loc.get("fullLocation") or "", loc.get("city") or "",
-                                         SR_COUNTRIES.get(code, "")] if x)
-            if loc.get("remote"):
-                place += " remote"
-            name = j.get("name") or ""
-            company = (j.get("company") or {}).get("name") or nice(slug)
-            url, text = f"https://jobs.smartrecruiters.com/{slug}/{j.get('id')}", ""
-            if "remote" in place.lower() and countries_for(place) and title_ok(name):
-                try:
-                    full = get(f"https://api.smartrecruiters.com/v1/companies/{slug}/postings/{j.get('id')}")
-                    url = full.get("postingUrl") or url
-                    parts = ((full.get("jobAd") or {}).get("sections") or {}).values()
-                    raw = " ".join((x or {}).get("text", "") for x in parts)
-                except Exception:
-                    continue   # cannot read the job, so cannot check it
-                # Some companies tick SmartRecruiters' remote box for hybrid roles, so the job
-                # text itself must say remote, and a hybrid job must say remote in its title
-                low = (name + " " + re.sub(r"<[^>]+>", " ", html.unescape(raw))).lower()
-                if not re.search(r"\bremote\b|work from home|work-from-home|\bwfh\b", low):
-                    continue
-                if "hybrid" in low and "remote" not in name.lower():
-                    continue
-                text = clean(raw)
-            yield make(name, nice(slug, company), place, url, j.get("releasedDate"), "Company site",
-                       text, need_remote=True)
-        if len(rows) < 100:
-            break
-        offset += 100
-
-
 # ---------- employer jobs from the Google Form sheet ----------
 
 EMPLOYER_MAX_AGE_DAYS = MAX_AGE_DAYS   # employer jobs follow the same 14-day rule
@@ -483,7 +438,7 @@ def employer_sheet(url):
                "posted": posted.isoformat(), "source": "Employer"}
 
 
-READERS = {"smartrecruiters": smartrecruiters, "greenhouse": greenhouse, "lever": lever, "ashby": ashby,
+READERS = {"greenhouse": greenhouse, "lever": lever, "ashby": ashby,
            "workable": workable, "recruitee": recruitee}
 
 
@@ -500,8 +455,6 @@ def detect(link):
         return "ashby", first
     if host.endswith("workable.com") and first:
         return "workable", first
-    if host.endswith("smartrecruiters.com") and first:
-        return "smartrecruiters", first
     if host.endswith(".recruitee.com"):
         return "recruitee", host.split(".")[0]
     return None, None
@@ -514,9 +467,24 @@ def job_key(job):
     return (re.sub(r"\W+", " ", job.get("company", "").lower()).strip(), re.sub(r"\W+", " ", title).strip())
 
 
+def company_key(name):
+    return re.sub(r"[^a-z0-9]+", " ", (name or "").lower()).strip()
+
+
+def is_approved(name, approved):
+    """Job-board jobs are shown only for companies on our approved list (sources.json).
+    "Honeywell International Inc." matches the entry "honeywell"; short entries must match fully."""
+    key = company_key(name)
+    return any(key == a or (len(a) >= 8 and key.startswith(a + " ")) for a in approved)
+
+
+REVIEW = {}   # companies seen on job boards that are not on the approved list yet
+
+
 def final_pass(all_jobs, cfg, now):
     """Safety pass on everything, including jobs kept from earlier refreshes."""
     blocked = [b.lower() for b in cfg.get("blocked_companies", []) if b.strip()]
+    approved = {company_key(a) for a in cfg.get("approved_companies", []) if a.strip()}
     clean_jobs, per_agency, dropped = [], {}, 0
     # The same job often comes from two sources. Keep one copy, preferring the employer's own post
     # or the company's own career page over a job feed.
@@ -546,7 +514,13 @@ def final_pass(all_jobs, cfg, now):
             dropped += 1
             continue
         if job.get("source") in FEEDS:
-            if AGENCY.search(name) and AGENCY_MAX == 0:
+            if not is_approved(name, approved):
+                r = REVIEW.setdefault(job.get("company", ""), {"jobs": 0, "example": job.get("title", ""),
+                                                               "link": job.get("url", ""),
+                                                               "source": job.get("source", "")})
+                r["jobs"] += 1
+                if AGENCY.search(name):
+                    r["note"] = "name looks like a staffing or outsourcing agency"
                 dropped += 1
                 continue
             per_agency[name] = per_agency.get(name, 0) + 1
@@ -570,6 +544,7 @@ def main():
         else:
             print("UNKNOWN careers link (skipped):", link)
 
+    sites = {k.lower(): v for k, v in cfg.get("company_sites", {}).items()}
     found = {}
     succeeded = 0
     boards_ok = set()   # company boards that answered this time
@@ -593,6 +568,9 @@ def main():
                 if job and fresh(job):
                     if is_board:
                         job["board"] = name
+                        site = sites.get(name.split(":", 1)[1])
+                        if site and not job.get("logo"):
+                            job["logo"] = f"https://www.google.com/s2/favicons?domain={site}&sz=128"
                     found[job["url"]] = job
                     kept += 1
             succeeded += 1
@@ -650,6 +628,11 @@ def main():
     OUT.write_text(json.dumps(
         {"updated": datetime.now(timezone.utc).isoformat(), "jobs": jobs}, ensure_ascii=False))
     print(len(jobs), "jobs saved")
+    # Companies waiting for a check. Add a name to "approved_companies" in sources.json to show its jobs.
+    REVIEW_OUT.write_text(json.dumps(
+        [{"company": c, **v} for c, v in sorted(REVIEW.items(), key=lambda x: x[0].lower())],
+        ensure_ascii=False, indent=1))
+    print(len(REVIEW), "companies waiting for review (data/review.json)")
 
 
 main()
