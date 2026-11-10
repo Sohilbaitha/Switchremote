@@ -49,6 +49,9 @@ EXPERIENCED = ["consultant", "counsel", "attorney", "lawyer", "accountant", "boo
 # Listings that are not one real, open job
 NOT_A_JOB = re.compile(r"talent (pool|network|community|hub)|general application|future (opening|opportunit)|"
                        r"\bphd\b|open application|expression of interest|you pick the title", re.I)
+# Field jobs (field sales, field marketing) mean travelling to customers, so they are not
+# work-from-home even when a company ticks the "remote" box
+FIELD_JOB = re.compile(r"\bfield\b|door[- ]to[- ]door|\bfos\b|on[- ]ground", re.I)
 # One company can show at most this many feed jobs, so a single bulk poster cannot fill the board
 COMPANY_MAX = 3
 # Seniority labels that job feeds attach to a job
@@ -94,7 +97,7 @@ def title_ok(title):
     """Fresher board rule for titles: no senior roles, no experience-only roles,
     and technical roles only when the title itself says junior/intern/trainee."""
     t = (title or "").lower()
-    if has(t, SENIOR) or NOT_A_JOB.search(t):
+    if has(t, SENIOR) or NOT_A_JOB.search(t) or FIELD_JOB.search(t):
         return False
     if (has(t, TECH) or has(t, EXPERIENCED)) and not has(t, FRESHER):
         return False
@@ -321,7 +324,10 @@ NAMES = {"automatticcareers": "Automattic", "wikimedia": "Wikimedia Foundation",
          "pricelabs": "PriceLabs", "canonical": "Canonical", "openai": "OpenAI",
          "clickup": "ClickUp", "twilio": "Twilio", "turing": "Turing", "notion": "Notion",
          "hostinger": "Hostinger", "linkedin3": "LinkedIn", "boschgroup": "Bosch",
-         "experian": "Experian", "grab": "Grab"}
+         "experian": "Experian", "grab": "Grab",
+         "razorpaysoftwareprivatelimited": "Razorpay", "groww": "Groww", "paytm": "Paytm",
+         "meesho": "Meesho", "cred": "CRED", "ajaib": "Ajaib", "swiggy": "Swiggy",
+         "deliveryhero": "Delivery Hero"}
 
 
 def nice(slug, fallback=None):
