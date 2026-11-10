@@ -44,7 +44,7 @@ a{color:var(--link)}
 }
 
 /* hero */
-.hero{padding:30px 0 26px;background-color:var(--tint);background-image:radial-gradient(#c3e3fa 1.2px,transparent 1.6px);background-size:16px 16px}
+.hero{padding:30px 0 26px;background:linear-gradient(180deg,#d9efff 0%,var(--tint) 55%,#fff 100%)}
 .hero h1{margin:0;font-size:1.5rem;line-height:1.3;font-weight:700;color:#000;max-width:520px}
 .sub{margin:10px 0 0;color:#3d4954;max-width:520px}
 .count{margin:14px 0 0;font-size:.8125rem;font-weight:600;color:#000}
@@ -224,9 +224,6 @@ a.chip{text-decoration:none}
 
 
 /* ---- A livelier page: hero, cards and the job page (brand colours only) ---- */
-.trust{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 0;padding:0;list-style:none}
-.trust li{display:inline-flex;align-items:center;gap:7px;padding:5px 12px 5px 9px;border:1px solid #c3e3fa;border-radius:999px;background:#fff;font-size:.8125rem;font-weight:500;color:#000}
-.trust li::before{content:"";width:14px;height:14px;border-radius:50%;background:var(--blue) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.3 8.4l2.4 2.4 5-5.6' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/12px no-repeat}
 .count{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px}
 .live{flex:none;width:8px;height:8px;border-radius:50%;background:var(--blue);animation:ring 2s ease-out infinite}
 .fresh{font-weight:400;color:#3d4954}
