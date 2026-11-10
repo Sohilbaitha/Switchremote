@@ -34,11 +34,6 @@ FRESHER = ["fresher", "freshers", "entry level", "entry-level", "junior", "inter
            "internship", "trainee", "graduate", "fresh graduate", "fresh graduates",
            "no experience", "no prior experience", "0-1 year", "0-1 years",
            "0-2 years", "less than 1 year", "apprentice"]
-ROLES = ["customer support", "customer service", "customer success", "support specialist",
-         "support agent", "support representative", "chat support", "live chat",
-         "data entry", "virtual assistant", "content writer", "content moderator",
-         "social media", "appointment setter", "sales development", "community moderator",
-         "transcription", "back office", "order processing", "associate"]
 SENIOR = ["senior", "sr", "lead", "manager", "director", "principal", "head", "staff", "vp",
           "architect", "chief", "executive", "expert", "ii", "iii", "mid-level", "experienced",
           "leader", "vice president", "president", "commander"]
@@ -146,13 +141,11 @@ SCAM = re.compile(
     r"(like|rate|review) (videos|posts|products|hotels) (and|to) earn|prepaid task|"
     r"(contact|message|text|dm|chat with) (us |me |the recruiter )?(on|via) (whatsapp|telegram)|"
     r"telegram (id|handle|username)|unlimited (income|earning)|earn (rs\.?|inr|₹|\$) ?\d[\d,]* (per|a) day)\b", re.I)
-# Staffing, outsourcing and virtual-assistant agencies are left out of the job feeds: the real
-# employer is hidden behind them, so we cannot tell who a fresher would be working for.
-# A company's own career board and employer posts we reviewed by hand are not affected.
+# Names that look like staffing, outsourcing or virtual-assistant agencies. Used only to add a
+# note in data/review.json, so such a company is not approved by mistake.
 AGENCY = re.compile(r"staff|recruit|agency|agencies|outsourc|offshor|overseas|manpower|placement|talent|"
                     r"\bhire|hiring|consultan|delegate|\bbpo\b|virtual assist|\bvas?\b|remote employee|"
                     r"operationsarmy|workforce|headhunt", re.I)
-AGENCY_MAX = 0
 FEEDS = {"Remotive", "Jobicy", "Himalayas", "Remote OK"}
 MIN_TEXT = 300   # feed jobs with almost no description are dropped
 
@@ -326,7 +319,7 @@ NAMES = {"automatticcareers": "Automattic", "wikimedia": "Wikimedia Foundation",
          "gitlab": "GitLab", "branch": "Branch International",
          "remotecom": "Remote", "invisibletech": "Invisible Technologies",
          "pricelabs": "PriceLabs", "canonical": "Canonical", "openai": "OpenAI",
-         "clickup": "ClickUp", "twilio": "Twilio", "turing": "Turing", "notion": "Notion",
+         "clickup": "ClickUp", "twilio": "Twilio", "notion": "Notion",
          "hostinger": "Hostinger",
          "razorpaysoftwareprivatelimited": "Razorpay", "groww": "Groww", "paytm": "Paytm",
          "meesho": "Meesho", "cred": "CRED", "ajaib": "Ajaib"}
