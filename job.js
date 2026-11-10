@@ -17,7 +17,7 @@
     if (text != null) e.textContent = text;
     return e;
   }
-  function placeName(x) { return x === 'Worldwide' ? 'Anywhere in the world' : x === 'Asia' ? 'Asia-Pacific' : x; }
+  function placeName(x) { return x === 'Worldwide' ? 'Any country' : x === 'Asia' ? 'Asia-Pacific' : x; }
   function days(iso) { return Math.floor((Date.now() - new Date(iso)) / 864e5); }
   function postedText(iso) {
     var d = days(iso);

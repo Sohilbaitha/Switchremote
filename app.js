@@ -5,13 +5,14 @@ const q = document.getElementById('q');
 const PLACES = [
   ['', 'All jobs'],
   ['new', 'New today'],
-  ['Worldwide', '\u{1F30D} Worldwide'],
+  ['India', '\u{1F1EE}\u{1F1F3} India'],
+  ['Philippines', '\u{1F1F5}\u{1F1ED} Philippines'],
   ['Indonesia', '\u{1F1EE}\u{1F1E9} Indonesia'],
   ['Vietnam', '\u{1F1FB}\u{1F1F3} Vietnam'],
   ['Malaysia', '\u{1F1F2}\u{1F1FE} Malaysia'],
-  ['Philippines', '\u{1F1F5}\u{1F1ED} Philippines'],
   ['Thailand', '\u{1F1F9}\u{1F1ED} Thailand'],
-  ['India', '\u{1F1EE}\u{1F1F3} India']
+  // Jobs open to people in any country
+  ['Worldwide', '\u{1F30D} Anywhere']
 ];
 const POST_URL = 'post-a-job.html';
 // Every country has its own page, so the country chips are real links
@@ -71,7 +72,7 @@ fetch('data/jobs.json?v=' + Date.now())
   .catch(() => { statusEl.textContent = 'Could not load jobs. Please try again later.'; });
 
 function shareJob(j) {
-  const where = j.countries.includes('Worldwide') ? 'anywhere in the world' : j.countries.map(placeName).join(', ');
+  const where = j.countries.includes('Worldwide') ? 'open to any country' : j.countries.map(placeName).join(', ');
   const url = 'https://switchremote.world/job.html?id=' + jobId(j);
   const text = j.title + ' at ' + j.company + ' (remote, ' + where + '). Free remote jobs for freshers on Switchremote.';
   if (window.track) track('share_click', { job_title: j.title, company: j.company });
@@ -122,7 +123,7 @@ function inPlace(j, p) {
 
 // 'Asia' marks jobs open across Asia-Pacific but not the whole world
 function placeName(x) {
-  return x === 'Worldwide' ? 'Anywhere in the World' : x === 'Asia' ? 'Asia-Pacific' : x;
+  return x === 'Worldwide' ? 'Any country' : x === 'Asia' ? 'Asia-Pacific' : x;
 }
 
 function age(iso) {
@@ -305,7 +306,7 @@ function render() {
 const shareSite = document.getElementById('share-site');
 if (shareSite) shareSite.addEventListener('click', () => {
   const url = 'https://switchremote.world/';
-  const text = 'Remote jobs for freshers across Asia and the world. Free, no signup.';
+  const text = 'Real remote jobs that freshers can apply for. Free, no signup.';
   if (window.track) track('share_site_click', {});
   if (navigator.share) { navigator.share({ title: 'Switchremote', text: text, url: url }).catch(() => {}); return; }
   if (navigator.clipboard) navigator.clipboard.writeText(text + ' ' + url).then(() => toast('Link copied. Paste it anywhere to share.'), () => window.prompt('Copy this link:', url));
@@ -315,19 +316,3 @@ if (shareSite) shareSite.addEventListener('click', () => {
 q.addEventListener('input', () => { shared = null; render(); });
 q.addEventListener('search', render);
 q.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); q.blur(); } });
-
-// Hero greeting: one language at a time, unless the person prefers no motion
-(() => {
-  const hello = document.querySelector('.hello');
-  if (!hello || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const words = [...hello.children];
-  if (words.length < 2) return;
-  let i = 0;
-  hello.classList.add('rot');
-  words[0].classList.add('on');
-  setInterval(() => {
-    words[i].classList.remove('on');
-    i = (i + 1) % words.length;
-    words[i].classList.add('on');
-  }, 2200);
-})();

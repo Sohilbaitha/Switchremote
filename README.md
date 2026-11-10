@@ -2,7 +2,7 @@
 
 **Remote jobs for freshers.** Live at [switchremote.world](https://switchremote.world)
 
-Switchremote is a free job board for freshers and early-career people looking for remote work in India, Indonesia, the Philippines, Vietnam, Malaysia, Thailand and worldwide.
+Switchremote is a free job board for freshers and early-career people looking for remote work. You pick where you live and it shows the remote jobs open to you.
 
 I built it because freshers searching for remote jobs keep running into fake listings, registration fees and jobs that were closed months ago. Switchremote only lists jobs that come straight from company career pages and trusted remote job boards, and it's free for everyone. No sign-up, no fees.
 

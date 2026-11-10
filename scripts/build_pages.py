@@ -35,7 +35,7 @@ def in_place(job, place):
 
 
 def place_name(x):
-    return {"Worldwide": "Anywhere in the World", "Asia": "Asia-Pacific"}.get(x, x)
+    return {"Worldwide": "Any country", "Asia": "Asia-Pacific"}.get(x, x)
 
 
 SOURCE_SITES = {"Remotive": "https://remotive.com", "Jobicy": "https://jobicy.com",
@@ -78,19 +78,19 @@ def swap(html, pattern, new):
 def build(template, jobs, place, name, where):
     url = SITE + name
     if place == "Worldwide":
-        title = "Remote jobs for freshers, open worldwide | Switchremote"
-        h1 = "Remote jobs for freshers, open worldwide"
-        desc = ("Work-from-home jobs that freshers can apply for from anywhere in the world, gathered "
+        title = "Remote jobs for freshers, open to any country | Switchremote"
+        h1 = "Remote jobs for freshers, open to any country"
+        desc = ("Work-from-home jobs that freshers can apply for from any country, gathered "
                 "from company career pages and trusted remote job boards. Free, no signup, refreshed every 6 hours.")
-        sub = ("These remote jobs are open to applicants anywhere in the world. We gather them from company "
+        sub = ("These remote jobs are open to applicants in any country. We gather them from company "
                "career pages and trusted remote job boards, check them for warning signs, and send you straight "
                "to the original listing to apply. No signup and no fees, ever.")
     else:
         title = f"Remote jobs for freshers {where} | Switchremote"
         h1 = f"Remote jobs for freshers {where}"
-        desc = (f"Work-from-home jobs that freshers {where} can apply for, including remote jobs open worldwide. "
+        desc = (f"Work-from-home jobs that freshers {where} can apply for, including remote jobs open to any country. "
                 "Gathered from company career pages and trusted remote job boards. Free, no signup.")
-        sub = (f"Work-from-home jobs that freshers {where} can apply for, including remote jobs open worldwide. "
+        sub = (f"Work-from-home jobs that freshers {where} can apply for, including remote jobs open to any country. "
                "We gather them from company career pages and trusted remote job boards, check them for warning "
                "signs, and send you straight to the original listing to apply. No signup and no fees, ever.")
     rows = [j for j in jobs if in_place(j, place)][:MAX_STATIC]
