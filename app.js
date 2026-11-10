@@ -272,14 +272,13 @@ function render() {
     if (j.kind) tags.append(tag(j.kind));
     j.countries.forEach(x => tags.append(tag(placeName(x))));
     tags.append(sourceTag(j.source));
+    // The card opens the job page; applying happens there, next to the summary and safety tips
     const apply = document.createElement('a');
     apply.className = 'apply';
-    apply.href = j.url;
-    apply.target = '_blank';
-    apply.rel = j.source === 'Remote OK' ? 'noopener' : 'noopener noreferrer nofollow';
-    apply.textContent = 'Apply now';
+    apply.href = jobUrl(j);
+    apply.textContent = 'View job';
     apply.addEventListener('click', () => {
-      if (window.track) track('apply_click', { job_title: j.title, company: j.company, source: j.source, country: j.countries.join(',') });
+      if (window.track) track('view_job_click', { job_title: j.title, company: j.company, source: j.source });
     });
     const actions = document.createElement('div');
     actions.className = 'actions';

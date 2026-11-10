@@ -281,3 +281,6 @@ a.chip{text-decoration:none}
 .jd > *{animation:rise .35s ease both}
 @media (prefers-reduced-motion:reduce){.jd > *{animation:none}}
 @media (min-width:700px){.jd{padding-top:32px}.jd h1{font-size:1.75rem}.facts{grid-template-columns:repeat(3,minmax(0,1fr))}.jd-more{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Card button opens the job page */
+.job .apply::after{content:"";display:inline-block;width:6px;height:6px;margin-left:8px;border-top:2px solid #000;border-right:2px solid #000;transform:rotate(45deg) translateY(-1px)}
