@@ -39,7 +39,8 @@ ROLES = ["customer support", "customer service", "customer success", "support sp
          "social media", "appointment setter", "sales development", "community moderator",
          "transcription", "back office", "order processing", "associate"]
 SENIOR = ["senior", "sr", "lead", "manager", "director", "principal", "head", "staff", "vp",
-          "architect", "chief", "executive", "expert", "ii", "iii", "mid-level", "experienced"]
+          "architect", "chief", "executive", "expert", "ii", "iii", "mid-level", "experienced",
+          "leader", "vice president", "president", "commander"]
 # Roles that need a licence or past experience, so they are not fresher jobs
 # (kept only when the title itself says junior/intern/trainee)
 EXPERIENCED = ["consultant", "counsel", "attorney", "lawyer", "accountant", "bookkeeper",
@@ -47,7 +48,7 @@ EXPERIENCED = ["consultant", "counsel", "attorney", "lawyer", "accountant", "boo
                "therapist", "supervisor"]
 # Listings that are not one real, open job
 NOT_A_JOB = re.compile(r"talent (pool|network|community|hub)|general application|future (opening|opportunit)|"
-                       r"\bphd\b|open application", re.I)
+                       r"\bphd\b|open application|expression of interest|you pick the title", re.I)
 # One company can show at most this many feed jobs, so a single bulk poster cannot fill the board
 COMPANY_MAX = 3
 # Seniority labels that job feeds attach to a job
@@ -80,6 +81,8 @@ def clean(text):
 def countries_for(location):
     t = (location or "").lower()
     found = [c for c, w in COUNTRIES.items() if has(t, w)]
+    # "Anywhere in France" means France only, not the whole world
+    t = re.sub(r"\banywhere in (?!the world)[a-z]+", " ", t)
     if not found and has(t, GLOBAL):
         found = ["Worldwide"]
     if not found and has(t, ASIA):
@@ -315,7 +318,10 @@ NAMES = {"automatticcareers": "Automattic", "wikimedia": "Wikimedia Foundation",
          "elevenlabs": "ElevenLabs", "deel": "Deel", "zapier": "Zapier",
          "gitlab": "GitLab", "branch": "Branch International",
          "remotecom": "Remote", "invisibletech": "Invisible Technologies",
-         "pricelabs": "PriceLabs", "canonical": "Canonical"}
+         "pricelabs": "PriceLabs", "canonical": "Canonical", "openai": "OpenAI",
+         "clickup": "ClickUp", "twilio": "Twilio", "turing": "Turing", "notion": "Notion",
+         "hostinger": "Hostinger", "linkedin3": "LinkedIn", "boschgroup": "Bosch",
+         "experian": "Experian", "grab": "Grab"}
 
 
 def nice(slug, fallback=None):
@@ -369,6 +375,50 @@ def recruitee(slug):
         yield make(j["title"], j.get("company_name") or slug, loc, j.get("careers_url"),
                    j.get("published_at") or j.get("created_at"), "Company site",
                    clean(j.get("description")), need_remote=True)
+
+
+SR_COUNTRIES = {"in": "India", "ph": "Philippines", "id": "Indonesia", "vn": "Vietnam",
+                "my": "Malaysia", "th": "Thailand"}
+
+
+def smartrecruiters(slug):
+    """SmartRecruiters public postings. The full description is fetched only for jobs that are
+    remote, in one of our places and have a fresher-friendly title, to keep calls low."""
+    offset = 0
+    while offset < 1000:
+        d = get(f"https://api.smartrecruiters.com/v1/companies/{slug}/postings?limit=100&offset={offset}")
+        rows = d.get("content") or []
+        for j in rows:
+            loc = j.get("location") or {}
+            code = (loc.get("country") or "").lower()
+            place = " ".join(x for x in [loc.get("fullLocation") or "", loc.get("city") or "",
+                                         SR_COUNTRIES.get(code, "")] if x)
+            if loc.get("remote"):
+                place += " remote"
+            name = j.get("name") or ""
+            company = (j.get("company") or {}).get("name") or nice(slug)
+            url, text = f"https://jobs.smartrecruiters.com/{slug}/{j.get('id')}", ""
+            if "remote" in place.lower() and countries_for(place) and title_ok(name):
+                try:
+                    full = get(f"https://api.smartrecruiters.com/v1/companies/{slug}/postings/{j.get('id')}")
+                    url = full.get("postingUrl") or url
+                    parts = ((full.get("jobAd") or {}).get("sections") or {}).values()
+                    raw = " ".join((x or {}).get("text", "") for x in parts)
+                except Exception:
+                    continue   # cannot read the job, so cannot check it
+                # Some companies tick SmartRecruiters' remote box for hybrid roles, so the job
+                # text itself must say remote, and a hybrid job must say remote in its title
+                low = (name + " " + re.sub(r"<[^>]+>", " ", html.unescape(raw))).lower()
+                if not re.search(r"\bremote\b|work from home|work-from-home|\bwfh\b", low):
+                    continue
+                if "hybrid" in low and "remote" not in name.lower():
+                    continue
+                text = clean(raw)
+            yield make(name, nice(slug, company), place, url, j.get("releasedDate"), "Company site",
+                       text, need_remote=True)
+        if len(rows) < 100:
+            break
+        offset += 100
 
 
 # ---------- employer jobs from the Google Form sheet ----------
@@ -425,7 +475,7 @@ def employer_sheet(url):
                "posted": posted.isoformat(), "source": "Employer"}
 
 
-READERS = {"greenhouse": greenhouse, "lever": lever, "ashby": ashby,
+READERS = {"smartrecruiters": smartrecruiters, "greenhouse": greenhouse, "lever": lever, "ashby": ashby,
            "workable": workable, "recruitee": recruitee}
 
 
@@ -442,6 +492,8 @@ def detect(link):
         return "ashby", first
     if host.endswith("workable.com") and first:
         return "workable", first
+    if host.endswith("smartrecruiters.com") and first:
+        return "smartrecruiters", first
     if host.endswith(".recruitee.com"):
         return "recruitee", host.split(".")[0]
     return None, None

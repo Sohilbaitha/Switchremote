@@ -16,8 +16,20 @@
     "https://job-boards.greenhouse.io/wikimedia",
     "https://job-boards.greenhouse.io/mozilla",
     "https://jobs.ashbyhq.com/supabase",
-    "https://jobs.ashbyhq.com/posthog"
+    "https://jobs.ashbyhq.com/posthog",
+    "https://job-boards.greenhouse.io/twilio",
+    "https://job-boards.greenhouse.io/turing",
+    "https://jobs.ashbyhq.com/hostinger",
+    "https://jobs.ashbyhq.com/notion",
+    "https://jobs.ashbyhq.com/clickup",
+    "https://jobs.ashbyhq.com/openai",
+    "https://jobs.smartrecruiters.com/Experian",
+    "https://jobs.smartrecruiters.com/BoschGroup",
+    "https://jobs.smartrecruiters.com/Grab",
+    "https://jobs.smartrecruiters.com/LinkedIn3"
   ],
   "sheet": "https://docs.google.com/spreadsheets/d/e/2PACX-1vSQqZkwYt_DpIDUXIZtepwwSxzNdZWzCqWB48ysDd9mox7pyDhziRU8qaeiLZ2HYwtBeBiD_4d99Yxn/pub?gid=1560256108&single=true&output=csv",
-  "blocked_companies": ["IAPWE"]
+  "blocked_companies": [
+    "IAPWE"
+  ]
 }
