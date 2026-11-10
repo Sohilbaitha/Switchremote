@@ -486,7 +486,9 @@ REVIEW = {}   # companies seen on job boards that are not on the approved list y
 
 def final_pass(all_jobs, cfg, now):
     """Safety pass on everything, including jobs kept from earlier refreshes."""
-    blocked = [b.lower() for b in cfg.get("blocked_companies", []) if b.strip()]
+    # Whole-word match, so blocking "Turing" does not also block a "Manufacturing" company
+    blocked = [re.compile(r"(?<![a-z0-9])" + re.escape(b.strip().lower()) + r"(?![a-z0-9])")
+               for b in cfg.get("blocked_companies", []) if b.strip()]
     approved = {company_key(a) for a in cfg.get("approved_companies", []) if a.strip()}
     clean_jobs, per_agency, dropped = [], {}, 0
     # The same job often comes from two sources. Keep one copy, preferring the employer's own post
@@ -505,7 +507,7 @@ def final_pass(all_jobs, cfg, now):
         keep.append(job)
     for job in sorted(keep, key=lambda j: j["posted"], reverse=True):
         name = job.get("company", "").lower()
-        if any(b in name for b in blocked) or bad_link(job.get("url")):
+        if any(b.search(name) for b in blocked) or bad_link(job.get("url")):
             dropped += 1
             continue
         if job.get("source") != "Employer" and CRYPTO.search(name):
