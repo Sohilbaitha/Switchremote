@@ -52,6 +52,9 @@ NOT_A_JOB = re.compile(r"talent (pool|network|community|hub)|general application
                        r"\bphd\b|open application|expression of interest|you pick the title", re.I)
 # Field jobs (field sales, field marketing) mean travelling to customers, so they are not
 # work-from-home even when a company ticks the "remote" box
+# Crypto companies and crypto jobs are left out completely
+CRYPTO = re.compile(r"crypto|bitcoin|blockchain|web3|\bdefi\b|\bnfts?\b|binance|coinbase|\bkraken\b|"
+                    r"\bokx\b|bybit|kucoin|certik|coindcx|coinswitch|wazirx|\btoken(s|omics)?\b", re.I)
 FIELD_JOB = re.compile(r"\bfield\b|door[- ]to[- ]door|\bfos\b|on[- ]ground", re.I)
 # One company can show at most this many feed jobs, so a single bulk poster cannot fill the board
 COMPANY_MAX = 3
@@ -98,7 +101,7 @@ def title_ok(title):
     """Fresher board rule for titles: no senior roles, no experience-only roles,
     and technical roles only when the title itself says junior/intern/trainee."""
     t = (title or "").lower()
-    if has(t, SENIOR) or NOT_A_JOB.search(t) or FIELD_JOB.search(t):
+    if has(t, SENIOR) or NOT_A_JOB.search(t) or FIELD_JOB.search(t) or CRYPTO.search(t):
         return False
     if (has(t, TECH) or has(t, EXPERIENCED)) and not has(t, FRESHER):
         return False
@@ -503,6 +506,9 @@ def final_pass(all_jobs, cfg, now):
     for job in sorted(keep, key=lambda j: j["posted"], reverse=True):
         name = job.get("company", "").lower()
         if any(b in name for b in blocked) or bad_link(job.get("url")):
+            dropped += 1
+            continue
+        if job.get("source") != "Employer" and CRYPTO.search(name):
             dropped += 1
             continue
         # Past the closing date the source gave us
