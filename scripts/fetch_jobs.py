@@ -353,6 +353,8 @@ def lever(slug):
 
 def ashby(slug):
     for j in get(f"https://api.ashbyhq.com/posting-api/job-board/{slug}")["jobs"]:
+        if j.get("isListed") is False:
+            continue   # Ashby: unlisted jobs are for direct links only, not for job lists
         places = [j.get("location") or ""]
         for s in j.get("secondaryLocations") or []:
             places.append(s.get("location", "") if isinstance(s, dict) else str(s))
