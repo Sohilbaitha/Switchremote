@@ -154,8 +154,54 @@ def bad_link(*links):
     return any(l and BAD_LINK.search(l) for l in links)
 
 
+# ---------- small extras shown on the job page ----------
+
+def summary_of(text, limit=220):
+    """A short extract from the listing, so people can decide whether to open it.
+    Kept short on purpose: the full text stays with the employer or job board."""
+    t = re.sub(r"\s+", " ", text or "").strip()
+    if len(t) < 60:
+        return ""
+    if len(t) <= limit:
+        return t
+    cut = t[:limit]
+    end = max(cut.rfind(". "), cut.rfind("! "), cut.rfind("? "))
+    if end >= 100:
+        return cut[:end + 1]
+    return cut[:cut.rfind(" ")].rstrip(",;:-") + "..."
+
+
+def kind_of(value):
+    """Full-time, Part-time and so on, from whatever wording the source uses."""
+    value = " ".join(str(v) for v in value) if isinstance(value, list) else str(value or "")
+    t = re.sub(r"[^a-z]", "", value.lower())
+    for key, label in (("fulltime", "Full-time"), ("parttime", "Part-time"), ("contract", "Contract"),
+                       ("freelance", "Freelance"), ("intern", "Internship"), ("temporary", "Temporary")):
+        if key in t:
+            return label
+    return ""
+
+
+def pay_of(low, high, currency="USD", period="year"):
+    """Pay range as the source states it, for example "USD 12,000 to 18,000 a year"."""
+    try:
+        low, high = float(low or 0), float(high or 0)
+    except (TypeError, ValueError):
+        return ""
+    if low <= 0 and high <= 0:
+        return ""
+    currency = re.sub(r"[^A-Za-z]", "", str(currency or "USD")).upper()[:3] or "USD"
+    per = {"year": "a year", "yearly": "a year", "annual": "a year", "month": "a month",
+           "monthly": "a month", "week": "a week", "weekly": "a week", "hour": "an hour",
+           "hourly": "an hour"}.get(str(period or "year").lower(), "a year")
+    if per == "a year" and max(low, high) < 1000:
+        return ""   # a yearly figure this small is a data mistake at the source
+    amount = f"{low:,.0f} to {high:,.0f}" if 0 < low < high else f"{(high or low):,.0f}"
+    return f"{currency} {amount} {per}"
+
+
 def make(title, company, location, url, posted, source, text, need_remote=False, logo="", check="",
-         level="", expires=None):
+         level="", expires=None, about="", kind="", pay=""):
     try:
         text = (text or "")[:4000]
         if not (title and url and url.startswith("http")):
@@ -184,6 +230,9 @@ def make(title, company, location, url, posted, source, text, need_remote=False,
             "source": source,
             **({"logo": logo} if isinstance(logo, str) and logo.startswith("https://") else {}),
             **({"expires": parse_date(expires).isoformat()} if expires else {}),
+            **({"summary": summary_of(about or text)} if summary_of(about or text) else {}),
+            **({"kind": kind_of(kind)} if kind_of(kind) else {}),
+            **({"pay": pay} if isinstance(pay, str) and pay else {}),
         }
     except Exception:
         return None
@@ -196,7 +245,8 @@ def remotive():
         yield make(j["title"], j["company_name"], j.get("candidate_required_location", ""),
                    j["url"], j["publication_date"], "Remotive",
                    clean(j.get("description")) + " " + j.get("category", ""),
-                   logo=j.get("company_logo") or "")
+                   logo=j.get("company_logo") or "", about=clean(j.get("description")),
+                   kind=j.get("job_type"))
 
 
 def jobicy():
@@ -219,7 +269,11 @@ def jobicy():
         level = " ".join(level) if isinstance(level, list) else level
         yield make(j["jobTitle"], j["companyName"], geo, j["url"], j["pubDate"], "Jobicy",
                    clean(j.get("jobDescription")) + " " + level,
-                   logo=j.get("companyLogo") or "", level=level)
+                   logo=j.get("companyLogo") or "", level=level,
+                   about=clean(j.get("jobExcerpt") or j.get("jobDescription")), kind=j.get("jobType"),
+                   pay=pay_of(j.get("annualSalaryMin") or j.get("salaryMin"),
+                              j.get("annualSalaryMax") or j.get("salaryMax"),
+                              j.get("salaryCurrency"), j.get("salaryPeriod") or "year"))
 
 
 # Himalayas API terms: use applicationLink unchanged for Apply, show Himalayas as the source,
@@ -245,7 +299,9 @@ def himalayas_job(j):
     return make(j["title"], j["companyName"], loc,
                 j.get("applicationLink") or j.get("guid"), j.get("pubDate"), "Himalayas",
                 clean(j.get("description") or j.get("excerpt")) + " " + level,
-                logo=j.get("companyLogo") or "", level=level, expires=j.get("expiryDate"))
+                logo=j.get("companyLogo") or "", level=level, expires=j.get("expiryDate"),
+                about=clean(j.get("excerpt") or j.get("description")), kind=j.get("employmentType"),
+                pay=pay_of(j.get("minSalary"), j.get("maxSalary"), j.get("currency") or j.get("salaryCurrency")))
 
 
 def himalayas():
@@ -306,7 +362,8 @@ def remoteok():
         yield make(j["position"], j.get("company", ""), j.get("location") or "Worldwide",
                    j.get("url"), j.get("date"), "Remote OK",
                    clean(j.get("description")) + " " + " ".join(j.get("tags") or []),
-                   check=j.get("apply_url") or "")
+                   check=j.get("apply_url") or "", about=clean(j.get("description")),
+                   pay=pay_of(j.get("salary_min"), j.get("salary_max")))
 
 
 # ---------- company career pages ----------
@@ -343,7 +400,8 @@ def lever(slug):
         if j.get("workplaceType") == "remote":
             loc += " remote"
         yield make(j["text"], nice(slug), loc, j["hostedUrl"], j["createdAt"], "Company site",
-                   j.get("descriptionPlain", ""), need_remote=True)
+                   j.get("descriptionPlain", ""), need_remote=True,
+                   kind=(j.get("categories") or {}).get("commitment"))
 
 
 def ashby(slug):
@@ -356,7 +414,8 @@ def ashby(slug):
         loc = " ".join(places) + (" remote" if j.get("isRemote") else "")
         yield make(j["title"], nice(slug), loc,
                    j.get("jobUrl") or j.get("applyUrl"), j.get("publishedAt"), "Company site",
-                   j.get("descriptionPlain") or clean(j.get("descriptionHtml")), need_remote=True)
+                   j.get("descriptionPlain") or clean(j.get("descriptionHtml")), need_remote=True,
+                   kind=j.get("employmentType"))
 
 
 def workable(slug):
@@ -367,7 +426,7 @@ def workable(slug):
             loc += " remote"
         yield make(j["title"], nice(slug, d.get("name")), loc, j.get("url") or j.get("shortlink"),
                    j.get("published_on") or j.get("created_at"), "Company site",
-                   clean(j.get("description")), need_remote=True)
+                   clean(j.get("description")), need_remote=True, kind=j.get("employment_type"))
 
 
 def recruitee(slug):

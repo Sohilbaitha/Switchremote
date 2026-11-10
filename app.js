@@ -53,8 +53,15 @@ fetch('data/jobs.json?v=' + Date.now())
     jobs = d.jobs || [];
     if (sharedKey) shared = jobs.find(j => jobId(j) === sharedKey) || null;
     const live = jobs.filter(j => inPlace(j, HOME)).length;
-    document.getElementById('count').textContent = live + (live === 1 ? ' job' : ' jobs') + ' live right now';
+    const countEl = document.getElementById('count');
+    const dot = document.createElement('i');
+    dot.className = 'live';
+    countEl.replaceChildren(dot, live + (live === 1 ? ' job' : ' jobs') + ' live right now');
     if (d.updated) {
+      const fresh = document.createElement('span');
+      fresh.className = 'fresh';
+      fresh.textContent = 'Updated ' + ago(d.updated);
+      countEl.append(fresh);
       document.getElementById('updated').textContent =
         'Last updated: ' + new Date(d.updated).toLocaleString();
     }
@@ -65,7 +72,7 @@ fetch('data/jobs.json?v=' + Date.now())
 
 function shareJob(j) {
   const where = j.countries.includes('Worldwide') ? 'anywhere in the world' : j.countries.map(placeName).join(', ');
-  const url = 'https://switchremote.world/?job=' + jobId(j);
+  const url = 'https://switchremote.world/job.html?id=' + jobId(j);
   const text = j.title + ' at ' + j.company + ' (remote, ' + where + '). Free remote jobs for freshers on Switchremote.';
   if (window.track) track('share_click', { job_title: j.title, company: j.company });
   if (navigator.share) {
@@ -87,6 +94,19 @@ function toast(msg) {
   t.classList.add('show');
   clearTimeout(t._h);
   t._h = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// "2 hours ago" style wording for the last refresh
+function ago(iso) {
+  const m = Math.max(0, Math.round((Date.now() - new Date(iso)) / 6e4));
+  if (m < 2) return 'just now';
+  if (m < 60) return m + ' minutes ago';
+  const h = Math.round(m / 60);
+  return h < 24 ? h + (h === 1 ? ' hour ago' : ' hours ago') : Math.round(h / 24) + ' days ago';
+}
+
+function jobUrl(j) {
+  return 'job.html?id=' + jobId(j);
 }
 
 function isNew(j) {
@@ -182,6 +202,7 @@ function drawChips() {
   if (on && chipsEl.scrollWidth > chipsEl.clientWidth) chipsEl.scrollLeft = on.offsetLeft - chipsEl.offsetLeft - 16;
 }
 
+let firstPaint = true;
 function render() {
   drawChips();
   const t = q.value.trim().toLowerCase();
@@ -199,9 +220,14 @@ function render() {
     link.textContent = 'Post your job for free';
     statusEl.replaceChildren('No jobs found here yet. Try another country or search, or ', link, '.');
   }
-  rows.forEach(j => {
+  list.classList.toggle('rise', firstPaint);
+  firstPaint = false;
+  rows.forEach((j, n) => {
     const card = document.createElement('article');
     card.className = 'job';
+    card.style.setProperty('--n', Math.min(n, 11));
+    // Tapping the card (not a button or link inside it) opens the job page
+    card.addEventListener('click', e => { if (!e.target.closest('a,button')) location.href = jobUrl(j); });
     if (j === shared) {
       card.classList.add('shared');
       const lb = document.createElement('p');
@@ -210,7 +236,7 @@ function render() {
       card.append(lb);
     }
     const av = document.createElement('div');
-    av.className = 'av';
+    av.className = 'av av-' + (parseInt(jobId(j), 36) % 3);
     av.textContent = (j.company || '?').trim().charAt(0).toUpperCase();
     if (j.logo) {
       // The image sits inside the box from the start (hidden), so the browser always loads it
@@ -219,7 +245,7 @@ function render() {
       im.referrerPolicy = 'no-referrer';
       im.decoding = 'async';
       im.hidden = true;
-      im.onload = () => { if (im.naturalWidth > 1) { av.firstChild.remove(); im.hidden = false; av.classList.add('has-logo'); } else { im.remove(); } };
+      im.onload = () => { if (im.naturalWidth > 1) { av.firstChild.remove(); im.hidden = false; av.className = 'av has-logo'; } else { im.remove(); } };
       im.onerror = () => im.remove();
       av.append(im);
       im.src = j.logo;
@@ -229,7 +255,10 @@ function render() {
     const top = document.createElement('div');
     top.className = 'top';
     const h = document.createElement('h2');
-    h.textContent = j.title;
+    const hl = document.createElement('a');
+    hl.href = jobUrl(j);
+    hl.textContent = j.title;
+    h.append(hl);
     const a = document.createElement('span');
     a.className = 'age';
     if (isNew(j)) { a.classList.add('new'); a.textContent = 'New'; } else { a.textContent = age(j.posted); }
@@ -240,6 +269,7 @@ function render() {
     const tags = document.createElement('div');
     tags.className = 'tags';
     tags.append(tag('Remote', true));
+    if (j.kind) tags.append(tag(j.kind));
     j.countries.forEach(x => tags.append(tag(placeName(x))));
     tags.append(sourceTag(j.source));
     const apply = document.createElement('a');
@@ -286,3 +316,19 @@ if (shareSite) shareSite.addEventListener('click', () => {
 q.addEventListener('input', () => { shared = null; render(); });
 q.addEventListener('search', render);
 q.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); q.blur(); } });
+
+// Hero greeting: one language at a time, unless the person prefers no motion
+(() => {
+  const hello = document.querySelector('.hello');
+  if (!hello || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const words = [...hello.children];
+  if (words.length < 2) return;
+  let i = 0;
+  hello.classList.add('rot');
+  words[0].classList.add('on');
+  setInterval(() => {
+    words[i].classList.remove('on');
+    i = (i + 1) % words.length;
+    words[i].classList.add('on');
+  }, 2200);
+})();

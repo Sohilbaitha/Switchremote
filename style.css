@@ -222,3 +222,62 @@ a.chip{text-decoration:none}
 @media (min-width:900px){.more{grid-template-columns:minmax(0,1fr) 320px;gap:48px;align-items:start}}
 .legal h2{margin-top:30px}
 .legal .toc{margin-bottom:8px}
+
+
+/* ---- A livelier page: hero, cards and the job page (brand colours only) ---- */
+.trust{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 0;padding:0;list-style:none}
+.trust li{display:inline-flex;align-items:center;gap:7px;padding:5px 12px 5px 9px;border:1px solid #c3e3fa;border-radius:999px;background:#fff;font-size:.8125rem;font-weight:500;color:#000}
+.trust li::before{content:"";width:14px;height:14px;border-radius:50%;background:var(--blue) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.3 8.4l2.4 2.4 5-5.6' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/12px no-repeat}
+.hello.rot{display:block;min-height:1.6em}
+.hello.rot span{display:none}
+.hello.rot span.on{display:inline-block;animation:hi .5s ease both}
+@keyframes hi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.count{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px}
+.live{flex:none;width:8px;height:8px;border-radius:50%;background:var(--blue);animation:ring 2s ease-out infinite}
+.fresh{font-weight:400;color:#3d4954}
+.fresh::before{content:"\00B7";margin-right:8px}
+
+.job{cursor:pointer}
+.job h2 a{color:inherit;text-decoration:none}
+.job h2 a:hover,.job h2 a:focus-visible{text-decoration:underline;text-decoration-color:var(--blue);text-underline-offset:3px;outline:none}
+.av-1{background:#000;color:#fff}
+.av-2{background:var(--blue);color:#000}
+#list.rise .job{animation:rise .4s ease both;animation-delay:calc(var(--n,0) * 45ms)}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.apply{transition:background .2s,transform .15s}
+.apply:active{transform:scale(.97)}
+@media (prefers-reduced-motion:reduce){.live,#list.rise .job,.hello.rot span.on{animation:none}}
+
+/* job page */
+.jd{max-width:720px;margin:0 auto;padding:20px 0 12px}
+.jd-back{display:inline-flex;align-items:center;gap:8px;margin-bottom:18px;color:#3d4954;font-size:.8125rem;font-weight:500;text-decoration:none}
+.jd-back::before{content:"";width:7px;height:7px;border-left:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg)}
+.jd-back:hover{color:#000}
+.jd-head{display:flex;gap:14px;align-items:flex-start;margin-bottom:12px}
+.jd-head .av{width:52px;height:52px;border-radius:14px;font-size:1.25rem}
+.jd-hb{min-width:0}
+.jd h1{margin:0 0 2px;font-size:1.375rem;line-height:1.3;color:#000}
+.jd .company{margin:0;font-size:.9375rem}
+.jd h2{margin:28px 0 8px;font-size:1.0625rem;color:#000}
+.jd-lead{margin:8px 0 18px;color:#3d4954}
+.facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:18px 0 0}
+.facts div{padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:#fff}
+.facts dt{font-size:.75rem;color:var(--muted)}
+.facts dd{margin:2px 0 0;font-weight:600;color:#000;overflow-wrap:anywhere}
+.jd-sum{margin:0;padding:14px 16px;border-left:3px solid var(--blue);border-radius:0 14px 14px 0;background:var(--tint);color:#1b1b1b;font-size:.9375rem}
+.jd-note{margin:8px 0 0;font-size:.8125rem;color:var(--muted)}
+.jd-actions{flex-wrap:wrap;margin-top:22px}
+.jd-actions .apply{padding:10px 22px;font-size:.9375rem}
+.jd-tips{margin-top:28px;padding:4px 18px 16px;border:1px solid var(--line);border-radius:16px}
+.jd-tips h2{margin-top:16px}
+.jd-tips ul{margin:0;padding-left:20px}
+.jd-tips li{margin-bottom:6px}
+.jd-more{display:grid;gap:10px}
+.jd-row{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;color:inherit;text-decoration:none;transition:border-color .2s}
+.jd-row:hover,.jd-row:focus-visible{border-color:var(--blue);outline:none}
+.jd-row-t{display:flex;flex-direction:column;min-width:0}
+.jd-row-t b{color:#000;font-weight:600}
+.jd-row-t span{font-size:.8125rem;color:var(--muted)}
+.jd > *{animation:rise .35s ease both}
+@media (prefers-reduced-motion:reduce){.jd > *{animation:none}}
+@media (min-width:700px){.jd{padding-top:32px}.jd h1{font-size:1.75rem}.facts{grid-template-columns:repeat(3,minmax(0,1fr))}.jd-more{grid-template-columns:repeat(2,minmax(0,1fr))}}
