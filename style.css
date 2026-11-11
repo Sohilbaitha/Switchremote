@@ -280,3 +280,6 @@ a.chip{text-decoration:none}
 /* Label above the country chips */
 .chips-label{margin:0;padding:2px 2px 6px;font-size:.8125rem;font-weight:600;color:#000}
 .search{padding-bottom:14px}
+
+/* After the job form is sent, the page scrolls back up to it; leave room for the sticky header */
+#form{scroll-margin-top:96px}
