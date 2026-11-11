@@ -234,11 +234,11 @@ a.chip{text-decoration:none}
 .job h2 a:hover,.job h2 a:focus-visible{text-decoration:underline;text-decoration-color:var(--blue);text-underline-offset:3px;outline:none}
 .av-1{background:#000;color:#fff}
 .av-2{background:var(--blue);color:#000}
-#list.rise .job:nth-child(-n+6){animation:rise .4s ease both;animation-delay:calc(var(--n,0) * 45ms)}
+#list.rise .job{animation:rise .4s ease both;animation-delay:calc(var(--n,0) * 45ms)}
 @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 .apply{transition:background .2s,transform .15s}
 .apply:active{transform:scale(.97)}
-@media (prefers-reduced-motion:reduce){.live,#list.rise .job:nth-child(-n+6){animation:none}}
+@media (prefers-reduced-motion:reduce){.live,#list.rise .job{animation:none}}
 
 /* job page */
 .jd{max-width:720px;margin:0 auto;padding:20px 0 12px}
@@ -283,20 +283,3 @@ a.chip{text-decoration:none}
 
 /* After the job form is sent, the page scrolls back up to it; leave room for the sticky header */
 #form{scroll-margin-top:96px}
-
-/* ---- Motion: small, quick and flat. Turned off for people who ask for less motion. ---- */
-.hero h1,.hero .sub,.hero .count{animation:rise .5s ease both}
-.hero .sub{animation-delay:.08s}
-.hero .count{animation-delay:.16s}
-.count .num{font-variant-numeric:tabular-nums}
-.chip,.share,.ghost{transition:transform .15s,background .2s,border-color .2s,color .2s}
-.chip:active,.share:active,.ghost:active{transform:scale(.95)}
-.chip:hover{border-color:var(--blue)}
-.chip.on:hover{border-color:#000}
-.job .apply::after{transition:transform .2s}
-.job:hover .apply::after,.apply:active::after{transform:rotate(45deg) translate(2px,-3px)}
-.faq details[open] > p{animation:rise .25s ease both}
-@media (prefers-reduced-motion:reduce){
-  .hero h1,.hero .sub,.hero .count,.faq details[open] > p{animation:none}
-  .chip,.share,.ghost,.job .apply::after{transition:none}
-}
