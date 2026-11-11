@@ -1,0 +1,29 @@
+# Switchremote
+
+> Switchremote is a free job board that lists remote jobs freshers can apply for. No signup and no fees. Jobs are gathered from company career pages and remote job boards, screened for scam signs, and refreshed every 6 hours. Each listing links to the original source, where people apply.
+
+Switchremote does not hire, does not collect applications, and does not promise that any listing is genuine. Listings stay up for 14 days.
+
+## Jobs
+
+- [All remote jobs](https://switchremote.world/): The full list
+- [India](https://switchremote.world/remote-jobs-india.html): Remote jobs freshers in India can apply for
+- [Philippines](https://switchremote.world/remote-jobs-philippines.html): Remote jobs freshers in the Philippines can apply for
+- [Indonesia](https://switchremote.world/remote-jobs-indonesia.html): Remote jobs freshers in Indonesia can apply for
+- [Vietnam](https://switchremote.world/remote-jobs-vietnam.html): Remote jobs freshers in Vietnam can apply for
+- [Malaysia](https://switchremote.world/remote-jobs-malaysia.html): Remote jobs freshers in Malaysia can apply for
+- [Thailand](https://switchremote.world/remote-jobs-thailand.html): Remote jobs freshers in Thailand can apply for
+- [Any country](https://switchremote.world/remote-jobs-worldwide.html): Remote jobs open to freshers in any country
+
+## Tools
+
+- [Scam checker](https://switchremote.world/scam-check.html): Answer a few questions about a job offer to see its warning signs
+- [Post a job](https://switchremote.world/post-a-job.html): Employers can post remote fresher and intern roles for free
+
+## About
+
+- [About](https://switchremote.world/about.html): Who runs Switchremote and how jobs are kept safe
+- [Terms](https://switchremote.world/terms.html)
+- [Privacy and cookies](https://switchremote.world/privacy.html)
+- [Disclaimer and safety](https://switchremote.world/disclaimer.html)
+- [Contact](https://switchremote.world/contact.html)
