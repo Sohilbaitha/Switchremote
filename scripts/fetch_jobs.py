@@ -50,6 +50,9 @@ NOT_A_JOB = re.compile(r"talent (pool|network|community|hub)|general application
 # Crypto companies and crypto jobs are left out completely
 CRYPTO = re.compile(r"crypto|bitcoin|blockchain|web3|\bdefi\b|\bnfts?\b|binance|coinbase|\bkraken\b|"
                     r"\bokx\b|bybit|kucoin|certik|coindcx|coinswitch|wazirx|\btoken(s|omics)?\b", re.I)
+# Data labelling / AI annotation work is left out completely (not real fresher careers)
+ANNOTATION = re.compile(r"annotat|data[- ]?label|\blabell?(er|ers|ing)\b|\bai (trainer|tutor|rater)s?\b|"
+                        r"\braters?\b|search (quality )?evaluator|\brlhf\b|data collection|ai data", re.I)
 FIELD_JOB = re.compile(r"\bfield\b|door[- ]to[- ]door|\bfos\b|on[- ]ground", re.I)
 # One company can show at most this many feed jobs, so a single bulk poster cannot fill the board
 COMPANY_MAX = 3
@@ -96,7 +99,7 @@ def title_ok(title):
     """Fresher board rule for titles: no senior roles, no experience-only roles,
     and technical roles only when the title itself says junior/intern/trainee."""
     t = (title or "").lower()
-    if has(t, SENIOR) or NOT_A_JOB.search(t) or FIELD_JOB.search(t) or CRYPTO.search(t):
+    if has(t, SENIOR) or NOT_A_JOB.search(t) or FIELD_JOB.search(t) or CRYPTO.search(t) or ANNOTATION.search(t):
         return False
     if (has(t, TECH) or has(t, EXPERIENCED)) and not has(t, FRESHER):
         return False
@@ -379,7 +382,48 @@ NAMES = {"automatticcareers": "Automattic", "wikimedia": "Wikimedia Foundation",
          "clickup": "ClickUp", "twilio": "Twilio", "notion": "Notion",
          "hostinger": "Hostinger",
          "razorpaysoftwareprivatelimited": "Razorpay", "groww": "Groww", "paytm": "Paytm",
-         "meesho": "Meesho", "cred": "CRED", "ajaib": "Ajaib"}
+         "meesho": "Meesho", "cred": "CRED", "ajaib": "Ajaib",
+         "freshprints": "Fresh Prints",
+         "workstream": "Workstream",
+         "hackerrank": "HackerRank",
+         "interviewkickstart": "Interview Kickstart",
+         "globalizationpartners": "Globalization Partners",
+         "apolloio": "Apollo.io",
+         "cloudbeds": "Cloudbeds",
+         "donorbox": "Donorbox",
+         "thumbtack": "Thumbtack",
+         "ashby": "Ashby",
+         "netomi": "Netomi",
+         "levelai": "Level AI",
+         "commerceiq": "CommerceIQ",
+         "fourkites": "FourKites",
+         "g2crowd": "G2",
+         "backblaze": "Backblaze",
+         "sumologic": "Sumo Logic",
+         "acquia": "Acquia",
+         "yugabyte": "Yugabyte",
+         "minio": "MinIO",
+         "techholding": "Tech Holding",
+         "onesignal": "OneSignal",
+         "customerio": "Customer.io",
+         "opensesame": "OpenSesame",
+         "doitintl": "DoiT",
+         "chainguard": "Chainguard",
+         "coda": "Coda",
+         "remofirst": "RemoFirst",
+         "drivetrain": "Drivetrain",
+         "prox-works": "Proximity Works",
+         "elastic": "Elastic",
+         "cloudflare": "Cloudflare",
+         "khanacademy": "Khan Academy",
+         "postman": "Postman",
+         "jumpcloud": "JumpCloud",
+         "yipitdata": "YipitData",
+         "doist": "Doist",
+         "helpscout": "Help Scout",
+         "hotjar": "Hotjar",
+         "xendit": "Xendit",
+         "paymongo": "PayMongo"}
 
 
 def nice(slug, fallback=None):
@@ -562,7 +606,7 @@ def final_pass(all_jobs, cfg, now):
         if any(b.search(name) for b in blocked) or bad_link(job.get("url")):
             dropped += 1
             continue
-        if job.get("source") != "Employer" and CRYPTO.search(name):
+        if job.get("source") != "Employer" and (CRYPTO.search(name) or ANNOTATION.search(name)):
             dropped += 1
             continue
         # Past the closing date the source gave us
