@@ -283,3 +283,7 @@ a.chip{text-decoration:none}
 
 /* After the job form is sent, the page scrolls back up to it; leave room for the sticky header */
 #form{scroll-margin-top:96px}
+
+/* Guides */
+.legal ol{margin:0 0 10px;padding-left:22px}
+.guide .meta a{color:var(--link)}

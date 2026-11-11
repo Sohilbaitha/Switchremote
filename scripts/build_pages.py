@@ -128,7 +128,8 @@ def write_sitemap():
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     urls = [(SITE, today, "daily", "1.0")]
     urls += [(SITE + name, today, "daily", "0.8") for _, name, _ in PAGES]
-    for page, pri in (("post-a-job.html", "0.6"), ("scam-check.html", "0.6"), ("about.html", "0.5"),
+    for page, pri in (("post-a-job.html", "0.6"), ("scam-check.html", "0.6"), ("guides.html", "0.6"),
+                      ("guide-remote-customer-support-jobs.html", "0.7"), ("about.html", "0.5"),
                       ("contact.html", "0.4"), ("terms.html", "0.3"), ("privacy.html", "0.3"),
                       ("disclaimer.html", "0.3")):
         if (ROOT / page).exists():
