@@ -15,6 +15,7 @@ I built it because freshers searching for remote jobs keep running into fake lis
   - remote job feeds: Remotive, Jobicy, Himalayas and Remote OK
   - jobs submitted by employers through our Google Form
 - It keeps only remote roles that freshers can apply for, removes duplicates and closed listings, and drops every job 14 days after it was posted.
+- Crypto companies and data labelling or AI annotation jobs are left out.
 - Jobs from job feeds are shown only for companies on the approved list in `sources.json`. Companies not checked yet are listed in `data/review.json`.
 - `scripts/build_pages.py` writes one page per country and the sitemap.
 - A GitHub Actions workflow runs every 6 hours (triggered by cron-job.org), so the list stays fresh without any manual work.
