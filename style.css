@@ -283,3 +283,24 @@ a.chip{text-decoration:none}
 
 /* After the job form is sent, the page scrolls back up to it; leave room for the sticky header */
 #form{scroll-margin-top:96px}
+
+/* ---- Motion: small, quick and flat. Turned off for people who ask for less motion. ---- */
+.hero h1,.hero .sub,.hero .count{animation:rise .5s ease both}
+.hero .sub{animation-delay:.08s}
+.hero .count{animation-delay:.16s}
+.count .num{font-variant-numeric:tabular-nums}
+.rv{opacity:0;transform:translateY(14px);transition:opacity .45s ease,transform .45s ease,border-color .2s,box-shadow .2s;transition-delay:calc(var(--d,0) * 55ms),calc(var(--d,0) * 55ms),0s,0s}
+.rv.fast{transform:none;transition-duration:.2s,.2s,.2s,.2s;transition-delay:0s}
+.rv.in{opacity:1;transform:none}
+.chip,.share,.ghost{transition:transform .15s,background .2s,border-color .2s,color .2s}
+.chip:active,.share:active,.ghost:active{transform:scale(.95)}
+.chip:hover{border-color:var(--blue)}
+.chip.on:hover{border-color:#000}
+.job .apply::after{transition:transform .2s}
+.job:hover .apply::after,.apply:active::after{transform:rotate(45deg) translate(2px,-3px)}
+.faq details[open] > p{animation:rise .25s ease both}
+@media (prefers-reduced-motion:reduce){
+  .hero h1,.hero .sub,.hero .count,.faq details[open] > p{animation:none}
+  .rv{opacity:1;transform:none;transition:none}
+  .chip,.share,.ghost,.job .apply::after{transition:none}
+}

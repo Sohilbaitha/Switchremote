@@ -57,7 +57,10 @@ fetch('data/jobs.json?v=' + Date.now())
     const countEl = document.getElementById('count');
     const dot = document.createElement('i');
     dot.className = 'live';
-    countEl.replaceChildren(dot, live + (live === 1 ? ' job' : ' jobs') + ' live right now');
+    const num = document.createElement('span');
+    num.className = 'num';
+    countEl.replaceChildren(dot, num, (live === 1 ? ' job' : ' jobs') + ' live right now');
+    countUp(num, live);
     if (d.updated) {
       const fresh = document.createElement('span');
       fresh.className = 'fresh';
@@ -221,8 +224,6 @@ function render() {
     link.textContent = 'Post your job for free';
     statusEl.replaceChildren('No jobs found here yet. Try another country or search, or ', link, '.');
   }
-  list.classList.toggle('rise', firstPaint);
-  firstPaint = false;
   rows.forEach((j, n) => {
     const card = document.createElement('article');
     card.className = 'job';
@@ -300,6 +301,8 @@ function render() {
     card.append(av, body);
     list.append(card);
   });
+  reveal([...list.children], !firstPaint);
+  firstPaint = false;
 }
 
 // "Share Switchremote" button under the job list
@@ -316,3 +319,39 @@ if (shareSite) shareSite.addEventListener('click', () => {
 q.addEventListener('input', () => { shared = null; render(); });
 q.addEventListener('search', render);
 q.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); q.blur(); } });
+
+// ---- Small motion touches. All of it is skipped for people who ask their device for less motion. ----
+const CALM = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+const seen = ('IntersectionObserver' in window) && !CALM ? new IntersectionObserver(entries => {
+  let n = 0;
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.style.setProperty('--d', Math.min(n++, 6));
+    e.target.classList.add('in');
+    seen.unobserve(e.target);
+  });
+}, { rootMargin: '0px 0px -8% 0px' }) : null;
+
+// Cards and sections fade up as they scroll into view. "fast" is a plain quick fade, used while filtering.
+function reveal(els, fast) {
+  if (!seen) return;
+  els.forEach(el => {
+    el.classList.add('rv');
+    el.classList.toggle('fast', !!fast);
+    seen.observe(el);
+  });
+}
+
+// The hero number counts up to the real figure
+function countUp(el, to) {
+  if (CALM || to < 2) { el.textContent = to; return; }
+  const t0 = performance.now(), ms = 700;
+  (function step(t) {
+    const p = Math.min((t - t0) / ms, 1);
+    el.textContent = Math.round(to * (1 - Math.pow(1 - p, 3)));
+    if (p < 1) requestAnimationFrame(step);
+  })(t0);
+}
+
+// Sections further down the page (FAQ, side cards) reveal on scroll too. Anything already on screen is left alone.
+reveal([...document.querySelectorAll('.faq, .side .card')].filter(el => el.getBoundingClientRect().top > innerHeight));
