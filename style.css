@@ -302,3 +302,4 @@ a.chip{text-decoration:none}
 .g-ways span{font-size:.9375rem}
 .g-safe{margin-top:8px;padding:16px 18px;border-radius:14px;background:var(--tint)}
 .g-safe p:last-child{margin-bottom:0}
+.g-by{margin:0 0 8px;font-size:.8125rem;font-weight:600;color:#000}
