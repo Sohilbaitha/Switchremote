@@ -283,23 +283,3 @@ a.chip{text-decoration:none}
 
 /* After the job form is sent, the page scrolls back up to it; leave room for the sticky header */
 #form{scroll-margin-top:96px}
-
-/* Guides */
-.legal ol{margin:0 0 10px;padding-left:22px}
-.guide .meta a{color:var(--link)}
-
-.g-art{margin:16px 0 10px}
-.g-art svg{display:block;width:100%;max-width:560px;height:auto;margin:0 auto}
-.g-glance{margin:16px 0 4px;padding:16px 18px;border:1px solid var(--line);border-radius:16px}
-.g-glance .g-k{margin:0 0 8px;font-size:.75rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#000}
-.g-glance dl{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px 24px;margin:0}
-.g-glance dt{font-size:.8125rem;color:var(--muted)}
-.g-glance dd{margin:1px 0 0;font-weight:600;color:#000}
-.g-ways{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:8px 0 12px}
-.g-ways > div{display:flex;flex-direction:column;gap:4px;padding:14px 16px;border:1px solid var(--line);border-radius:14px}
-.g-ways svg{width:28px;height:28px;margin-bottom:4px;fill:none;stroke:#000;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-.g-ways b{color:#000}
-.g-ways span{font-size:.9375rem}
-.g-safe{margin-top:8px;padding:16px 18px;border-radius:14px;background:var(--tint)}
-.g-safe p:last-child{margin-bottom:0}
-.g-by{margin:0 0 8px;font-size:.8125rem;font-weight:600;color:#000}
