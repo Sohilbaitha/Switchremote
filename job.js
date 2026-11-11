@@ -141,11 +141,6 @@
      'Apply only on the page this button opens. We never collect applications ourselves.',
      'A real employer will never ask you to pay for a job, training or equipment.'].forEach(function (t) { ul.append(el('li', null, t)); });
     tips.append(ul);
-    var sc = el('p', 'jd-note');
-    sc.append('Not sure about an offer you received? Run it through our ');
-    var sl = el('a', null, 'scam checker'); sl.href = 'scam-check.html';
-    sc.append(sl, '.');
-    tips.append(sc);
     box.append(tips);
 
     var more = all.filter(function (x) {
