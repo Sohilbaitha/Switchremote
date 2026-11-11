@@ -234,11 +234,11 @@ a.chip{text-decoration:none}
 .job h2 a:hover,.job h2 a:focus-visible{text-decoration:underline;text-decoration-color:var(--blue);text-underline-offset:3px;outline:none}
 .av-1{background:#000;color:#fff}
 .av-2{background:var(--blue);color:#000}
-#list.rise .job{animation:rise .4s ease both;animation-delay:calc(var(--n,0) * 45ms)}
+#list.rise .job:nth-child(-n+6){animation:rise .4s ease both;animation-delay:calc(var(--n,0) * 45ms)}
 @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 .apply{transition:background .2s,transform .15s}
 .apply:active{transform:scale(.97)}
-@media (prefers-reduced-motion:reduce){.live,#list.rise .job{animation:none}}
+@media (prefers-reduced-motion:reduce){.live,#list.rise .job:nth-child(-n+6){animation:none}}
 
 /* job page */
 .jd{max-width:720px;margin:0 auto;padding:20px 0 12px}
@@ -289,9 +289,6 @@ a.chip{text-decoration:none}
 .hero .sub{animation-delay:.08s}
 .hero .count{animation-delay:.16s}
 .count .num{font-variant-numeric:tabular-nums}
-.rv{opacity:0;transform:translateY(14px);transition:opacity .45s ease,transform .45s ease,border-color .2s,box-shadow .2s;transition-delay:calc(var(--d,0) * 55ms),calc(var(--d,0) * 55ms),0s,0s}
-.rv.fast{transform:none;transition-duration:.2s,.2s,.2s,.2s;transition-delay:0s}
-.rv.in{opacity:1;transform:none}
 .chip,.share,.ghost{transition:transform .15s,background .2s,border-color .2s,color .2s}
 .chip:active,.share:active,.ghost:active{transform:scale(.95)}
 .chip:hover{border-color:var(--blue)}
@@ -301,6 +298,5 @@ a.chip{text-decoration:none}
 .faq details[open] > p{animation:rise .25s ease both}
 @media (prefers-reduced-motion:reduce){
   .hero h1,.hero .sub,.hero .count,.faq details[open] > p{animation:none}
-  .rv{opacity:1;transform:none;transition:none}
   .chip,.share,.ghost,.job .apply::after{transition:none}
 }

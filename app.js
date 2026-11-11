@@ -301,7 +301,7 @@ function render() {
     card.append(av, body);
     list.append(card);
   });
-  reveal([...list.children], !firstPaint);
+  list.classList.toggle('rise', firstPaint);
   firstPaint = false;
 }
 
@@ -322,26 +322,6 @@ q.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault()
 
 // ---- Small motion touches. All of it is skipped for people who ask their device for less motion. ----
 const CALM = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-const seen = ('IntersectionObserver' in window) && !CALM ? new IntersectionObserver(entries => {
-  let n = 0;
-  entries.forEach(e => {
-    if (!e.isIntersecting) return;
-    e.target.style.setProperty('--d', Math.min(n++, 6));
-    e.target.classList.add('in');
-    seen.unobserve(e.target);
-  });
-}, { rootMargin: '0px 0px -8% 0px' }) : null;
-
-// Cards and sections fade up as they scroll into view. "fast" is a plain quick fade, used while filtering.
-function reveal(els, fast) {
-  if (!seen) return;
-  els.forEach(el => {
-    el.classList.add('rv');
-    el.classList.toggle('fast', !!fast);
-    seen.observe(el);
-  });
-}
-
 // The hero number counts up to the real figure
 function countUp(el, to) {
   if (CALM || to < 2) { el.textContent = to; return; }
@@ -352,6 +332,3 @@ function countUp(el, to) {
     if (p < 1) requestAnimationFrame(step);
   })(t0);
 }
-
-// Sections further down the page (FAQ, side cards) reveal on scroll too. Anything already on screen is left alone.
-reveal([...document.querySelectorAll('.faq, .side .card')].filter(el => el.getBoundingClientRect().top > innerHeight));
