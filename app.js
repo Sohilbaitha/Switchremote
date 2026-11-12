@@ -144,7 +144,14 @@ function tag(text, withSwitch) {
 }
 
 function sourceTag(source) {
-  if (source === 'Employer') return tag('Posted by employer');
+  if (source === 'Employer') {
+    // Jobs sent to us by the employer through our form: shown with a star badge
+    const b = document.createElement('span');
+    b.className = 'tag-emp';
+    b.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3L2.9 9.5l6.3-.9z"/></svg>';
+    b.append('Direct from employer');
+    return b;
+  }
   const site = SOURCE_SITES[source];
   if (!site) return tag(source);
   const a = document.createElement('a');
@@ -225,7 +232,7 @@ function render() {
   firstPaint = false;
   rows.forEach((j, n) => {
     const card = document.createElement('article');
-    card.className = 'job';
+    card.className = j.source === 'Employer' ? 'job job-emp' : 'job';
     card.style.setProperty('--n', Math.min(n, 11));
     // Tapping the card (not a button or link inside it) opens the job page
     card.addEventListener('click', e => { if (!e.target.closest('a,button')) location.href = jobUrl(j); });
