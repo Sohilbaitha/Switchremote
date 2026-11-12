@@ -14,9 +14,13 @@ ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "data" / "jobs.json"
 REVIEW_OUT = ROOT / "data" / "review.json"
 SOURCES = ROOT / "sources.json"
-HEADERS = {"User-Agent": "SwitchremoteBot/1.0"}
+# We say who we are and where to reach us on every request
+HEADERS = {"User-Agent": "SwitchremoteBot/1.0 (+https://switchremote.world/about.html)"}
 MAX_AGE_DAYS = 14   # every job leaves the site 14 days after it was posted
 MAX_JOBS = 500
+# Raise this number whenever the fresher rules below change. Jobs saved under an older number
+# are not carried over, so every job on the site has passed the current rules.
+RULES = 2
 
 COUNTRIES = {
     "Indonesia": ["indonesia", "jakarta", "surabaya", "bandung", "bali"],
@@ -80,7 +84,8 @@ def has(text, words):
 
 
 def clean(text):
-    return re.sub(r"<[^>]+>", " ", html.unescape(text or ""))[:4000]
+    """Plain text of the whole listing (not cut short), so the checks can read all of it."""
+    return re.sub(r"<[^>]+>", " ", html.unescape(text or ""))
 
 
 def countries_for(location):
@@ -124,10 +129,79 @@ def parse_date(value):
     return d if d.tzinfo else d.replace(tzinfo=timezone.utc)
 
 
-def min_years(text):
-    """Smallest 'N years' number asked for in the text, or None."""
-    found = re.findall(r"(\d{1,2})\s*(?:\+|-|to|\u2013)?\s*(?:\d{1,2})?\s*\+?\s*(?:years|yrs)\b", text.lower())
-    return min(int(n) for n in found) if found else None
+# ---------- fresher rules: read the whole listing ----------
+_NUM = r"\d{1,2}|one|two|three|four|five|six|seven|eight|nine|ten"
+_WORDS = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7,
+          "eight": 8, "nine": 9, "ten": 10}
+# "2+ years", "1-3 yrs", "0–1-year", "two years"
+YEARS = re.compile(rf"\b({_NUM})\s*(?:\+|plus)?\s*(?:(?:-|\u2013|\u2014|to)\s*(?:{_NUM})\s*\+?)?[\s-]*(?:years?|yrs?)\b", re.I)
+# The number counts only when the words around it are about work experience
+EXP_NEAR = re.compile(r"experience|\bexp\b|background|track record|worked|working|similar role|"
+                      r"professional|hands[- ]on|industry|relevant", re.I)
+# "18 years old", "5 years ago", "3-year degree", "1 year contract" are not experience
+NOT_EXP = re.compile(r"^\W*(old|of age|ago|in business|in the (market|business)|of (history|growth|operations?|"
+                     r"excellence|innovation|service)|contract|fixed|program|programme|course|degree|"
+                     r"diploma|warranty|anniversary)", re.I)
+UP_TO = re.compile(r"(up ?to|less than|under|below|maximum( of)?|max\.?|no more than|not more than)\W*$", re.I)
+# The listing itself says freshers are welcome
+EXPLICIT = re.compile(
+    r"\bfreshers?\b|\b(fresh|recent|new) (college |university )?grad(uate)?s?\b|"
+    r"no (prior |previous |work |working |professional |relevant )?experience (is )?(needed|required|necessary)|"
+    r"experience (is )?not (required|necessary|needed|mandatory)|without (any )?(prior |previous )?experience|"
+    r"\b0\s*(?:-|\u2013|\u2014|to)\s*[123][\s-]*(?:years?|yrs?)|final[- ]year students?|"
+    r"students? (are welcome|can apply|may apply)|campus (hire|hiring|recruitment)", re.I)
+# Softer signs that a role is a starting role
+WEAK = re.compile(r"entry[- ]level|early[- ]career|early in (your|their) career|\binternships?\b|"
+                  r"graduate (program|programme|scheme|trainee|role)|start(ing)? your career|first job", re.I)
+WEAK_TITLE = re.compile(r"(?i:\b(associate|assistant|tier ?1|level ?1|l1)\b)|\s(I|1)\s*(\(|-|,|$)")
+# Experience asked for without a number
+HARD_EXP = re.compile(
+    r"(?<!no )(?<!without )(?<!any )\b(previous|prior|proven|demonstrated)\s+(work(ing)?\s+)?experience\b"
+    r"(?![^.;\n]{0,70}\b(a plus|preferred|nice to have|not required|not necessary|desirable|"
+    r"advantage|bonus|helpful|welcome|optional)\b)|"
+    r"\bexperience\s+(is\s+)?(required|a must|mandatory|essential)\b", re.I)
+# Listings posted by an agency for another company (the real employer is hidden or is "the client")
+CLIENT_JOB = re.compile(
+    r"\babout the client\b|\bour client(?!s)\b|\bon behalf of (our|a|the|their|its) clients?\b|"
+    r"\bhiring (agency|on behalf)\b|\bfor (one of )?our clients?\b|\bclient of ours\b|"
+    r"name will be (revealed|disclosed|shared)|\b(staffing|recruitment|recruiting) (agency|firm|company)\b|"
+    r"we connect [a-z ]{0,30}talent", re.I)
+
+
+def exp_years(text):
+    """Fewest years of work experience the listing asks for, or None when it gives no number."""
+    text = text or ""
+    found = []
+    for m in YEARS.finditer(text):
+        raw = m.group(1).lower()
+        n = _WORDS.get(raw, int(raw) if raw.isdigit() else 0)
+        before, after = text[max(0, m.start() - 60):m.start()], text[m.end():m.end() + 70]
+        if n > 10 or NOT_EXP.match(after) or not EXP_NEAR.search(before + " " + after):
+            continue   # company history ("25 years in business"), age, degree length and so on
+        found.append(0 if UP_TO.search(before) else n)
+    return min(found) if found else None
+
+
+def fresher_ok(title, text, level=""):
+    """True only when a fresher can really apply. Reads the title and the whole listing.
+    - 3 or more years asked: never.
+    - 2 years asked: only when the listing itself says freshers are welcome.
+    - 1 year asked: only with a clear fresher sign (says so, or junior/intern/trainee in the title).
+    - No number: experience must not be required in words, and the listing must show some sign
+      that it is a starting role. A job that gives no sign at all is left out."""
+    title, text = title or "", text or ""
+    explicit = bool(EXPLICIT.search(title + " " + text))
+    title_fresh = has(title.lower(), FRESHER)
+    years = exp_years(text)
+    if years is not None and years >= 3:
+        return False
+    if years == 2:
+        return explicit
+    if years == 1:
+        return explicit or title_fresh
+    if HARD_EXP.search(text) and not (explicit or title_fresh):
+        return False
+    return bool(explicit or title_fresh or WEAK.search(text + " " + (level or "")) or WEAK_TITLE.search(title))
 
 
 # ---------- safety rules ----------
@@ -216,11 +290,12 @@ def make(title, company, location, url, posted, source, text, need_remote=False,
             return None
         if need_remote and "remote" not in (location + " " + title).lower():
             return None
-        body = (title + " " + text).lower()
+        body = (title + " " + full).lower()
         if not title_ok(title) or not level_ok(level) or has(body, BAD) or SCAM.search(body):
             return None
-        years = min_years(full)   # read the whole job text, requirements are often near the end
-        if years is not None and years >= 2:
+        # Read the whole listing (requirements are often near the end): fresher jobs only,
+        # and nothing posted by an agency for a hidden "client"
+        if not fresher_ok(title, full, level) or CLIENT_JOB.search(full):
             return None
         countries = countries_for(location)
         if not countries:
@@ -232,6 +307,7 @@ def make(title, company, location, url, posted, source, text, need_remote=False,
             "url": url,
             "posted": parse_date(posted).isoformat(),
             "source": source,
+            "rules": RULES,
             **({"logo": logo} if isinstance(logo, str) and logo.startswith("https://") else {}),
             **({"expires": parse_date(expires).isoformat()} if expires else {}),
             **({"summary": summary_of(about or text)} if summary_of(about or text) else {}),
@@ -424,7 +500,7 @@ NAMES = {"automatticcareers": "Automattic", "wikimedia": "Wikimedia Foundation",
          "helpscout": "Help Scout",
          "hotjar": "Hotjar",
          "xendit": "Xendit",
-         "paymongo": "PayMongo", "preply": "Preply"}
+         "paymongo": "PayMongo", "preply": "Preply", "canva": "Canva", "freshworks": "Freshworks"}
 
 
 def nice(slug, fallback=None):
@@ -490,6 +566,40 @@ def recruitee(slug):
                    clean(j.get("description")) + " " + clean(j.get("requirements")), need_remote=True)
 
 
+SR_COUNTRIES = {"in": "India", "id": "Indonesia", "ph": "Philippines", "vn": "Vietnam",
+                "my": "Malaysia", "th": "Thailand"}
+
+
+def smartrecruiters(slug):
+    """SmartRecruiters public Posting API: the same public feed that fills a company's own careers page.
+    The list has no description, so we open a job only after it passes the remote, country and
+    title checks, and at most 40 jobs per company."""
+    base = f"https://api.smartrecruiters.com/v1/companies/{slug}/postings"
+    opened = 0
+    for offset in (0, 100, 200, 300, 400):
+        rows = get(f"{base}?limit=100&offset={offset}").get("content") or []
+        for p in rows:
+            loc = p.get("location") or {}
+            country = SR_COUNTRIES.get(str(loc.get("country") or "").lower())
+            title = p.get("name") or ""
+            if not (loc.get("remote") and country and title_ok(title)) or opened >= 40:
+                continue
+            opened += 1
+            try:
+                d = get(f"{base}/{p['id']}")
+            except Exception:
+                continue
+            sections = ((d.get("jobAd") or {}).get("sections") or {}).values()
+            text = " ".join(clean((x or {}).get("text")) for x in sections)
+            level = (p.get("experienceLevel") or {}).get("label") or ""
+            yield make(title, nice(slug, (p.get("company") or {}).get("name")), country + " remote",
+                       d.get("postingUrl") or f"https://jobs.smartrecruiters.com/{slug}/{p['id']}",
+                       p.get("releasedDate"), "Company site", text + " " + level, need_remote=True,
+                       level=level, about=text, kind=(p.get("typeOfEmployment") or {}).get("label"))
+        if len(rows) < 100:
+            break
+
+
 # ---------- employer jobs from the Google Form sheet ----------
 
 EMPLOYER_MAX_AGE_DAYS = MAX_AGE_DAYS   # employer jobs follow the same 14-day rule
@@ -545,7 +655,7 @@ def employer_sheet(url):
 
 
 READERS = {"greenhouse": greenhouse, "lever": lever, "ashby": ashby,
-           "workable": workable, "recruitee": recruitee}
+           "workable": workable, "recruitee": recruitee, "smartrecruiters": smartrecruiters}
 
 
 def detect(link):
@@ -563,6 +673,8 @@ def detect(link):
         return "workable", first
     if host.endswith(".recruitee.com"):
         return "recruitee", host.split(".")[0]
+    if host.endswith("smartrecruiters.com") and first:
+        return "smartrecruiters", first
     return None, None
 
 
@@ -713,6 +825,8 @@ def main():
             for job in json.loads(OUT.read_text()).get("jobs", []):
                 if job.get("source") == "Employer" or job.get("url") in found or not fresh(job):
                     continue
+                if job.get("rules") != RULES:
+                    continue   # checked under older, looser rules: show it again only if it passes today
                 if job.get("source") == "Company site":
                     board = board_of(job)
                     # Gone from a board that answered

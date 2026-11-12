@@ -11,10 +11,13 @@ I built it because freshers searching for remote jobs keep running into fake lis
 ## How it works
 
 - A Python script (`scripts/fetch_jobs.py`) collects remote jobs from:
-  - company career boards on Greenhouse, Lever, Ashby, Workable and Recruitee (listed in `sources.json`)
+  - company career boards on Greenhouse, Lever, Ashby, Workable, Recruitee and SmartRecruiters (listed in `sources.json`)
   - remote job feeds: Remotive, Jobicy, Himalayas and Remote OK
   - jobs submitted by employers through our Google Form
 - It keeps only remote roles that freshers can apply for, removes duplicates and closed listings, and drops every job 14 days after it was posted.
+- Fresher check: it reads the whole listing. A job stays only when it shows a clear starting-role sign (intern, trainee, junior, entry-level, "freshers can apply"). Jobs that require previous experience are dropped; a job asking for 1 or 2 years stays only when the listing says freshers can apply.
+- Listings posted by an agency for an unnamed "client" are left out.
+- Each job feed is credited on every job ("via ..."), Apply opens the original listing, and jobs are not passed on to other job sites.
 - Crypto companies and data labelling or AI annotation jobs are left out.
 - Jobs from job feeds are shown only for companies on the approved list in `sources.json`. Companies not checked yet are listed in `data/review.json`.
 - `scripts/build_pages.py` writes one page per country and the sitemap.
