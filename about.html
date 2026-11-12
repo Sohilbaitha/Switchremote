@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <script>(function(){var d=document.documentElement,k='sr-theme',t;try{t=localStorage.getItem(k)}catch(e){}if(t==='dark')d.setAttribute('data-theme','dark');
-function meta(on){var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=on?'#101317':'#ffffff'}
+function meta(on){var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=on?'#000000':'#ffffff'}
 document.addEventListener('DOMContentLoaded',function(){var on=d.getAttribute('data-theme')==='dark',b=document.getElementById('thm');meta(on);if(b)b.setAttribute('aria-pressed',on)});
 document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('#thm');if(!b)return;var on=d.getAttribute('data-theme')!=='dark';
 if(on)d.setAttribute('data-theme','dark');else d.removeAttribute('data-theme');b.setAttribute('aria-pressed',on);meta(on);

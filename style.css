@@ -295,40 +295,40 @@ a.chip{text-decoration:none}
 @media (min-width:640px){.menu,.menu.open{margin-left:auto}.bar-act{margin-left:24px}.thm{width:36px;height:36px;border-radius:10px}}
 
 /* ---- Dark mode: same layout, same brand blue, dark surfaces ---- */
-[data-theme="dark"]{--tint:#10283b;--text:#e6eaee;--muted:#9aa7b3;--line:#2a323b;--link:#6fcaff;color-scheme:dark}
-[data-theme="dark"] body,[data-theme="dark"] .bar,[data-theme="dark"] .menu{background:#101317}
+[data-theme="dark"]{--tint:#161616;--text:#ededed;--muted:#a3a3a3;--line:#2a2a2a;--link:#6fcaff;color-scheme:dark}
+[data-theme="dark"] body,[data-theme="dark"] .bar,[data-theme="dark"] .menu{background:#000}
 [data-theme="dark"] .menu{box-shadow:0 18px 30px rgba(0,0,0,.5)}
 [data-theme="dark"] .scrim{background:rgba(0,0,0,.55)}
 [data-theme="dark"] .logo{content:url(/Logo-dark.png);height:37px}
-[data-theme="dark"] .mbtn,[data-theme="dark"] .thm{background:#171b21;color:#e6eaee}
+[data-theme="dark"] .mbtn,[data-theme="dark"] .thm{background:#121212;color:#ededed}
 [data-theme="dark"] .mbtn:hover,[data-theme="dark"] .mbtn[aria-expanded="true"]{background:var(--tint)}
 @media (hover:hover){[data-theme="dark"] .thm:hover{background:var(--tint)}}
-[data-theme="dark"] .mbtn-i i{background:#e6eaee}
-[data-theme="dark"] .menu a,[data-theme="dark"] .menu a:first-child{color:#e6eaee}
-[data-theme="dark"] .menu a::after{border-color:#5f6b76}
-[data-theme="dark"] .hero{background:#101317}
+[data-theme="dark"] .mbtn-i i{background:#ededed}
+[data-theme="dark"] .menu a,[data-theme="dark"] .menu a:first-child{color:#ededed}
+[data-theme="dark"] .menu a::after{border-color:#6b6b6b}
+[data-theme="dark"] .hero{background:#000}
 [data-theme="dark"] .hero h1,[data-theme="dark"] .count,[data-theme="dark"] .job h2,[data-theme="dark"] .legal h1,[data-theme="dark"] .legal h2,
 [data-theme="dark"] .faq h2,[data-theme="dark"] .faq summary,[data-theme="dark"] .post h1,[data-theme="dark"] .post h2,[data-theme="dark"] .steps li::before,
 [data-theme="dark"] .steps strong,[data-theme="dark"] .card h2,[data-theme="dark"] .jd h1,[data-theme="dark"] .jd h2,[data-theme="dark"] .facts dd,
 [data-theme="dark"] .jd-row-t b,[data-theme="dark"] .chips-label,[data-theme="dark"] .av,[data-theme="dark"] .ghost,[data-theme="dark"] .age.new,
 [data-theme="dark"] .social a:hover,[data-theme="dark"] a.tag-src:hover,[data-theme="dark"] .jd-back:hover{color:#fff}
 [data-theme="dark"] .sub,[data-theme="dark"] .tag,[data-theme="dark"] .faq p,[data-theme="dark"] .post .lead,[data-theme="dark"] .card p,
-[data-theme="dark"] .fresh,[data-theme="dark"] .jd-back,[data-theme="dark"] .jd-lead,[data-theme="dark"] .safe{color:#b4bfc9}
-[data-theme="dark"] .jd-sum{color:#e6eaee}
+[data-theme="dark"] .fresh,[data-theme="dark"] .jd-back,[data-theme="dark"] .jd-lead,[data-theme="dark"] .safe{color:#c4c4c4}
+[data-theme="dark"] .jd-sum{color:#ededed}
 [data-theme="dark"] .search input,[data-theme="dark"] .chip,[data-theme="dark"] .social a,[data-theme="dark"] .cookie,[data-theme="dark"] .cookie .no,
 [data-theme="dark"] .chip-new,[data-theme="dark"] .age.new,[data-theme="dark"] .share,[data-theme="dark"] .formbox,[data-theme="dark"] .ghost,
-[data-theme="dark"] .facts div{background:#171b21}
-[data-theme="dark"] .social a,[data-theme="dark"] .cookie .no{color:#e6eaee}
+[data-theme="dark"] .facts div{background:#121212}
+[data-theme="dark"] .social a,[data-theme="dark"] .cookie .no{color:#ededed}
 [data-theme="dark"] .chip.on,[data-theme="dark"] .chip.on.chip-new{background:#fff;border-color:#fff;color:#000}
-[data-theme="dark"] .chip.on span{color:#5f6b76}
-[data-theme="dark"] .sw{background:#e6eaee}
-[data-theme="dark"] .sw::after{background:#101317}
+[data-theme="dark"] .chip.on span{color:#6b6b6b}
+[data-theme="dark"] .sw{background:#ededed}
+[data-theme="dark"] .sw::after{background:#000}
 [data-theme="dark"] .av-1{background:#fff;color:#000}
-[data-theme="dark"] .share svg{stroke:#e6eaee}
-[data-theme="dark"] .share svg circle{fill:#e6eaee}
+[data-theme="dark"] .share svg{stroke:#ededed}
+[data-theme="dark"] .share svg circle{fill:#ededed}
 [data-theme="dark"] .toast{background:#fff;color:#000}
 [data-theme="dark"] .shared-label{color:#6fcaff}
-[data-theme="dark"] .faq summary::after{border-color:#9aa7b3}
+[data-theme="dark"] .faq summary::after{border-color:#a3a3a3}
 [data-theme="dark"] .job:hover{box-shadow:none}
 [data-theme="dark"] .cookie{box-shadow:0 16px 40px rgba(0,0,0,.6)}
-@media (min-width:640px){[data-theme="dark"] .menu{background:none;box-shadow:none}[data-theme="dark"] .menu a,[data-theme="dark"] .menu a:first-child{color:#b4bfc9}[data-theme="dark"] .menu a:hover,[data-theme="dark"] .menu a:first-child:hover{color:#fff}}
+@media (min-width:640px){[data-theme="dark"] .menu{background:none;box-shadow:none}[data-theme="dark"] .menu a,[data-theme="dark"] .menu a:first-child{color:#c4c4c4}[data-theme="dark"] .menu a:hover,[data-theme="dark"] .menu a:first-child:hover{color:#fff}}
