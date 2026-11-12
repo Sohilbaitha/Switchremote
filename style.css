@@ -332,3 +332,8 @@ a.chip{text-decoration:none}
 [data-theme="dark"] .job:hover{box-shadow:none}
 [data-theme="dark"] .cookie{box-shadow:0 16px 40px rgba(0,0,0,.6)}
 @media (min-width:640px){[data-theme="dark"] .menu{background:none;box-shadow:none}[data-theme="dark"] .menu a,[data-theme="dark"] .menu a:first-child{color:#c4c4c4}[data-theme="dark"] .menu a:hover,[data-theme="dark"] .menu a:first-child:hover{color:#fff}}
+[data-theme="dark"] .toc a{background:#121212;color:#ededed}
+/* The job form comes from Google Forms and cannot be restyled, so in dark mode it is shown with inverted colours */
+[data-theme="dark"] .formbox{background:#000}
+[data-theme="dark"] .formbox iframe{filter:invert(1) hue-rotate(180deg)}
+[data-theme="dark"] .av-2{color:#000}
