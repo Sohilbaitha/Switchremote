@@ -232,7 +232,7 @@ function render() {
   firstPaint = false;
   rows.forEach((j, n) => {
     const card = document.createElement('article');
-    card.className = j.source === 'Employer' ? 'job job-emp' : 'job';
+    card.className = 'job';
     card.style.setProperty('--n', Math.min(n, 11));
     // Tapping the card (not a button or link inside it) opens the job page
     card.addEventListener('click', e => { if (!e.target.closest('a,button')) location.href = jobUrl(j); });
