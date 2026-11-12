@@ -67,7 +67,8 @@
     "https://jobs.lever.co/helpscout",
     "https://job-boards.greenhouse.io/hotjar",
     "https://jobs.lever.co/xendit",
-    "https://jobs.lever.co/paymongo"
+    "https://jobs.lever.co/paymongo",
+    "https://jobs.ashbyhq.com/preply"
   ],
   "sheet": "https://docs.google.com/spreadsheets/d/e/2PACX-1vSQqZkwYt_DpIDUXIZtepwwSxzNdZWzCqWB48ysDd9mox7pyDhziRU8qaeiLZ2HYwtBeBiD_4d99Yxn/pub?gid=1560256108&single=true&output=csv",
   "blocked_companies": [],
@@ -139,7 +140,8 @@
     "helpscout": "helpscout.com",
     "hotjar": "hotjar.com",
     "xendit": "xendit.co",
-    "paymongo": "paymongo.com"
+    "paymongo": "paymongo.com",
+    "preply": "preply.com"
   },
   "approved_companies": [
     "Accenture",

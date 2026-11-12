@@ -423,7 +423,7 @@ NAMES = {"automatticcareers": "Automattic", "wikimedia": "Wikimedia Foundation",
          "helpscout": "Help Scout",
          "hotjar": "Hotjar",
          "xendit": "Xendit",
-         "paymongo": "PayMongo"}
+         "paymongo": "PayMongo", "preply": "Preply"}
 
 
 def nice(slug, fallback=None):
