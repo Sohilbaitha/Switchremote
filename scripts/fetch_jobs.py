@@ -206,7 +206,8 @@ def pay_of(low, high, currency="USD", period="year"):
 def make(title, company, location, url, posted, source, text, need_remote=False, logo="", check="",
          level="", expires=None, about="", kind="", pay=""):
     try:
-        text = (text or "")[:4000]
+        full = text or ""
+        text = full[:4000]
         if not (title and url and url.startswith("http")):
             return None
         if bad_link(url, check):
@@ -218,7 +219,7 @@ def make(title, company, location, url, posted, source, text, need_remote=False,
         body = (title + " " + text).lower()
         if not title_ok(title) or not level_ok(level) or has(body, BAD) or SCAM.search(body):
             return None
-        years = min_years(text)
+        years = min_years(full)   # read the whole job text, requirements are often near the end
         if years is not None and years >= 2:
             return None
         countries = countries_for(location)
@@ -443,8 +444,13 @@ def lever(slug):
         loc = (j.get("categories") or {}).get("location", "") or ""
         if j.get("workplaceType") == "remote":
             loc += " remote"
+        # Lever keeps the requirements in "lists", outside the main description
+        parts = [j.get("descriptionPlain", "")]
+        for part in j.get("lists") or []:
+            parts.append(part.get("text", "") + " " + clean(part.get("content", "")))
+        parts.append(j.get("additionalPlain", ""))
         yield make(j["text"], nice(slug), loc, j["hostedUrl"], j["createdAt"], "Company site",
-                   j.get("descriptionPlain", ""), need_remote=True,
+                   " ".join(parts), need_remote=True,
                    kind=(j.get("categories") or {}).get("commitment"))
 
 
@@ -470,7 +476,8 @@ def workable(slug):
             loc += " remote"
         yield make(j["title"], nice(slug, d.get("name")), loc, j.get("url") or j.get("shortlink"),
                    j.get("published_on") or j.get("created_at"), "Company site",
-                   clean(j.get("description")), need_remote=True, kind=j.get("employment_type"))
+                   clean(j.get("description")) + " " + clean(j.get("requirements")),
+                   need_remote=True, kind=j.get("employment_type"))
 
 
 def recruitee(slug):
@@ -480,7 +487,7 @@ def recruitee(slug):
             loc += " remote"
         yield make(j["title"], j.get("company_name") or slug, loc, j.get("careers_url"),
                    j.get("published_at") or j.get("created_at"), "Company site",
-                   clean(j.get("description")), need_remote=True)
+                   clean(j.get("description")) + " " + clean(j.get("requirements")), need_remote=True)
 
 
 # ---------- employer jobs from the Google Form sheet ----------
