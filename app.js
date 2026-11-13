@@ -306,7 +306,7 @@ function render() {
 const shareSite = document.getElementById('share-site');
 if (shareSite) shareSite.addEventListener('click', () => {
   const url = 'https://switchremote.world/';
-  const text = 'Real remote jobs that freshers can apply for. Free, no signup.';
+  const text = 'Remote jobs that freshers can apply for. Free, no signup.';
   if (window.track) track('share_site_click', {});
   if (navigator.share) { navigator.share({ title: 'Switchremote', text: text, url: url }).catch(() => {}); return; }
   if (navigator.clipboard) navigator.clipboard.writeText(text + ' ' + url).then(() => toast('Link copied. Paste it anywhere to share.'), () => window.prompt('Copy this link:', url));

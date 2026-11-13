@@ -1,6 +1,6 @@
 # Switchremote
 
-> Switchremote is a free job board that lists remote jobs freshers can apply for. No signup and no fees. Jobs are gathered from company career pages and remote job boards, screened for scam signs, and refreshed every 6 hours. Each listing links to the original source, where people apply.
+> Switchremote is a free job board that lists remote jobs freshers can apply for. No signup and no fees. Jobs are gathered from company career pages and remote job boards, and refreshed every 6 hours. Each listing links to the original source, where people apply.
 
 Switchremote does not hire, does not collect applications, and does not promise that any listing is genuine. Listings stay up for 14 days.
 

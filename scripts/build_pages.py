@@ -82,13 +82,13 @@ def build(template, jobs, place, name, where):
         h1 = "Remote jobs for freshers, open to any country"
         desc = ("Work-from-home jobs that freshers can apply for from any country, gathered "
                 "from company career pages and trusted remote job boards. Free, no signup, refreshed every 6 hours.")
-        sub = "Remote jobs open to freshers in any country. Free, no signup, and screened for scam signs."
+        sub = "Remote jobs open to freshers in any country. Free, no signup, and you apply on the company's own page."
     else:
         title = f"Remote jobs for freshers {where} | Switchremote"
         h1 = f"Remote jobs for freshers {where}"
         desc = (f"Work-from-home jobs that freshers {where} can apply for, including remote jobs open to any country. "
                 "Gathered from company career pages and trusted remote job boards. Free, no signup.")
-        sub = f"Work-from-home jobs that freshers {where} can apply for. Free, no signup, and screened for scam signs."
+        sub = f"Work-from-home jobs that freshers {where} can apply for. Free, no signup, and you apply on the company's own page."
     rows = [j for j in jobs if in_place(j, place)][:MAX_STATIC]
     crumbs = json.dumps({
         "@context": "https://schema.org", "@type": "BreadcrumbList",
