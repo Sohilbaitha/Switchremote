@@ -337,3 +337,5 @@ a.chip{text-decoration:none}
 [data-theme="dark"] .formbox{background:#000}
 [data-theme="dark"] .formbox iframe{filter:invert(1) hue-rotate(180deg)}
 [data-theme="dark"] .av-2{color:#000}
+/* "How we pick jobs" on the home page */
+.steps.pick{margin:0 0 22px}

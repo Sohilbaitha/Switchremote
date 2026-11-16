@@ -141,7 +141,21 @@ def write_sitemap():
                     '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + body + "</urlset>\n")
 
 
+def update_counts():
+    """Keep the numbers in "How we pick jobs" in step with sources.json."""
+    src = json.loads((ROOT / "sources.json").read_text(encoding="utf-8"))
+    nums = {"pages": len(src.get("companies", [])), "approved": len(src.get("approved_companies", []))}
+    path = ROOT / "index.html"
+    html = path.read_text(encoding="utf-8")
+    new = html
+    for key, value in nums.items():
+        new = re.sub(r'(<span data-n="%s">)\d+(</span>)' % key, r"\g<1>%d\g<2>" % value, new)
+    if new != html:
+        path.write_text(new, encoding="utf-8")
+
+
 def main():
+    update_counts()
     template = (ROOT / "index.html").read_text(encoding="utf-8")
     jobs = json.loads((ROOT / "data" / "jobs.json").read_text()).get("jobs", [])
     for place, name, where in PAGES:
