@@ -22,7 +22,7 @@ Switchremote does not hire, does not collect applications, and does not promise 
 ## About
 
 - [About](https://switchremote.world/about.html): Who runs Switchremote and how jobs are kept safe
-- [Terms](https://switchremote.world/terms.html)
-- [Privacy and cookies](https://switchremote.world/privacy.html)
-- [Disclaimer and safety](https://switchremote.world/disclaimer.html)
-- [Contact](https://switchremote.world/contact.html)
+- [Terms](https://switchremote.world/terms.html): The rules for using Switchremote
+- [Privacy and cookies](https://switchremote.world/privacy.html): What data we collect, why, and how to ask for deletion
+- [Disclaimer and safety](https://switchremote.world/disclaimer.html): What we can and cannot promise about listings, and safety tips
+- [Contact](https://switchremote.world/contact.html): How to reach us or report a job
