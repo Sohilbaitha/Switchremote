@@ -88,6 +88,34 @@ def swap(html, pattern, new):
     return out
 
 
+COUNTRY_WORD = {"Philippines": "the Philippines"}
+
+
+def country_faq(place, rows):
+    """Questions people in this country search for, answered from the jobs listed right now."""
+    if place == "Worldwide":
+        return []
+    c = COUNTRY_WORD.get(place, place)
+    local = [j for j in rows if place in j.get("countries", [])]
+    anyw = [j for j in rows if "Worldwide" in j.get("countries", []) or "Asia" in j.get("countries", [])]
+    picks = (local + [j for j in anyw if j not in local])[:3]
+    if picks:
+        now = "Right now you can find " + ", ".join(f"{j['title']} at {j.get('company', '')}" for j in picks) + \
+              f". The list changes every 6 hours, so check back often."
+    else:
+        now = "There are no openings for this country at the moment. New jobs come in every 6 hours, so check back soon."
+    return [
+        (f"Can freshers in {c} get a remote job with no experience?",
+         f"Yes. Every job on this page is remote and picked for freshers, such as internships, trainee, graduate and entry-level roles. "
+         f"We leave out jobs that ask for two or more years of experience. Some jobs are only for people in {c}, "
+         f"and some are open to any country, which you can also apply for from {c}."),
+        (f"Which work from home jobs for freshers are open in {c} now?", now),
+        (f"Do I need to pay to apply for a remote job in {c}?",
+         "No. You apply for free on the company's own page, and you do not need an account on Switchremote. "
+         "A real employer will never ask you to pay for a job, training or equipment."),
+    ]
+
+
 def build(template, jobs, place, name, where):
     url = SITE + name
     if place == "Worldwide":
@@ -121,8 +149,19 @@ def build(template, jobs, place, name, where):
     # The WebSite block belongs to the homepage only; country pages get a breadcrumb instead
     h = swap(h, r'<script type="application/ld\+json">\{"@context":"https://schema.org","@type":"WebSite".*?</script>',
              f'<script type="application/ld+json">{crumbs}</script>')
-    # The FAQ data belongs to the homepage only
-    h = swap(h, r'<script type="application/ld\+json" id="faq-ld">.*?</script>\n?', "")
+    # The homepage FAQ data stays on the homepage; country pages get their own questions
+    faq = country_faq(place, rows)
+    faq_ld = ""
+    if faq:
+        faq_ld = '<script type="application/ld+json" id="faq-ld">' + json.dumps({
+            "@context": "https://schema.org", "@type": "FAQPage",
+            "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in faq]},
+            ensure_ascii=False) + "</script>\n"
+    h = swap(h, r'<script type="application/ld\+json" id="faq-ld">.*?</script>\n?', faq_ld)
+    if faq:
+        block = f'<h2 id="cfaq-h">Remote jobs for freshers {escape(where)}</h2>\n' + "".join(
+            f'    <details><summary>{escape(q)}</summary><p>{escape(a)}</p></details>\n' for q, a in faq) + "    "
+        h = swap(h, r'<h2 id="faq-h">Good to know</h2>', block + '<h2 id="faq-h">Good to know</h2>')
     h = swap(h, r"<h1>.*?</h1>", f"<h1>{escape(h1)}</h1>")
     h = swap(h, r'<p class="sub">.*?</p>', f'<p class="sub">{escape(sub)}</p>')
     # Mark this country's chip as the selected one in the plain HTML too
