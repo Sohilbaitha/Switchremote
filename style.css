@@ -339,3 +339,19 @@ a.chip{text-decoration:none}
 [data-theme="dark"] .av-2{color:#000}
 /* "How we pick jobs" on the home page */
 .steps.pick{margin:0 0 22px}
+/* Save a job (kept in this browser only) */
+.save{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;padding:0;border:1px solid var(--line);border-radius:50%;background:#fff;cursor:pointer}
+.save svg{width:16px;height:16px;fill:none;stroke:#000;stroke-width:1.8;stroke-linejoin:round}
+.save:hover,.save:focus-visible{border-color:var(--blue);background:var(--tint);outline:none}
+.save.on{border-color:var(--blue)}
+.save.on svg{fill:var(--blue);stroke:var(--blue)}
+.chip-saved{display:inline-flex;align-items:center}
+.chip-saved svg{width:13px;height:13px;margin-right:6px;fill:var(--blue);stroke:var(--blue);stroke-width:1.8;stroke-linejoin:round}
+.save-btn.on{border-color:var(--blue);color:#0b6fae}
+.follow{margin:4px 0 22px;font-size:.875rem;color:var(--muted)}
+.follow a{color:inherit;font-weight:600;text-decoration:underline;text-underline-offset:2px}
+[data-theme="dark"] .save{background:#121212}
+[data-theme="dark"] .save svg{stroke:#ededed}
+[data-theme="dark"] .save.on svg{fill:var(--blue);stroke:var(--blue)}
+[data-theme="dark"] .save-btn.on{color:#6fcaff}
+[data-theme="dark"] .follow{color:#c4c4c4}

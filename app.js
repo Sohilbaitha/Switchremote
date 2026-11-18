@@ -15,6 +15,7 @@ const PLACES = [
   ['Worldwide', '\u{1F30D} Anywhere']
 ];
 const POST_URL = 'post-a-job.html';
+const BOOKMARK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 3.5h11v17l-5.5-4-5.5 4z"/></svg>';
 // Every country has its own page, so the country chips are real links
 const PAGES = {
   '': './',
@@ -42,6 +43,12 @@ try {
   if (sharedKey) history.replaceState(null, '', location.pathname + location.hash);
 } catch (e) {}
 
+// Saved jobs live only in this browser (no account), as a list of job ids
+const SAVE_KEY = 'sr-saved';
+let saved = new Set();
+try { saved = new Set(JSON.parse(localStorage.getItem(SAVE_KEY) || '[]')); } catch (e) {}
+function storeSaved() { try { localStorage.setItem(SAVE_KEY, JSON.stringify([...saved])); } catch (e) {} }
+
 function jobId(j) {
   let h = 2166136261;
   for (const ch of j.url) { h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619); }
@@ -52,12 +59,16 @@ fetch('data/jobs.json?v=' + Date.now())
   .then(r => r.json())
   .then(d => {
     jobs = d.jobs || [];
+    // A saved job that is no longer listed (closed or past 14 days) is dropped from the saved list
+    const live = new Set(jobs.map(jobId));
+    saved.forEach(id => { if (!live.has(id)) saved.delete(id); });
+    storeSaved();
     if (sharedKey) shared = jobs.find(j => jobId(j) === sharedKey) || null;
-    const live = jobs.filter(j => inPlace(j, HOME)).length;
+    const liveN = jobs.filter(j => inPlace(j, HOME)).length;
     const countEl = document.getElementById('count');
     const dot = document.createElement('i');
     dot.className = 'live';
-    countEl.replaceChildren(dot, live + (live === 1 ? ' job' : ' jobs') + ' live right now');
+    countEl.replaceChildren(dot, liveN + (liveN === 1 ? ' job' : ' jobs') + ' live right now');
     if (d.updated) {
       const fresh = document.createElement('span');
       fresh.className = 'fresh';
@@ -116,6 +127,7 @@ function isNew(j) {
 
 function inPlace(j, p) {
   if (!p) return true;
+  if (p === 'saved') return saved.has(jobId(j));
   if (p === 'new') return isNew(j) && inPlace(j, HOME);
   if (p === 'Worldwide') return j.countries.includes('Worldwide');
   return j.countries.includes(p) || j.countries.includes('Worldwide') || j.countries.includes('Asia');
@@ -174,9 +186,10 @@ const FLAGS_OK = (() => {
 
 function drawChips() {
   chipsEl.replaceChildren();
-  PLACES.forEach(([value, label]) => {
+  const all = saved.size ? [PLACES[0], ['saved', 'Saved'], ...PLACES.slice(1)] : PLACES;
+  all.forEach(([value, label]) => {
     // The chip for this page and "New today" filter in place. Every other chip opens that country's page.
-    const isLink = value !== 'new' && value !== HOME;
+    const isLink = value !== 'new' && value !== 'saved' && value !== HOME;
     const b = document.createElement(isLink ? 'a' : 'button');
     b.className = 'chip' + (value === place ? ' on' : '');
     if (isLink) {
@@ -187,6 +200,10 @@ function drawChips() {
       b.addEventListener('click', () => { place = value; shared = null; render(); });
     }
     b.append(FLAGS_OK ? label : label.replace(/^[\u{1F1E6}-\u{1F1FF}]{2} /u, ''));
+    if (value === 'saved') {
+      b.classList.add('chip-saved');
+      b.insertAdjacentHTML('afterbegin', BOOKMARK);
+    }
     if (value === 'new') {
       b.classList.add('chip-new');
       const dot = document.createElement('i');
@@ -295,7 +312,27 @@ function render() {
     share.title = 'Share';
     share.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>';
     share.addEventListener('click', () => shareJob(j));
-    actions.append(apply, share, report);
+    const save = document.createElement('button');
+    save.type = 'button';
+    save.className = 'save';
+    save.innerHTML = BOOKMARK;
+    const mark = () => {
+      const on = saved.has(jobId(j));
+      save.classList.toggle('on', on);
+      save.setAttribute('aria-pressed', on);
+      save.setAttribute('aria-label', on ? 'Remove from saved jobs' : 'Save this job');
+      save.title = on ? 'Saved' : 'Save';
+    };
+    mark();
+    save.addEventListener('click', () => {
+      const id = jobId(j);
+      if (saved.has(id)) { saved.delete(id); toast('Removed from saved jobs.'); }
+      else { saved.add(id); toast('Saved. Find it under Saved at the top.'); if (window.track) track('save_job', { job_title: j.title, company: j.company }); }
+      storeSaved();
+      if (place === 'saved' && !saved.size) place = HOME;
+      if (place === 'saved') render(); else { mark(); drawChips(); }
+    });
+    actions.append(apply, save, share, report);
     body.append(top, c, tags, actions);
     card.append(av, body);
     list.append(card);

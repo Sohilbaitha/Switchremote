@@ -131,7 +131,26 @@
     var report = el('a', 'report', 'Report');
     report.href = 'mailto:contact@switchremote.world?subject=' + encodeURIComponent('Report a job: ' + j.title) +
       '&body=' + encodeURIComponent('Job: ' + j.title + ' at ' + j.company + '\nLink: ' + j.url + '\n\nWhat is wrong with this job?\n');
-    act.append(apply, share, report);
+    // Save works the same as on the job list: kept only in this browser
+    var KEY = 'sr-saved', ids = [];
+    try { ids = JSON.parse(localStorage.getItem(KEY) || '[]'); } catch (e) {}
+    var save = el('button', 'ghost save-btn');
+    save.type = 'button';
+    function mark() {
+      var on = ids.indexOf(jobId(j)) > -1;
+      save.textContent = on ? 'Saved' : 'Save';
+      save.classList.toggle('on', on);
+      save.setAttribute('aria-pressed', on);
+    }
+    mark();
+    save.addEventListener('click', function () {
+      var id = jobId(j), i = ids.indexOf(id);
+      if (i > -1) { ids.splice(i, 1); toast('Removed from saved jobs.'); }
+      else { ids.push(id); toast('Saved. Find it under Saved on the job list.'); if (window.track) track('save_job', { job_title: j.title, company: j.company }); }
+      try { localStorage.setItem(KEY, JSON.stringify(ids)); } catch (e) {}
+      mark();
+    });
+    act.append(apply, save, share, report);
     box.append(act);
 
     var tips = el('div', 'jd-tips');
