@@ -67,6 +67,19 @@ def card(j):
         '</div></article>')
 
 
+LIST = r'<main id="list">.*?</main>'
+
+
+def build_home(jobs):
+    """The homepage gets the current jobs written in too, so search engines see them without running app.js."""
+    path = ROOT / "index.html"
+    html = path.read_text(encoding="utf-8")
+    new = swap(html, LIST, '<main id="list">' + "".join(card(j) for j in jobs[:MAX_STATIC]) + "</main>")
+    if new != html:
+        path.write_text(new, encoding="utf-8")
+    return min(len(jobs), MAX_STATIC)
+
+
 def swap(html, pattern, new):
     """Replace exactly one match, or stop: a silent miss would publish a wrong page."""
     out, n = re.subn(pattern, lambda m: new, html, count=1, flags=re.S)
@@ -78,13 +91,13 @@ def swap(html, pattern, new):
 def build(template, jobs, place, name, where):
     url = SITE + name
     if place == "Worldwide":
-        title = "Remote jobs for freshers, open to any country | Switchremote"
+        title = "Remote, work from home jobs for freshers in any country | Switchremote"
         h1 = "Remote jobs for freshers, open to any country"
         desc = ("Work-from-home jobs that freshers can apply for from any country, gathered "
                 "from company career pages and trusted remote job boards. Free, no signup, refreshed every 6 hours.")
         sub = "Remote jobs open to freshers in any country. Free, no signup, and you apply on the company's own page."
     else:
-        title = f"Remote jobs for freshers {where} | Switchremote"
+        title = f"Remote, work from home jobs for freshers {where} | Switchremote"
         h1 = f"Remote jobs for freshers {where}"
         desc = (f"Work-from-home jobs that freshers {where} can apply for, including remote jobs open to any country. "
                 "Gathered from company career pages and trusted remote job boards. Free, no signup.")
@@ -115,7 +128,7 @@ def build(template, jobs, place, name, where):
     # Mark this country's chip as the selected one in the plain HTML too
     h = h.replace('<a class="chip on" href="./">', '<a class="chip" href="./">', 1)
     h = h.replace(f'<a class="chip" href="{name}">', f'<a class="chip on" href="{name}" aria-current="page">', 1)
-    h = swap(h, r'<main id="list"></main>', '<main id="list">' + "".join(card(j) for j in rows) + "</main>")
+    h = swap(h, LIST, '<main id="list">' + "".join(card(j) for j in rows) + "</main>")
     h = swap(h, r'<script src="app.js"></script>',
              f'<script>window.SR_PLACE={json.dumps(place)};</script>\n<script src="app.js"></script>')
     (ROOT / name).write_text(h, encoding="utf-8")
@@ -160,6 +173,7 @@ def main():
     jobs = json.loads((ROOT / "data" / "jobs.json").read_text()).get("jobs", [])
     for place, name, where in PAGES:
         print(f"{name}: {build(template, jobs, place, name, where)} jobs")
+    print(f"index.html: {build_home(jobs)} jobs")
     write_sitemap()
     print("sitemap.xml written")
 
