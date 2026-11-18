@@ -159,9 +159,12 @@ def build(template, jobs, place, name, where):
             ensure_ascii=False) + "</script>\n"
     h = swap(h, r'<script type="application/ld\+json" id="faq-ld">.*?</script>\n?', faq_ld)
     if faq:
-        block = f'<h2 id="cfaq-h">Remote jobs for freshers {escape(where)}</h2>\n' + "".join(
-            f'    <details><summary>{escape(q)}</summary><p>{escape(a)}</p></details>\n' for q, a in faq) + "    "
-        h = swap(h, r'<h2 id="faq-h">Good to know</h2>', block + '<h2 id="faq-h">Good to know</h2>')
+        # One "Good to know" list: this country's questions first, without repeating the general
+        # questions they already answer (is it free, can freshers apply)
+        block = "".join(f'\n    <details><summary>{escape(q)}</summary><p>{escape(a)}</p></details>' for q, a in faq)
+        h = swap(h, r'<h2 id="faq-h">Good to know</h2>', '<h2 id="faq-h">Good to know</h2>' + block)
+        h = swap(h, r'\s*<details><summary>Is Switchremote free\?</summary>.*?</details>', "")
+        h = swap(h, r"\s*<details><summary>I'm a fresher with no experience\. Can I apply\?</summary>.*?</details>", "")
     h = swap(h, r"<h1>.*?</h1>", f"<h1>{escape(h1)}</h1>")
     h = swap(h, r'<p class="sub">.*?</p>', f'<p class="sub">{escape(sub)}</p>')
     # Mark this country's chip as the selected one in the plain HTML too

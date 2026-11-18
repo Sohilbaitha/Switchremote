@@ -352,5 +352,3 @@ a.chip{text-decoration:none}
 [data-theme="dark"] .save svg{stroke:#ededed}
 [data-theme="dark"] .save.on svg{fill:var(--blue);stroke:var(--blue)}
 [data-theme="dark"] .save-btn.on{color:#6fcaff}
-/* Country questions sit above "Good to know" */
-.faq details + #faq-h{margin-top:30px}
