@@ -57,6 +57,8 @@ CRYPTO = re.compile(r"crypto|bitcoin|blockchain|web3|\bdefi\b|\bnfts?\b|binance|
 # Data labelling / AI annotation work is left out completely (not real fresher careers)
 ANNOTATION = re.compile(r"annotat|data[- ]?label|\blabell?(er|ers|ing)\b|\bai (trainer|tutor|rater)s?\b|"
                         r"\braters?\b|search (quality )?evaluator|\brlhf\b|data collection|ai data", re.I)
+# Company boards say "remote" in different ways (Canonical writes "Home based - Worldwide")
+REMOTE_WORDS = re.compile(r"remote|home[- ]?based|work from home|work-from-home|\bwfh\b|telecommut", re.I)
 FIELD_JOB = re.compile(r"\bfield\b|door[- ]to[- ]door|\bfos\b|on[- ]ground", re.I)
 # One company can show at most this many feed jobs, so a single bulk poster cannot fill the board
 COMPANY_MAX = 3
@@ -288,7 +290,7 @@ def make(title, company, location, url, posted, source, text, need_remote=False,
             return None
         if source in FEEDS and len(text.strip()) < MIN_TEXT:
             return None
-        if need_remote and "remote" not in (location + " " + title).lower():
+        if need_remote and not REMOTE_WORDS.search(location + " " + title):
             return None
         body = (title + " " + full).lower()
         if not title_ok(title) or not level_ok(level) or has(body, BAD) or SCAM.search(body):
