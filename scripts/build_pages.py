@@ -190,7 +190,12 @@ def build_job_page(template, j, name):
     h = swap(h, r'<meta name="twitter:description" content="[^"]*">', f'<meta name="twitter:description" content="{escape(desc, quote=True)}">')
     h = swap(h, r'<meta property="og:url" content="[^"]*">',
              f'<meta property="og:url" content="{url}">\n<link rel="canonical" href="{url}">\n'
-             f'<script type="application/ld+json">{json.dumps(job_ld(j), ensure_ascii=False)}</script>')
+             f'<script type="application/ld+json">{json.dumps(job_ld(j), ensure_ascii=False)}</script>\n'
+             '<script type="application/ld+json">' + json.dumps({
+                 "@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+                     {"@type": "ListItem", "position": 1, "name": "Switchremote", "item": SITE},
+                     {"@type": "ListItem", "position": 2, "name": title_safe(f"{title} at {company}"), "item": url}]},
+                 ensure_ascii=False) + "</script>")
     rel = "noopener noreferrer nofollow"
     static = (f'<a class="jd-back" href="./">All jobs</a>'
               f'<h1>{escape(title)}</h1><p class="jd-co">{escape(company)}</p>'
@@ -202,6 +207,18 @@ def build_job_page(template, j, name):
     path = ROOT / name
     if not path.exists() or path.read_text(encoding="utf-8") != h:
         path.write_text(h, encoding="utf-8")
+
+
+def update_llms(jobs):
+    """llms.txt lists the current company-site and employer jobs (never job-board jobs)."""
+    path = ROOT / "llms.txt"
+    text = path.read_text(encoding="utf-8")
+    lines = [f"- [{title_safe(short_title(j))} at {j.get('company', '')}]({SITE}{page_name(j)}): "
+             f"Remote, {where_text(j)}" for j in jobs if page_name(j)]
+    block = ("## Latest jobs from company career pages\n\n" + ("\n".join(lines) if lines else "- None right now") + "\n\n")
+    text = re.sub(r"## Latest jobs from company career pages\n\n.*?\n\n(?=## )", "", text, flags=re.S)
+    text = text.replace("## Tools\n", block + "## Tools\n", 1)
+    path.write_text(text, encoding="utf-8")
 
 
 def build_job_pages(jobs):
@@ -238,11 +255,33 @@ def card(j):
 LIST = r'<main id="list">.*?</main>'
 
 
+def list_ld(rows, url, name):
+    """Tells search engines and AI tools what this page lists and when it last changed."""
+    items = []
+    for j in rows:
+        page = page_name(j)
+        items.append({"@type": "ListItem", "position": len(items) + 1,
+                      "name": f"{title_safe(short_title(j))} at {j.get('company', '')}",
+                      **({"url": SITE + page} if page else {})})
+    data = {"@context": "https://schema.org", "@type": "CollectionPage", "name": name, "url": url,
+            "dateModified": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S+00:00"),
+            "isPartOf": {"@type": "WebSite", "name": "Switchremote", "url": SITE},
+            "mainEntity": {"@type": "ItemList", "numberOfItems": len(items), "itemListElement": items}}
+    return '<script type="application/ld+json" id="list-ld">' + json.dumps(data, ensure_ascii=False) + "</script>"
+
+
+def put_list_ld(html, block):
+    if 'id="list-ld"' in html:
+        return swap(html, r'<script type="application/ld\+json" id="list-ld">.*?</script>', block)
+    return html.replace("</head>", block + "\n</head>", 1)
+
+
 def build_home(jobs):
     """The homepage gets the current jobs written in too, so search engines see them without running app.js."""
     path = ROOT / "index.html"
     html = path.read_text(encoding="utf-8")
     new = swap(html, LIST, '<main id="list">' + "".join(card(j) for j in jobs[:MAX_STATIC]) + "</main>")
+    new = put_list_ld(new, list_ld(jobs[:MAX_STATIC], SITE, "Remote jobs for freshers"))
     if new != html:
         path.write_text(new, encoding="utf-8")
     return min(len(jobs), MAX_STATIC)
@@ -312,7 +351,8 @@ def build(template, jobs, place, name, where):
     h = swap(h, r'<meta property="og:title" content="[^"]*">', f'<meta property="og:title" content="{e(title)}">')
     h = swap(h, r'<meta property="og:description" content="[^"]*">', f'<meta property="og:description" content="{e(desc)}">')
     h = swap(h, r'<meta property="og:url" content="[^"]*">', f'<meta property="og:url" content="{url}">')
-    h = swap(h, r'<meta name="twitter:title" content="[^"]*">', f'<meta name="twitter:title" content="{e(h1)}">')
+    h = swap(h, r'<meta name="twitter:title" content="[^"]*">', f'<meta name="twitter:title" content="{e(title)}">')
+    h = put_list_ld(h, list_ld(rows, url, h1))
     h = swap(h, r'<meta name="twitter:description" content="[^"]*">', f'<meta name="twitter:description" content="{e(desc)}">')
     # The WebSite block belongs to the homepage only; country pages get a breadcrumb instead
     h = swap(h, r'<script type="application/ld\+json">\{"@context":"https://schema.org","@type":"WebSite".*?</script>',
@@ -386,6 +426,7 @@ def main():
     template = (ROOT / "index.html").read_text(encoding="utf-8")
     jobs = json.loads((ROOT / "data" / "jobs.json").read_text()).get("jobs", [])
     pages = build_job_pages(jobs)
+    update_llms(jobs)
     print(f"job pages: {len(pages)}")
     # app.js links each job to its own page when it has one
     data_path = ROOT / "data" / "jobs.json"
