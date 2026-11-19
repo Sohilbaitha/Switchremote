@@ -93,6 +93,13 @@ def page_name(j):
     return f"remote-job-{slug(j.get('company', '') + ' ' + short_title(j))}-{job_id(j)}.html"
 
 
+def title_safe(t):
+    """Titles shown in Google: no commas and no long dashes, only " - " and " | "."""
+    t = re.sub(r"\s*[\u2013\u2014]\s*", " - ", t)
+    t = re.sub(r"\s*,\s*", " - ", t)
+    return re.sub(r"\s{2,}", " ", t).strip()
+
+
 def short_title(j):
     """The title without a trailing ", Company name" part, which repeats the company."""
     parts = [p.strip() for p in clean_title(j["title"]).split(",")]
@@ -103,7 +110,8 @@ def short_title(j):
 
 
 def clean_title(t):
-    t = re.sub(r"\s+[-\u2013\u2014]\s+", " ", t)
+    t = re.sub(r"\s+-\s+", " ", t)                    # "Backend - Intern" reads as "Backend Intern"
+    t = re.sub(r"\s*[\u2013\u2014]\s*", " - ", t)       # long dashes become a plain " - "
     t = re.sub(r"\(\s+", "(", t)
     t = re.sub(r"\s+\)", ")", t)
     return re.sub(r"\s{2,}", " ", t).strip()
@@ -144,7 +152,7 @@ def job_ld(j):
     ld = {
         "@context": "https://schema.org/",
         "@type": "JobPosting",
-        "title": title,
+        "title": title_safe(title),
         "description": desc,
         "datePosted": posted,
         "hiringOrganization": {"@type": "Organization", "name": j.get("company", "")},
@@ -169,7 +177,7 @@ def build_job_page(template, j, name):
     title = short_title(j)
     company = j.get("company", "")
     where = where_text(j)
-    full = f"{title} at {company}, remote job for freshers"
+    full = title_safe(f"{title} at {company}") + " - remote job for freshers"
     desc = f"{title} at {company}. Remote, {where}. Free to apply on the company's own page, no signup."
     url = SITE + name
     h = template
@@ -279,13 +287,13 @@ def country_faq(place, rows):
 def build(template, jobs, place, name, where):
     url = SITE + name
     if place == "Worldwide":
-        title = "Remote, work from home jobs for freshers in any country | Switchremote"
+        title = "Remote - work from home jobs for freshers in any country | Switchremote"
         h1 = "Remote jobs for freshers, open to any country"
         desc = ("Work-from-home jobs that freshers can apply for from any country, gathered "
                 "from company career pages and trusted remote job boards. Free, no signup, refreshed every 6 hours.")
         sub = "Remote jobs open to freshers in any country. Free, no signup, and you apply on the company's own page."
     else:
-        title = f"Remote, work from home jobs for freshers {where} | Switchremote"
+        title = f"Remote - work from home jobs for freshers {where} | Switchremote"
         h1 = f"Remote jobs for freshers {where}"
         desc = (f"Work-from-home jobs that freshers {where} can apply for, including remote jobs open to any country. "
                 "Gathered from company career pages and trusted remote job boards. Free, no signup.")

@@ -70,7 +70,7 @@
 
   function show(j, all) {
     // A job's own page already has a search-friendly title
-    if (!window.SR_JOB_ID) document.title = j.title + ' at ' + j.company + ' | Switchremote';
+    if (!window.SR_JOB_ID) document.title = (j.title + ' at ' + j.company).replace(/\s*[\u2013\u2014,]\s*/g, ' - ') + ' | Switchremote';
     box.replaceChildren();
 
     var back = el('a', 'jd-back', 'All jobs');
