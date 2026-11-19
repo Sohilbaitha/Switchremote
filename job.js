@@ -4,7 +4,7 @@
   var SOURCE_SITES = { Remotive: 'https://remotive.com', Jobicy: 'https://jobicy.com', Himalayas: 'https://himalayas.app', 'Remote OK': 'https://remoteok.com' };
   var KEEP_DAYS = 14;
   var id = null;
-  try { id = new URLSearchParams(location.search).get('id'); } catch (e) {}
+  try { id = window.SR_JOB_ID || new URLSearchParams(location.search).get('id'); } catch (e) {}
 
   function jobId(j) {
     var h = 2166136261;
@@ -69,7 +69,8 @@
   }
 
   function show(j, all) {
-    document.title = j.title + ' at ' + j.company + ' | Switchremote';
+    // A job's own page already has a search-friendly title
+    if (!window.SR_JOB_ID) document.title = j.title + ' at ' + j.company + ' | Switchremote';
     box.replaceChildren();
 
     var back = el('a', 'jd-back', 'All jobs');
@@ -121,7 +122,7 @@
     var share = el('button', 'ghost', 'Share');
     share.type = 'button';
     share.addEventListener('click', function () {
-      var url = 'https://switchremote.world/job.html?id=' + jobId(j);
+      var url = 'https://switchremote.world/' + (j.page || 'job.html?id=' + jobId(j));
       var text = j.title + ' at ' + j.company + ' (remote). Free remote jobs for freshers on Switchremote.';
       if (window.track) track('share_click', { job_title: j.title, company: j.company });
       if (navigator.share) { navigator.share({ title: j.title + ' | Switchremote', text: text, url: url }).catch(function () {}); return; }
@@ -170,7 +171,7 @@
       var ml = el('div', 'jd-more');
       more.forEach(function (x) {
         var a = el('a', 'jd-row');
-        a.href = 'job.html?id=' + jobId(x);
+        a.href = x.page || 'job.html?id=' + jobId(x);
         var t = el('span', 'jd-row-t');
         t.append(el('b', null, x.title), el('span', null, x.company + ' · ' + x.countries.map(placeName).join(', ')));
         a.append(avatar(x), t);

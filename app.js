@@ -84,7 +84,7 @@ fetch('data/jobs.json?v=' + Date.now())
 
 function shareJob(j) {
   const where = j.countries.includes('Worldwide') ? 'open to any country' : j.countries.map(placeName).join(', ');
-  const url = 'https://switchremote.world/job.html?id=' + jobId(j);
+  const url = 'https://switchremote.world/' + jobUrl(j);
   const text = j.title + ' at ' + j.company + ' (remote, ' + where + '). Free remote jobs for freshers on Switchremote.';
   if (window.track) track('share_click', { job_title: j.title, company: j.company });
   if (navigator.share) {
@@ -118,7 +118,8 @@ function ago(iso) {
 }
 
 function jobUrl(j) {
-  return 'job.html?id=' + jobId(j);
+  // Company-site and employer jobs have their own page; the rest use the shared job page
+  return j.page || 'job.html?id=' + jobId(j);
 }
 
 function isNew(j) {

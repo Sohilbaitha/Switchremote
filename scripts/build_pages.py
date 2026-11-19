@@ -1,4 +1,5 @@
-"""Builds one page per country (remote-jobs-india.html and so on) and sitemap.xml.
+"""Builds one page per country (remote-jobs-india.html and so on), one page per
+company-site or employer job (remote-job-....html), and sitemap.xml.
 
 Each country page is a copy of index.html with its own title, description and
 heading, and with the current jobs written into the page itself, so search
@@ -7,7 +8,7 @@ index.html only; these pages follow it on the next refresh.
 """
 import json
 import re
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from html import escape
 from pathlib import Path
 
@@ -52,6 +53,164 @@ def source_tag(source):
     return f'<a class="tag tag-src" href="{site}" target="_blank" rel="{rel}">via {escape(source)}</a>'
 
 
+# ---------- one page per job ----------
+# Only jobs from company career pages and employers get their own page and Google Jobs data.
+# Jobs from job boards stay on job.html (not indexed): Remotive asks that its jobs are never
+# sent to Google Jobs, and Himalayas asks that its jobs are not passed on to other platforms.
+OWN_SOURCES = {"Company site", "Employer"}
+TARGETS = ["India", "Philippines", "Indonesia", "Vietnam", "Malaysia", "Thailand"]
+COUNTRY_CODES = {"India": "IN", "Philippines": "PH", "Indonesia": "ID", "Vietnam": "VN",
+                 "Malaysia": "MY", "Thailand": "TH"}
+KEEP_DAYS = 14
+EMPLOYMENT = {"intern": "INTERN", "full": "FULL_TIME", "part": "PART_TIME", "contract": "CONTRACTOR",
+              "temporary": "TEMPORARY", "freelance": "CONTRACTOR"}
+
+
+def job_id(j):
+    """Same short id as jobId() in app.js and job.js."""
+    h = 2166136261
+    for ch in j["url"]:
+        o = ord(ch)
+        h ^= o if o < 0x10000 else 0xD800 + ((o - 0x10000) >> 10)   # JS charCodeAt(0) of the character
+        h = (h * 16777619) & 0xFFFFFFFF
+    n, out = h, ""
+    digits = "0123456789abcdefghijklmnopqrstuvwxyz"
+    while True:
+        n, r = divmod(n, 36)
+        out = digits[r] + out
+        if not n:
+            return out
+
+
+def slug(text):
+    t = re.sub(r"[^a-z0-9]+", "-", text.lower().replace("&", " and ")).strip("-")
+    return t[:70].rstrip("-")
+
+
+def page_name(j):
+    if j.get("source") not in OWN_SOURCES:
+        return None
+    return f"remote-job-{slug(j.get('company', '') + ' ' + short_title(j))}-{job_id(j)}.html"
+
+
+def short_title(j):
+    """The title without a trailing ", Company name" part, which repeats the company."""
+    parts = [p.strip() for p in clean_title(j["title"]).split(",")]
+    first = (j.get("company") or "").lower().split(" ")[0]
+    if len(parts) > 1 and first and first in parts[-1].lower():
+        parts = parts[:-1]
+    return ", ".join(parts)
+
+
+def clean_title(t):
+    t = re.sub(r"\s+[-\u2013\u2014]\s+", " ", t)
+    t = re.sub(r"\(\s+", "(", t)
+    t = re.sub(r"\s+\)", ")", t)
+    return re.sub(r"\s{2,}", " ", t).strip()
+
+
+def where_text(j):
+    c = j.get("countries", [])
+    if "Worldwide" in c:
+        return "open to any country"
+    if "Asia" in c:
+        return "open across Asia-Pacific"
+    return "in " + ", ".join(c)
+
+
+def job_ld(j):
+    """Google Jobs data, built only from facts in the listing."""
+    title = short_title(j)
+    where = where_text(j)
+    kind = (j.get("kind") or "").strip()
+    desc = (f"<p>{escape(j.get('company', ''))} is hiring for {escape(title)}. "
+            f"This is a remote {escape(kind.lower() + ' ') if kind else ''}role, {escape(where)}, "
+            f"and suited to freshers.</p>")
+    if j.get("summary"):
+        desc += f"<p>{escape(j['summary'])}</p>"
+    desc += "<p>Read the full listing and apply on the company's own careers page.</p>"
+    c = j.get("countries", [])
+    places = TARGETS if ("Worldwide" in c or "Asia" in c) else [x for x in c if x in COUNTRY_CODES]
+    posted = j.get("posted", "")[:10]
+    try:
+        until = datetime.fromisoformat(j.get("expires") or "")
+    except ValueError:
+        until = None
+    if not until:
+        try:
+            until = datetime.fromisoformat(j["posted"].replace("Z", "+00:00")) + timedelta(days=KEEP_DAYS)
+        except (KeyError, ValueError):
+            until = None
+    ld = {
+        "@context": "https://schema.org/",
+        "@type": "JobPosting",
+        "title": title,
+        "description": desc,
+        "datePosted": posted,
+        "hiringOrganization": {"@type": "Organization", "name": j.get("company", "")},
+        "jobLocationType": "TELECOMMUTE",
+        "applicantLocationRequirements": [{"@type": "Country", "name": x} for x in places],
+        "directApply": False,
+        "identifier": {"@type": "PropertyValue", "name": "Switchremote", "value": job_id(j)},
+    }
+    m = re.search(r"domain=([^&]+)", j.get("logo") or "")
+    if m:
+        ld["hiringOrganization"]["sameAs"] = "https://" + m.group(1)
+    if until:
+        ld["validThrough"] = until.strftime("%Y-%m-%dT%H:%M:%S+00:00")
+    for key, value in EMPLOYMENT.items():
+        if key in kind.lower():
+            ld["employmentType"] = value
+            break
+    return ld
+
+
+def build_job_page(template, j, name):
+    title = short_title(j)
+    company = j.get("company", "")
+    where = where_text(j)
+    full = f"{title} at {company}, remote job for freshers"
+    desc = f"{title} at {company}. Remote, {where}. Free to apply on the company's own page, no signup."
+    url = SITE + name
+    h = template
+    h = swap(h, r"<title>.*?</title>", f"<title>{escape(full)} | Switchremote</title>")
+    h = swap(h, r'<meta name="robots" content="[^"]*">', '<meta name="robots" content="index, follow, max-image-preview:large">')
+    h = swap(h, r'<meta name="description" content="[^"]*">', f'<meta name="description" content="{escape(desc, quote=True)}">')
+    h = swap(h, r'<meta property="og:title" content="[^"]*">', f'<meta property="og:title" content="{escape(full, quote=True)}">')
+    h = swap(h, r'<meta name="twitter:title" content="[^"]*">', f'<meta name="twitter:title" content="{escape(full, quote=True)}">')
+    h = swap(h, r'<meta property="og:description" content="[^"]*">', f'<meta property="og:description" content="{escape(desc, quote=True)}">')
+    h = swap(h, r'<meta name="twitter:description" content="[^"]*">', f'<meta name="twitter:description" content="{escape(desc, quote=True)}">')
+    h = swap(h, r'<meta property="og:url" content="[^"]*">',
+             f'<meta property="og:url" content="{url}">\n<link rel="canonical" href="{url}">\n'
+             f'<script type="application/ld+json">{json.dumps(job_ld(j), ensure_ascii=False)}</script>')
+    rel = "noopener noreferrer nofollow"
+    static = (f'<a class="jd-back" href="./">All jobs</a>'
+              f'<h1>{escape(title)}</h1><p class="jd-co">{escape(company)}</p>'
+              f'<p>Remote, {escape(where)}.</p>'
+              + (f'<p>{escape(j["summary"])}</p>' if j.get("summary") else "")
+              + f'<a class="apply" href="{escape(j["url"], quote=True)}" target="_blank" rel="{rel}">Apply on the company site</a>')
+    h = swap(h, r'<p class="status">Loading this job\.\.\.</p>', static)
+    h = swap(h, r'<script src="job.js"></script>', f'<script>window.SR_JOB_ID={json.dumps(job_id(j))};</script>\n<script src="job.js"></script>')
+    path = ROOT / name
+    if not path.exists() or path.read_text(encoding="utf-8") != h:
+        path.write_text(h, encoding="utf-8")
+
+
+def build_job_pages(jobs):
+    """Write a page for each company-site or employer job and delete pages of jobs that left the list."""
+    template = (ROOT / "job.html").read_text(encoding="utf-8")
+    keep = set()
+    for j in jobs:
+        name = page_name(j)
+        if name:
+            build_job_page(template, j, name)
+            keep.add(name)
+    for old in ROOT.glob("remote-job-*.html"):
+        if old.name not in keep:
+            old.unlink()
+    return keep
+
+
 def card(j):
     tags = "".join(f'<span class="tag">{escape(place_name(c))}</span>' for c in j.get("countries", []))
     rel = "noopener" if j.get("source") == "Remote OK" else "noopener noreferrer nofollow"
@@ -59,7 +218,8 @@ def card(j):
         '<article class="job">'
         f'<div class="av">{escape((j.get("company") or "?").strip()[:1].upper())}</div>'
         '<div class="body">'
-        f'<div class="top"><h2>{escape(j["title"])}</h2></div>'
+        + (f'<div class="top"><h2><a href="{page_name(j)}">{escape(j["title"])}</a></h2></div>' if page_name(j)
+           else f'<div class="top"><h2>{escape(j["title"])}</h2></div>') +
         f'<p class="company">{escape(j.get("company", ""))}</p>'
         f'<div class="tags"><span class="tag"><i class="sw"></i>Remote</span>{tags}'
         f'{source_tag(j.get("source", ""))}</div>'
@@ -177,7 +337,7 @@ def build(template, jobs, place, name, where):
     return len(rows)
 
 
-def write_sitemap():
+def write_sitemap(jobs=()):
     path = ROOT / "sitemap.xml"
     old = dict(re.findall(r"<loc>([^<]+)</loc>\s*<lastmod>([^<]+)</lastmod>", path.read_text())) if path.exists() else {}
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
@@ -188,6 +348,10 @@ def write_sitemap():
                       ("disclaimer.html", "0.3")):
         if (ROOT / page).exists():
             urls.append((SITE + page, old.get(SITE + page, today), "monthly", pri))
+    for j in jobs:
+        name = page_name(j)
+        if name:
+            urls.append((SITE + name, (j.get("posted") or today)[:10], "weekly", "0.7"))
     body = "".join(
         f"  <url>\n    <loc>{loc}</loc>\n    <lastmod>{mod}</lastmod>\n"
         f"    <changefreq>{freq}</changefreq>\n    <priority>{pri}</priority>\n  </url>\n"
@@ -213,10 +377,26 @@ def main():
     update_counts()
     template = (ROOT / "index.html").read_text(encoding="utf-8")
     jobs = json.loads((ROOT / "data" / "jobs.json").read_text()).get("jobs", [])
+    pages = build_job_pages(jobs)
+    print(f"job pages: {len(pages)}")
+    # app.js links each job to its own page when it has one
+    data_path = ROOT / "data" / "jobs.json"
+    data = json.loads(data_path.read_text())
+    changed = False
+    for j in data.get("jobs", []):
+        name = page_name(j)
+        if j.get("page") != name:
+            changed = True
+            if name:
+                j["page"] = name
+            else:
+                j.pop("page", None)
+    if changed:
+        data_path.write_text(json.dumps(data, ensure_ascii=False))
     for place, name, where in PAGES:
         print(f"{name}: {build(template, jobs, place, name, where)} jobs")
     print(f"index.html: {build_home(jobs)} jobs")
-    write_sitemap()
+    write_sitemap(jobs)
     print("sitemap.xml written")
 
 
