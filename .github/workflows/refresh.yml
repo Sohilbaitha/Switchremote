@@ -26,7 +26,7 @@ jobs:
       - run: |
           git config user.name "switchremote-bot"
           git config user.email "bot@users.noreply.github.com"
-          git add data/jobs.json sitemap.xml index.html llms.txt remote-jobs-*.html
+          git add data/jobs.json data/review.json sitemap.xml index.html llms.txt remote-jobs-*.html
           git add -A -- ':(glob)remote-job-*.html' || true
           git diff --staged --quiet || (git commit -m "Update jobs" && git push)
       # Tells Bing which pages changed (free IndexNow ping). Never blocks the refresh.
