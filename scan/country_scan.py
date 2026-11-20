@@ -22,6 +22,19 @@ REGIONS = {"Latin America": ["latam", "latin america", "south america"], "Europe
            "Africa": ["africa"], "North America": ["north america"], "Middle East": ["middle east", "mena"]}
 
 ns["HIMALAYAS_PLACES"] = list(ns["HIMALAYAS_PLACES"]) + CANDIDATES
+# Go slowly so Himalayas does not rate limit the extra country searches
+import time
+_hget = ns["himalayas_get"]
+def slow_get(url):
+    for attempt in range(3):
+        time.sleep(6)
+        try:
+            return _hget(url)
+        except Exception as e:
+            if "429" not in str(e) or attempt == 2:
+                raise
+            time.sleep(30)
+ns["himalayas_get"] = slow_get
 orig = ns["countries_for"]
 def tagged(location):
     found = orig(location)
@@ -72,6 +85,12 @@ print("target-country jobs:", len(target_now))
 print("approved, blocked only by country:", len(kept_other))
 for p, v in sorted(kept_by.items(), key=lambda x: -len(x[1])):
     print(f"  {p}: {len(v)}")
+print("companies waiting for review:", len(ns["REVIEW"]))
 print("any company, blocked only by country:", len(all_other))
 for p, v in sorted(all_by.items(), key=lambda x: -len(x[1]))[:25]:
     print(f"  {p}: {len(v)}")
+
+print("=== DETAIL any company ===")
+for p, v in sorted(all_by.items(), key=lambda x: -len(x[1])):
+    for j in v:
+        print(f"{p} | {j['company']} | {j['title'][:60]} | {j['source']} | {j['countries'][0][7:][:60]}")
