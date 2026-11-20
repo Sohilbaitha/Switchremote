@@ -94,3 +94,9 @@ print("=== DETAIL any company ===")
 for p, v in sorted(all_by.items(), key=lambda x: -len(x[1])):
     for j in v:
         print(f"{p} | {j['company']} | {j['title'][:60]} | {j['source']} | {j['countries'][0][7:][:60]}")
+
+print("=== TARGET COUNTRIES, NOT APPROVED ===")
+kept_urls = {j["url"] for j in captured.get("kept", [])}
+for j in captured.get("all", []):
+    if not j["countries"][0].startswith("OTHER::") and j["url"] not in kept_urls:
+        print(f"{','.join(j['countries'])} | {j['company']} | {j['title'][:60]} | {j['source']}")
