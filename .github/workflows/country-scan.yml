@@ -1,0 +1,21 @@
+name: Country scan (one-off report)
+on:
+  push:
+    branches: [country-scan]
+permissions:
+  contents: read
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python scan/country_scan.py
+        env:
+          HIMALAYAS_API_KEY: ${{ secrets.HIMALAYAS_API_KEY }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: country-report
+          path: scan/country_report.json
