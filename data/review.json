@@ -49,6 +49,20 @@
   "source": "Himalayas"
  },
  {
+  "company": "Keepgo",
+  "jobs": 1,
+  "example": "Technical Customer Support (SaaS only)",
+  "link": "https://himalayas.app/companies/keepgo/jobs/technical-customer-support-saas-only?utm_source=api",
+  "source": "Himalayas"
+ },
+ {
+  "company": "LaunchBrightly",
+  "jobs": 1,
+  "example": "Product Setup Specialist - Operations",
+  "link": "https://himalayas.app/companies/launchbrightly/jobs/product-setup-specialist-operations?utm_source=api",
+  "source": "Himalayas"
+ },
+ {
   "company": "micro1",
   "jobs": 10,
   "example": "Telecommunications Customer Support Specialist",
@@ -81,6 +95,13 @@
   "jobs": 1,
   "example": "Intern – Java",
   "link": "https://himalayas.app/companies/rmgx/jobs/intern-java-8574784410?utm_source=api",
+  "source": "Himalayas"
+ },
+ {
+  "company": "RustLabs",
+  "jobs": 1,
+  "example": "Native Speakers for AI Audio Conversations (DE, KO, RU, IT, JA)",
+  "link": "https://himalayas.app/companies/rustlabs/jobs/native-speakers-for-ai-audio-conversations-de-ko-ru-it-ja?utm_source=api",
   "source": "Himalayas"
  },
  {
