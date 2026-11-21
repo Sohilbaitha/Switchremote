@@ -178,7 +178,7 @@ def build_job_page(template, j, name):
     company = j.get("company", "")
     where = where_text(j)
     full = title_safe(f"{title} at {company}") + " - remote job for freshers"
-    desc = f"{title} at {company}. Remote, {where}. Free to apply on the company's own page, no signup."
+    desc = f"{title} at {company}. Remote work from home job for freshers, {where}. Free to apply on the company's own page, no signup."
     url = SITE + name
     h = template
     h = swap(h, r"<title>.*?</title>", f"<title>{escape(full)} | Switchremote</title>")
@@ -326,16 +326,16 @@ def country_faq(place, rows):
 def build(template, jobs, place, name, where):
     url = SITE + name
     if place == "Worldwide":
-        title = "Remote - work from home jobs for freshers in any country | Switchremote"
+        title = "Remote Jobs for Freshers Worldwide - Work From Home | Switchremote"
         h1 = "Remote jobs for freshers, open to any country"
-        desc = ("Work-from-home jobs that freshers can apply for from any country, gathered "
-                "from company career pages and trusted remote job boards. Free, no signup, refreshed every 6 hours.")
+        desc = ("Remote and work from home jobs for freshers in any country. Internships, trainee, graduate and "
+                "entry-level roles for people with little or no experience. Free, no signup, updated every 6 hours.")
         sub = "Remote jobs open to freshers in any country. Free, no signup, and you apply on the company's own page."
     else:
-        title = f"Remote - work from home jobs for freshers {where} | Switchremote"
+        title = f"Remote Jobs for Freshers {where} - Work From Home | Switchremote"
         h1 = f"Remote jobs for freshers {where}"
-        desc = (f"Work-from-home jobs that freshers {where} can apply for, including remote jobs open to any country. "
-                "Gathered from company career pages and trusted remote job boards. Free, no signup.")
+        desc = (f"Remote and work from home jobs for freshers {where}. Internships, trainee, graduate and entry-level "
+                "roles for people with little or no experience. Free, no signup, updated every 6 hours.")
         sub = f"Work-from-home jobs that freshers {where} can apply for. Free, no signup, and you apply on the company's own page."
     rows = [j for j in jobs if in_place(j, place)][:MAX_STATIC]
     crumbs = json.dumps({
