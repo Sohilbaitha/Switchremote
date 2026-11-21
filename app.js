@@ -130,7 +130,14 @@ function isNew(j) {
 const INTERN = /\bintern(s|ship|ships)?\b/i;
 function isIntern(j) { return INTERN.test(j.title || '') || INTERN.test(j.kind || ''); }
 
+// On the internships page the country chips filter internships on the page itself
+const INTERN_PAGE = HOME === 'Internships';
+
 function inPlace(j, p) {
+  if (INTERN_PAGE && p !== 'saved') {
+    if (!isIntern(j)) return false;
+    if (!p || p === 'Internships') return true;
+  }
   if (!p) return true;
   if (p === 'Internships') return isIntern(j);
   if (p === 'saved') return saved.has(jobId(j));
@@ -192,10 +199,12 @@ const FLAGS_OK = (() => {
 
 function drawChips() {
   chipsEl.replaceChildren();
-  const all = saved.size ? [PLACES[0], ['saved', 'Saved'], ...PLACES.slice(1)] : PLACES;
+  const base = INTERN_PAGE ? [['Internships', 'All internships'], ...PLACES.slice(1)] : PLACES;
+  const all = saved.size ? [base[0], ['saved', 'Saved'], ...base.slice(1)] : base;
   all.forEach(([value, label]) => {
     // The chip for this page and "New today" filter in place. Every other chip opens that country's page.
-    const isLink = value !== 'new' && value !== 'saved' && value !== HOME;
+    // On the internships page every chip filters in place.
+    const isLink = !INTERN_PAGE && value !== 'new' && value !== 'saved' && value !== HOME;
     const b = document.createElement(isLink ? 'a' : 'button');
     b.className = 'chip' + (value === place ? ' on' : '');
     if (isLink) {
