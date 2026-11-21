@@ -25,10 +25,19 @@ PAGES = [
     ("Thailand", "remote-jobs-thailand.html", "in Thailand"),
     ("India", "remote-jobs-india.html", "in India"),
     ("Worldwide", "remote-jobs-worldwide.html", "open worldwide"),
+    ("Internships", "remote-internships.html", ""),
 ]
+
+INTERN = re.compile(r"\bintern(s|ship|ships)?\b", re.I)
+
+
+def is_intern(job):
+    return bool(INTERN.search(job.get("title", "")) or INTERN.search(job.get("kind") or ""))
 
 
 def in_place(job, place):
+    if place == "Internships":
+        return is_intern(job)
     c = job.get("countries", [])
     if place == "Worldwide":
         return "Worldwide" in c
@@ -302,6 +311,20 @@ def country_faq(place, rows):
     """Questions people in this country search for, answered from the jobs listed right now."""
     if place == "Worldwide":
         return []
+    if place == "Internships":
+        picks = rows[:3]
+        now = ("Right now you can find " + ", ".join(f"{j['title']} at {j.get('company', '')}" for j in picks) +
+               ". The list changes every 6 hours, so check back often.") if picks else \
+              "There are no remote internships at the moment. New jobs come in every 6 hours, so check back soon."
+        return [
+            ("Can students and freshers get a remote internship with no experience?",
+             "Yes. Every internship on this page is fully remote and open to students and freshers. Each one shows "
+             "which countries it is open to, so check that you can apply from where you live."),
+            ("Which work from home internships are open now?", now),
+            ("Do I need to pay to apply for a remote internship?",
+             "No. You apply for free on the company's own page, and you do not need an account on Switchremote. "
+             "A real employer will never ask you to pay for an internship, training or a certificate."),
+        ]
     c = COUNTRY_WORD.get(place, place)
     local = [j for j in rows if place in j.get("countries", [])]
     anyw = [j for j in rows if "Worldwide" in j.get("countries", []) or "Asia" in j.get("countries", [])]
@@ -325,7 +348,13 @@ def country_faq(place, rows):
 
 def build(template, jobs, place, name, where):
     url = SITE + name
-    if place == "Worldwide":
+    if place == "Internships":
+        title = "Remote Internships for Freshers - Work From Home | Switchremote"
+        h1 = "Remote internships for freshers"
+        desc = ("Remote and work from home internships for students and freshers in India, the Philippines, Southeast Asia "
+                "and worldwide. No experience needed. Free, no signup, updated every 6 hours.")
+        sub = "Work-from-home internships for students and freshers. Free, no signup, and you apply on the company's own page."
+    elif place == "Worldwide":
         title = "Remote Jobs for Freshers Worldwide - Work From Home | Switchremote"
         h1 = "Remote jobs for freshers, open to any country"
         desc = ("Remote and work from home jobs for freshers in any country. Internships, trainee, graduate and "
@@ -379,6 +408,8 @@ def build(template, jobs, place, name, where):
     h = h.replace('<a class="chip on" href="./">', '<a class="chip" href="./">', 1)
     h = h.replace(f'<a class="chip" href="{name}">', f'<a class="chip on" href="{name}" aria-current="page">', 1)
     h = swap(h, LIST, '<main id="list">' + "".join(card(j) for j in rows) + "</main>")
+    if place == "Internships":
+        h = swap(h, r'<p class="also">.*?</p>', '<p class="also">Looking for full-time roles? <a href="./">See all remote jobs</a></p>')
     h = swap(h, r'<script src="app.js"></script>',
              f'<script>window.SR_PLACE={json.dumps(place)};</script>\n<script src="app.js"></script>')
     (ROOT / name).write_text(h, encoding="utf-8")

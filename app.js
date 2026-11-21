@@ -126,8 +126,13 @@ function isNew(j) {
   return Date.now() - new Date(j.posted) < 864e5;
 }
 
+// Internships have their own page
+const INTERN = /\bintern(s|ship|ships)?\b/i;
+function isIntern(j) { return INTERN.test(j.title || '') || INTERN.test(j.kind || ''); }
+
 function inPlace(j, p) {
   if (!p) return true;
+  if (p === 'Internships') return isIntern(j);
   if (p === 'saved') return saved.has(jobId(j));
   if (p === 'new') return isNew(j) && inPlace(j, HOME);
   if (p === 'Worldwide') return j.countries.includes('Worldwide');

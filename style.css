@@ -352,3 +352,8 @@ a.chip{text-decoration:none}
 [data-theme="dark"] .save svg{stroke:#ededed}
 [data-theme="dark"] .save.on svg{fill:var(--blue);stroke:var(--blue)}
 [data-theme="dark"] .save-btn.on{color:#6fcaff}
+/* Link to the internships page under the country chips */
+.also{margin:-4px 0 16px;font-size:.875rem;color:var(--muted)}
+.also a{color:inherit;font-weight:600;text-decoration:underline;text-underline-offset:2px}
+.also a:hover{color:var(--blue)}
+[data-theme="dark"] .also{color:#c4c4c4}
