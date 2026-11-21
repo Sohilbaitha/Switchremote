@@ -408,8 +408,6 @@ def build(template, jobs, place, name, where):
     h = h.replace('<a class="chip on" href="./">', '<a class="chip" href="./">', 1)
     h = h.replace(f'<a class="chip" href="{name}">', f'<a class="chip on" href="{name}" aria-current="page">', 1)
     h = swap(h, LIST, '<main id="list">' + "".join(card(j) for j in rows) + "</main>")
-    if place == "Internships":
-        h = swap(h, r'<p class="also">.*?</p>', '<p class="also">Looking for full-time roles? <a href="./">See all remote jobs</a></p>')
     h = swap(h, r'<script src="app.js"></script>',
              f'<script>window.SR_PLACE={json.dumps(place)};</script>\n<script src="app.js"></script>')
     (ROOT / name).write_text(h, encoding="utf-8")
