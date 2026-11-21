@@ -350,7 +350,7 @@ def build(template, jobs, place, name, where):
     url = SITE + name
     if place == "Internships":
         title = "Remote Internships for Freshers - Work From Home | Switchremote"
-        h1 = "Remote internships for freshers"
+        h1 = "Remote internships"
         desc = ("Remote and work from home internships for students and freshers in India, the Philippines, Southeast Asia "
                 "and worldwide. No experience needed. Free, no signup, updated every 6 hours.")
         sub = "Work-from-home internships for students and freshers. Free, no signup, and you apply on the company's own page."
