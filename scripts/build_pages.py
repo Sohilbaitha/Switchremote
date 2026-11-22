@@ -287,7 +287,8 @@ def build_companies(jobs):
             "and Canva. See which companies have remote fresher jobs and internships open right now.")
     body = (f'<main class="wrap legal companies">\n  <h1>Companies on Switchremote</h1>\n'
             f'  <p>We list remote jobs for freshers from these {len(names)} companies whenever they have one open. '
-            f'Tap a company with live jobs to see them.</p>\n'
+            f'Tap a company with live jobs to see them.</p>\n'            f'  <p class="meta">Switchremote is not affiliated with, endorsed by or sponsored by any of these companies. '
+            f'Company names are shown only to tell you whose jobs we list, and all trademarks belong to their owners.</p>\n'
             f'  <h2>Hiring now</h2>\n  <ul class="co-hire">{hire_html}</ul>\n'
             f'  <h2>All companies A to Z</h2>\n  {az}\n'
             f'  <p class="meta">Want your company here? <a href="post-a-job.html" data-track="post_job_click">Post a remote job for free</a>.</p>\n'
