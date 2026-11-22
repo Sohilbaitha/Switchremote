@@ -701,8 +701,29 @@ def is_approved(name, approved):
 REVIEW = {}   # companies seen on job boards that are not on the approved list yet
 
 
+def own_page_companies(cfg):
+    """Companies whose own careers page we read directly. For these, a job from a job board is
+    shown only if the company's own page has it too, so old or unlisted board posts do not appear."""
+    approved = {company_key(a): a for a in cfg.get("approved_companies", []) if a.strip()}
+    sites = {k.lower(): v for k, v in cfg.get("company_sites", {}).items()}
+    names = set()
+    for url in cfg.get("companies", []):
+        slug = url.rstrip("/").split("/")[-1].lower()
+        dom = sites.get(slug, "")
+        for cand in (slug, dom.split(".")[0] if dom else ""):
+            k = company_key(cand)
+            if k:
+                names.add(k)
+                # match approved names written differently, e.g. "razorpay" and "Razorpay"
+                for a in approved:
+                    if a.replace(" ", "") == k.replace(" ", ""):
+                        names.add(a)
+    return names
+
+
 def final_pass(all_jobs, cfg, now):
     """Safety pass on everything, including jobs kept from earlier refreshes."""
+    own_pages = own_page_companies(cfg)
     # Whole-word match, so blocking "Turing" does not also block a "Manufacturing" company
     blocked = [re.compile(r"(?<![a-z0-9])" + re.escape(b.strip().lower()) + r"(?![a-z0-9])")
                for b in cfg.get("blocked_companies", []) if b.strip()]
@@ -739,6 +760,10 @@ def final_pass(all_jobs, cfg, now):
             dropped += 1
             continue
         if job.get("source") in FEEDS:
+            # We read this company's own careers page, so only its own posts count
+            if company_key(job.get("company", "")) in own_pages or company_key(job.get("company", "")).replace(" ", "") in {n.replace(" ", "") for n in own_pages}:
+                dropped += 1
+                continue
             if not is_approved(name, approved):
                 r = REVIEW.setdefault(job.get("company", ""), {"jobs": 0, "example": job.get("title", ""),
                                                                "link": job.get("url", ""),
