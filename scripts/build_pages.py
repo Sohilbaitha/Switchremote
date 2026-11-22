@@ -275,9 +275,8 @@ def build_companies(jobs):
     def logo(n):
         dom = links.get(n, {}).get("domain", "")
         first = escape(n[:1].upper())
-        # Logos are stored on our own site (logos/<domain>.png); without one we show the first letter
-        img = (f'<img src="logos/{dom}.png" alt="" width="28" height="28" loading="lazy" onerror="this.remove()">'
-               if dom and (ROOT / "logos" / f"{dom}.png").exists() else "")
+        # No company logos: we have no permission to use them, so a plain first letter stands in
+        img = ""
         return f'<span class="co-logo" aria-hidden="true">{first}{img}</span>'
     def careers(n):
         u = links.get(n, {}).get("careers", "")

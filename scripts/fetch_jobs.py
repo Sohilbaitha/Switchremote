@@ -793,9 +793,7 @@ def main():
                 if job and fresh(job):
                     if is_board:
                         job["board"] = name
-                        site = sites.get(name.split(":", 1)[1])
-                        if site and not job.get("logo"):
-                            job["logo"] = f"https://www.google.com/s2/favicons?domain={site}&sz=128"
+                        # No logo of our own making for company-site jobs: the card shows the first letter
                     found[job["url"]] = job
                     kept += 1
             succeeded += 1
