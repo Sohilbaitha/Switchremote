@@ -1,15 +1,19 @@
-name: Company link check (one-off)
+name: Company logos (one-off)
 on:
   push:
     branches: [company-links-check]
 permissions:
   contents: read
 jobs:
-  check:
+  logos:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: python scan/check_links.py
+      - run: python scan/get_logos.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: logos
+          path: logos/

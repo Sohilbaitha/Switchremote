@@ -364,3 +364,16 @@ a.chip{text-decoration:none}
 [data-theme="dark"] .companies .co-hire a{color:#ededed;background:#0a0a0a}
 [data-theme="dark"] .companies .co-hire a:hover{background:#111}
 [data-theme="dark"] .companies .co-c{color:#6fcaff;background:#0d2230}
+.companies .co-logo{position:relative;flex:none;display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;background:var(--tint);color:#0b6fae;font-size:.8125rem;font-weight:700;overflow:hidden}
+.companies .co-logo img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#fff;border-radius:8px}
+.companies .co-card{justify-content:flex-start}
+.companies .co-card .co-n{flex:1;min-width:0}
+.companies .co-all a,.companies .co-plain{display:flex;align-items:center;gap:10px;padding:5px 0;color:#000;text-decoration:none}
+.companies .co-all a:hover span{color:var(--blue)}
+.companies .co-ext{font-size:.75rem;color:var(--muted)}
+.companies .co-all li{margin:0 0 4px}
+.companies .co-all{columns:1}
+@media (min-width:520px){.companies .co-all{columns:2}}
+@media (min-width:860px){.companies .co-all{columns:3}}
+[data-theme="dark"] .companies .co-all a,[data-theme="dark"] .companies .co-plain{color:#ededed}
+[data-theme="dark"] .companies .co-logo{background:#0d2230;color:#6fcaff}
