@@ -108,7 +108,7 @@ footer a{color:inherit}
 .cookie-btns{display:flex;gap:8px}
 .cookie button{flex:1;font:inherit;font-size:.875rem;font-weight:600;padding:10px 18px;border-radius:999px;cursor:pointer}
 .cookie .yes{border:0;background:var(--blue);color:#000}
-.cookie .no{border:1px solid var(--line);background:#fff;color:#1b1b1b}
+.cookie .no{border:1.5px solid #000;background:#fff;color:#000}
 
 /* responsive: use the space on tablets, laptops and big screens */
 .wrap{width:100%}
@@ -331,6 +331,7 @@ a.chip{text-decoration:none}
 [data-theme="dark"] .faq summary::after{border-color:#a3a3a3}
 [data-theme="dark"] .job:hover{box-shadow:none}
 [data-theme="dark"] .cookie{box-shadow:0 16px 40px rgba(0,0,0,.6)}
+[data-theme="dark"] .cookie .no{border-color:#ededed}
 @media (min-width:640px){[data-theme="dark"] .menu{background:none;box-shadow:none}[data-theme="dark"] .menu a,[data-theme="dark"] .menu a:first-child{color:#c4c4c4}[data-theme="dark"] .menu a:hover,[data-theme="dark"] .menu a:first-child:hover{color:#fff}}
 [data-theme="dark"] .toc a{background:#121212;color:#ededed}
 /* The job form comes from Google Forms and cannot be restyled, so in dark mode it is shown with inverted colours */
