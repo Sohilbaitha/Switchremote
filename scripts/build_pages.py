@@ -230,6 +230,90 @@ def update_llms(jobs):
     path.write_text(text, encoding="utf-8")
 
 
+# ---------- companies page ----------
+# Names shown once even when the approved list has two spellings of the same company
+SAME_AS = {"Cengage": "Cengage Group", "Dell": "Dell Technologies", "PhysicsWallah": "Physics Wallah",
+           "TCS": "Tata Consultancy Services", "Think Academy US": "Think Academy"}
+BOARD_NAMES = {"branch": "Branch International", "gohighlevel": "HighLevel", "contentsquare": "Contentsquare"}
+
+
+def all_companies():
+    cfg = json.loads((ROOT / "sources.json").read_text())
+    norm = lambda x: re.sub(r"[^a-z0-9]", "", x.lower())
+    names = {norm(a): a for a in cfg.get("approved_companies", [])}
+    for url in cfg.get("companies", []):
+        slug = url.rstrip("/").split("/")[-1]
+        dom = cfg.get("company_sites", {}).get(slug, "")
+        root = dom.split(".")[0] if dom else slug
+        if not (names.get(norm(slug)) or names.get(norm(root))):
+            n = BOARD_NAMES.get(slug, root.title())
+            names[norm(n)] = n
+    out = {}
+    for n in names.values():
+        n = SAME_AS.get(n, n)
+        out[norm(n)] = n
+    return sorted(out.values(), key=lambda x: x.lower())
+
+
+def build_companies(jobs):
+    norm = lambda x: re.sub(r"[^a-z0-9]", "", x.lower())
+    live = {}
+    for j in jobs:
+        live[norm(j.get("company", ""))] = live.get(norm(j.get("company", "")), 0) + 1
+    names = all_companies()
+    hiring = [n for n in names if live.get(norm(n))]
+    # Live jobs whose company spelling differs slightly from the list still count
+    for j in jobs:
+        c = j.get("company", "")
+        if c and not any(norm(c) == norm(n) for n in names) and c not in hiring:
+            hiring.append(c)
+            names.append(c)
+    hiring.sort(key=lambda x: x.lower())
+    names = sorted(set(names), key=lambda x: x.lower())
+    from urllib.parse import quote
+    hire_html = "".join(
+        f'<li><a href="/?q={quote(n)}"><span class="co-n">{escape(n)}</span>'
+        f'<span class="co-c">{live.get(norm(n), 0)} {"job" if live.get(norm(n), 0) == 1 else "jobs"} live</span></a></li>'
+        for n in hiring)
+    groups = {}
+    for n in names:
+        k = n[0].upper() if n[0].isalpha() else "#"
+        groups.setdefault(k, []).append(n)
+    az = "".join(f'<h3 class="co-l">{k}</h3><ul class="co-all">' + "".join(f"<li>{escape(n)}</li>" for n in v) + "</ul>"
+                 for k, v in sorted(groups.items()))
+    url = SITE + "companies.html"
+    title = "Remote Jobs for Freshers by Company | Switchremote"
+    desc = (f"{len(names)} companies whose remote jobs for freshers we list on Switchremote, including Canonical, SAP, Paytm "
+            "and Canva. See which companies have remote fresher jobs and internships open right now.")
+    body = (f'<main class="wrap legal companies">\n  <h1>Companies on Switchremote</h1>\n'
+            f'  <p>We list remote jobs for freshers from these {len(names)} companies whenever they have one open. '
+            f'Tap a company with live jobs to see them.</p>\n'
+            f'  <h2>Hiring now</h2>\n  <ul class="co-hire">{hire_html}</ul>\n'
+            f'  <h2>All companies A to Z</h2>\n  {az}\n'
+            f'  <p class="meta">Want your company here? <a href="post-a-job.html" data-track="post_job_click">Post a remote job for free</a>.</p>\n'
+            f'</main>')
+    h = (ROOT / "about.html").read_text(encoding="utf-8")
+    e = lambda x: escape(x, quote=True)
+    h = swap(h, r"<title>.*?</title>", f"<title>{escape(title)}</title>")
+    h = swap(h, r'<meta name="description" content="[^"]*">', f'<meta name="description" content="{e(desc)}">')
+    h = swap(h, r'<link rel="canonical" href="[^"]*">', f'<link rel="canonical" href="{url}">')
+    h = swap(h, r'<meta property="og:title" content="[^"]*">', f'<meta property="og:title" content="{e(title)}">')
+    h = swap(h, r'<meta name="twitter:title" content="[^"]*">', f'<meta name="twitter:title" content="{e(title)}">')
+    h = swap(h, r'<meta property="og:description" content="[^"]*">', f'<meta property="og:description" content="{e(desc)}">')
+    h = swap(h, r'<meta name="twitter:description" content="[^"]*">', f'<meta name="twitter:description" content="{e(desc)}">')
+    h = swap(h, r'<meta property="og:url" content="[^"]*">', f'<meta property="og:url" content="{url}">')
+    h = re.sub(r'<script type="application/ld\+json">.*?</script>\n?', "", h, flags=re.S)
+    crumbs = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Switchremote", "item": SITE},
+        {"@type": "ListItem", "position": 2, "name": "Companies", "item": url}]}
+    h = h.replace("</head>", f'<script type="application/ld+json">{json.dumps(crumbs)}</script>\n</head>', 1)
+    h = swap(h, r'<main class="wrap legal">.*?</main>', body)
+    path = ROOT / "companies.html"
+    if not path.exists() or path.read_text(encoding="utf-8") != h:
+        path.write_text(h, encoding="utf-8")
+    return len(names), len(hiring)
+
+
 def build_job_pages(jobs):
     """Write a page for each company-site or employer job and delete pages of jobs that left the list."""
     template = (ROOT / "job.html").read_text(encoding="utf-8")
@@ -420,7 +504,7 @@ def write_sitemap(jobs=()):
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     urls = [(SITE, today, "daily", "1.0")]
     urls += [(SITE + name, today, "daily", "0.8") for _, name, _ in PAGES]
-    for page, pri in (("post-a-job.html", "0.6"), ("about.html", "0.5"),
+    for page, pri in (("post-a-job.html", "0.6"), ("companies.html", "0.6"), ("about.html", "0.5"),
                       ("contact.html", "0.4"), ("terms.html", "0.3"), ("privacy.html", "0.3"),
                       ("disclaimer.html", "0.3")):
         if (ROOT / page).exists():
@@ -474,6 +558,7 @@ def main():
     for place, name, where in PAGES:
         print(f"{name}: {build(template, jobs, place, name, where)} jobs")
     print(f"index.html: {build_home(jobs)} jobs")
+    print("companies.html: %d companies, %d hiring now" % build_companies(jobs))
     write_sitemap(jobs)
     print("sitemap.xml written")
 

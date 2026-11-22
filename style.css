@@ -352,3 +352,15 @@ a.chip{text-decoration:none}
 [data-theme="dark"] .save svg{stroke:#ededed}
 [data-theme="dark"] .save.on svg{fill:var(--blue);stroke:var(--blue)}
 [data-theme="dark"] .save-btn.on{color:#6fcaff}
+/* Companies page */
+.companies .co-hire{list-style:none;margin:8px 0 18px;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.companies .co-hire a{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;color:#000;text-decoration:none;font-weight:600}
+.companies .co-hire a:hover{border-color:var(--blue);background:var(--tint)}
+.companies .co-c{flex:none;font-size:.8125rem;font-weight:600;color:#0b6fae;background:var(--tint);border-radius:999px;padding:3px 9px}
+.companies .co-l{margin:16px 0 4px;font-size:.875rem;color:var(--muted)}
+.companies .co-all{list-style:none;margin:0;padding:0;columns:2;column-gap:24px}
+.companies .co-all li{margin:0 0 6px;break-inside:avoid}
+@media (min-width:700px){.companies .co-all{columns:3}}
+[data-theme="dark"] .companies .co-hire a{color:#ededed;background:#0a0a0a}
+[data-theme="dark"] .companies .co-hire a:hover{background:#111}
+[data-theme="dark"] .companies .co-c{color:#6fcaff;background:#0d2230}
