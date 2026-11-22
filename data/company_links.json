@@ -1,0 +1,790 @@
+{
+ "Accenture": {
+  "domain": "accenture.com",
+  "careers": "https://www.accenture.com/in-en/careers"
+ },
+ "Acquia": {
+  "domain": "acquia.com",
+  "careers": "https://job-boards.greenhouse.io/acquia"
+ },
+ "Adobe": {
+  "domain": "adobe.com",
+  "careers": "https://careers.adobe.com/"
+ },
+ "Agoda": {
+  "domain": "agoda.com",
+  "careers": "https://careersatagoda.com/"
+ },
+ "AirAsia": {
+  "domain": "airasia.com",
+  "careers": "https://careers.airasia.com/"
+ },
+ "Airbnb": {
+  "domain": "airbnb.com",
+  "careers": "https://careers.airbnb.com/"
+ },
+ "Airtable": {
+  "domain": "airtable.com",
+  "careers": "https://www.airtable.com/careers"
+ },
+ "Ajaib": {
+  "domain": "ajaib.co.id",
+  "careers": "https://apply.workable.com/ajaib"
+ },
+ "Amazon": {
+  "domain": "amazon.com",
+  "careers": "https://www.amazon.jobs/"
+ },
+ "American Express": {
+  "domain": "americanexpress.com",
+  "careers": "https://www.americanexpress.com/en-us/careers/"
+ },
+ "Angel One": {
+  "domain": "angelone.in",
+  "careers": "https://www.angelone.in/careers"
+ },
+ "Anthropic": {
+  "domain": "anthropic.com",
+  "careers": "https://www.anthropic.com/careers"
+ },
+ "Apollo.io": {
+  "domain": "apollo.io",
+  "careers": "https://job-boards.greenhouse.io/apolloio"
+ },
+ "Archipelago International": {
+  "domain": "archipelagointernational.com",
+  "careers": "https://www.archipelagointernational.com/careers"
+ },
+ "Asana": {
+  "domain": "asana.com",
+  "careers": "https://asana.com/jobs"
+ },
+ "Ashby": {
+  "domain": "ashbyhq.com",
+  "careers": "https://jobs.ashbyhq.com/ashby"
+ },
+ "Atlassian": {
+  "domain": "atlassian.com",
+  "careers": "https://www.atlassian.com/company/careers"
+ },
+ "Automattic": {
+  "domain": "automattic.com",
+  "careers": "https://job-boards.greenhouse.io/automatticcareers"
+ },
+ "Avery Dennison": {
+  "domain": "averydennison.com",
+  "careers": "https://www.averydennison.com/en/home/careers.html"
+ },
+ "Babbel": {
+  "domain": "babbel.com",
+  "careers": "https://jobs.babbel.com/"
+ },
+ "Backblaze": {
+  "domain": "backblaze.com",
+  "careers": "https://job-boards.greenhouse.io/backblaze"
+ },
+ "Bjak": {
+  "domain": "bjak.my",
+  "careers": "https://apply.workable.com/bjak-1/"
+ },
+ "Bloomberg": {
+  "domain": "bloomberg.com",
+  "careers": "https://www.bloomberg.com/company/what-we-do/careers/"
+ },
+ "Booking.com": {
+  "domain": "booking.com",
+  "careers": "https://jobs.booking.com/"
+ },
+ "Bored Panda": {
+  "domain": "boredpanda.com",
+  "careers": "https://jobs.boredpanda.com/"
+ },
+ "Bosch": {
+  "domain": "bosch.com",
+  "careers": "https://www.bosch.com/careers/"
+ },
+ "Branch International": {
+  "domain": "branch.co",
+  "careers": "https://job-boards.greenhouse.io/branch"
+ },
+ "Buffer": {
+  "domain": "buffer.com",
+  "careers": "https://buffer.com/journey"
+ },
+ "Cambly": {
+  "domain": "cambly.com",
+  "careers": "https://jobs.cambly.com/"
+ },
+ "Canonical": {
+  "domain": "canonical.com",
+  "careers": "https://job-boards.greenhouse.io/canonical"
+ },
+ "Canva": {
+  "domain": "canva.com",
+  "careers": "https://careers.smartrecruiters.com/Canva"
+ },
+ "Capgemini": {
+  "domain": "capgemini.com",
+  "careers": "https://www.capgemini.com/careers/"
+ },
+ "Carousell": {
+  "domain": "carousell.com",
+  "careers": "https://careers.carousell.com/"
+ },
+ "Carsome": {
+  "domain": "carsome.my",
+  "careers": "https://carsome.breezy.hr/"
+ },
+ "Cengage Group": {
+  "domain": "cengagegroup.com",
+  "careers": "https://www.cengagegroup.com/careers/"
+ },
+ "Chainguard": {
+  "domain": "chainguard.dev",
+  "careers": "https://job-boards.greenhouse.io/chainguard"
+ },
+ "Cisco": {
+  "domain": "cisco.com",
+  "careers": "https://jobs.cisco.com/"
+ },
+ "ClickUp": {
+  "domain": "clickup.com",
+  "careers": "https://jobs.ashbyhq.com/clickup"
+ },
+ "Cloudbeds": {
+  "domain": "cloudbeds.com",
+  "careers": "https://job-boards.greenhouse.io/cloudbeds"
+ },
+ "Cloudflare": {
+  "domain": "cloudflare.com",
+  "careers": "https://job-boards.greenhouse.io/cloudflare"
+ },
+ "Coda": {
+  "domain": "coda.io",
+  "careers": "https://jobs.lever.co/Coda"
+ },
+ "Cognizant": {
+  "domain": "cognizant.com",
+  "careers": "https://careers.cognizant.com/"
+ },
+ "CommerceIQ": {
+  "domain": "commerceiq.ai",
+  "careers": "https://job-boards.greenhouse.io/commerceiq"
+ },
+ "Contentsquare": {
+  "domain": "contentsquare.com",
+  "careers": "https://jobs.lever.co/contentsquare"
+ },
+ "Coursera": {
+  "domain": "coursera.org",
+  "careers": "https://careers.coursera.com/"
+ },
+ "CRED": {
+  "domain": "cred.club",
+  "careers": "https://jobs.lever.co/cred"
+ },
+ "Customer.io": {
+  "domain": "customer.io",
+  "careers": "https://job-boards.greenhouse.io/customerio"
+ },
+ "Datadog": {
+  "domain": "datadoghq.com",
+  "careers": "https://careers.datadoghq.com/"
+ },
+ "DBS": {
+  "domain": "dbs.com",
+  "careers": "https://www.dbs.com/careers/"
+ },
+ "Deel": {
+  "domain": "deel.com",
+  "careers": "https://jobs.ashbyhq.com/deel"
+ },
+ "Delivery Hero": {
+  "domain": "deliveryhero.com",
+  "careers": "https://careers.deliveryhero.com/"
+ },
+ "Dell Technologies": {
+  "domain": "dell.com",
+  "careers": "https://jobs.dell.com/"
+ },
+ "Deloitte": {
+  "domain": "deloitte.com",
+  "careers": "https://www.deloitte.com/global/en/careers.html"
+ },
+ "Discord": {
+  "domain": "discord.com",
+  "careers": "https://discord.com/careers"
+ },
+ "Docker": {
+  "domain": "docker.com",
+  "careers": "https://www.docker.com/careers/"
+ },
+ "Doist": {
+  "domain": "doist.com",
+  "careers": "https://doist.com/careers"
+ },
+ "DoiT": {
+  "domain": "doit.com",
+  "careers": "https://job-boards.greenhouse.io/doitintl"
+ },
+ "Donorbox": {
+  "domain": "donorbox.org",
+  "careers": "https://job-boards.greenhouse.io/donorbox"
+ },
+ "DoorDash": {
+  "domain": "doordash.com",
+  "careers": "https://careersatdoordash.com/"
+ },
+ "Dropbox": {
+  "domain": "dropbox.com",
+  "careers": "https://jobs.dropbox.com/"
+ },
+ "Duolingo": {
+  "domain": "duolingo.com",
+  "careers": "https://careers.duolingo.com/"
+ },
+ "edX": {
+  "domain": "edx.org",
+  "careers": "https://www.edx.org/careers"
+ },
+ "Elastic": {
+  "domain": "elastic.co",
+  "careers": "https://job-boards.greenhouse.io/elastic"
+ },
+ "ElevenLabs": {
+  "domain": "elevenlabs.io",
+  "careers": "https://jobs.ashbyhq.com/elevenlabs"
+ },
+ "EY": {
+  "domain": "ey.com",
+  "careers": "https://www.ey.com/en_gl/careers"
+ },
+ "Figma": {
+  "domain": "figma.com",
+  "careers": "https://www.figma.com/careers/"
+ },
+ "Flipkart": {
+  "domain": "flipkart.com",
+  "careers": "https://www.flipkartcareers.com/"
+ },
+ "Foodpanda": {
+  "domain": "foodpanda.com",
+  "careers": "https://careers.foodpanda.com/jobs"
+ },
+ "FourKites": {
+  "domain": "fourkites.com",
+  "careers": "https://job-boards.greenhouse.io/fourkites"
+ },
+ "Fresh Prints": {
+  "domain": "freshprints.com",
+  "careers": "https://job-boards.greenhouse.io/freshprints"
+ },
+ "Freshworks": {
+  "domain": "freshworks.com",
+  "careers": "https://careers.smartrecruiters.com/Freshworks"
+ },
+ "G2": {
+  "domain": "g2.com",
+  "careers": "https://jobs.ashbyhq.com/g2"
+ },
+ "GCash": {
+  "domain": "gcash.com",
+  "careers": "https://www.gcash.com/careers"
+ },
+ "Genpact": {
+  "domain": "genpact.com",
+  "careers": "https://www.genpact.com/careers"
+ },
+ "GitHub": {
+  "domain": "github.com",
+  "careers": "https://www.github.careers/"
+ },
+ "GitLab": {
+  "domain": "gitlab.com",
+  "careers": "https://job-boards.greenhouse.io/gitlab"
+ },
+ "Glean": {
+  "domain": "glean.com",
+  "careers": "https://job-boards.greenhouse.io/gleanwork"
+ },
+ "Globalization Partners": {
+  "domain": "g-p.com",
+  "careers": "https://job-boards.greenhouse.io/globalizationpartners"
+ },
+ "Globe Telecom": {
+  "domain": "globe.com.ph",
+  "careers": "https://www.globe.com.ph/careers"
+ },
+ "GoDaddy": {
+  "domain": "godaddy.com",
+  "careers": "https://careers.godaddy.com/"
+ },
+ "Gojek": {
+  "domain": "gojek.com",
+  "careers": "https://www.gojek.io/careers"
+ },
+ "Google": {
+  "domain": "google.com",
+  "careers": "https://www.google.com/about/careers/applications/"
+ },
+ "GoTo": {
+  "domain": "goto.com",
+  "careers": "https://www.goto.com/company/careers"
+ },
+ "Grab": {
+  "domain": "grab.com",
+  "careers": "https://www.grab.careers/"
+ },
+ "Grammarly": {
+  "domain": "grammarly.com",
+  "careers": "https://www.grammarly.com/jobs"
+ },
+ "Groww": {
+  "domain": "groww.in",
+  "careers": "https://job-boards.greenhouse.io/groww"
+ },
+ "HackerRank": {
+  "domain": "hackerrank.com",
+  "careers": "https://job-boards.greenhouse.io/hackerrank"
+ },
+ "HCLTech": {
+  "domain": "hcltech.com",
+  "careers": "https://www.hcltech.com/careers"
+ },
+ "Hello English": {
+  "domain": "helloenglish.com",
+  "careers": ""
+ },
+ "Help Scout": {
+  "domain": "helpscout.com",
+  "careers": "https://jobs.ashbyhq.com/helpscout"
+ },
+ "HighLevel": {
+  "domain": "gohighlevel.com",
+  "careers": "https://jobs.lever.co/gohighlevel"
+ },
+ "Honeywell": {
+  "domain": "honeywell.com",
+  "careers": "https://careers.honeywell.com/"
+ },
+ "Hostinger": {
+  "domain": "hostinger.com",
+  "careers": "https://jobs.ashbyhq.com/hostinger"
+ },
+ "Hotjar": {
+  "domain": "hotjar.com",
+  "careers": "https://careers.hotjar.com/"
+ },
+ "HP": {
+  "domain": "hp.com",
+  "careers": "https://jobs.hp.com/"
+ },
+ "HSBC": {
+  "domain": "hsbc.com",
+  "careers": "https://www.hsbc.com/careers"
+ },
+ "HubSpot": {
+  "domain": "hubspot.com",
+  "careers": "https://www.hubspot.com/careers"
+ },
+ "IBM": {
+  "domain": "ibm.com",
+  "careers": "https://www.ibm.com/careers"
+ },
+ "IIDE": {
+  "domain": "iide.co",
+  "careers": "https://iide.co/careers/"
+ },
+ "Infosys": {
+  "domain": "infosys.com",
+  "careers": "https://www.infosys.com/careers/"
+ },
+ "Intercom": {
+  "domain": "intercom.com",
+  "careers": "https://www.intercom.com/careers"
+ },
+ "Interview Kickstart": {
+  "domain": "interviewkickstart.com",
+  "careers": "https://jobs.ashbyhq.com/interview-kickstart"
+ },
+ "JetBrains": {
+  "domain": "jetbrains.com",
+  "careers": "https://www.jetbrains.com/careers/"
+ },
+ "Jollibee": {
+  "domain": "jollibeegroup.com",
+  "careers": "https://www.jollibeegroup.com/careers/"
+ },
+ "JumpCloud": {
+  "domain": "jumpcloud.com",
+  "careers": "https://jobs.lever.co/jumpcloud"
+ },
+ "Khan Academy": {
+  "domain": "khanacademy.org",
+  "careers": "https://job-boards.greenhouse.io/khanacademy"
+ },
+ "KPMG": {
+  "domain": "kpmg.com",
+  "careers": "https://kpmg.com/xx/en/careers.html"
+ },
+ "Kredivo": {
+  "domain": "kredivo.com",
+  "careers": "https://kredivocorp.com/careers"
+ },
+ "Lazada": {
+  "domain": "lazada.com",
+  "careers": "https://www.lazada.com/en/careers/"
+ },
+ "Lenovo": {
+  "domain": "lenovo.com",
+  "careers": "https://jobs.lenovo.com/"
+ },
+ "Level AI": {
+  "domain": "thelevel.ai",
+  "careers": "https://jobs.lever.co/levelai"
+ },
+ "Mastercard": {
+  "domain": "mastercard.com",
+  "careers": "https://careers.mastercard.com/"
+ },
+ "MAX Security Solutions": {
+  "domain": "max-security.com",
+  "careers": "https://www.max-security.com/careers/"
+ },
+ "Maya": {
+  "domain": "maya.ph",
+  "careers": "https://www.maya.ph/careers"
+ },
+ "Maybank": {
+  "domain": "maybank.com",
+  "careers": "https://www.maybank.com/en/careers.page"
+ },
+ "Meesho": {
+  "domain": "meesho.com",
+  "careers": "https://jobs.lever.co/meesho"
+ },
+ "Microsoft": {
+  "domain": "microsoft.com",
+  "careers": "https://careers.microsoft.com/"
+ },
+ "MinIO": {
+  "domain": "min.io",
+  "careers": "https://job-boards.greenhouse.io/minio"
+ },
+ "Miro": {
+  "domain": "miro.com",
+  "careers": "https://miro.com/careers/"
+ },
+ "MongoDB": {
+  "domain": "mongodb.com",
+  "careers": "https://www.mongodb.com/company/careers"
+ },
+ "Mozilla": {
+  "domain": "mozilla.org",
+  "careers": "https://job-boards.greenhouse.io/mozilla"
+ },
+ "Myntra": {
+  "domain": "myntra.com",
+  "careers": "https://careers.myntra.com/"
+ },
+ "Netflix": {
+  "domain": "netflix.com",
+  "careers": "https://jobs.netflix.com/"
+ },
+ "Netomi": {
+  "domain": "netomi.com",
+  "careers": "https://jobs.lever.co/netomi"
+ },
+ "Ninja Van": {
+  "domain": "ninjavan.co",
+  "careers": "https://www.ninjavan.co/en-sg/careers"
+ },
+ "Notion": {
+  "domain": "notion.com",
+  "careers": "https://jobs.ashbyhq.com/notion"
+ },
+ "Okta": {
+  "domain": "okta.com",
+  "careers": "https://www.okta.com/company/careers/"
+ },
+ "OneSignal": {
+  "domain": "onesignal.com",
+  "careers": "https://onesignal.com/careers"
+ },
+ "OpenAI": {
+  "domain": "openai.com",
+  "careers": "https://jobs.ashbyhq.com/openai"
+ },
+ "OpenSesame": {
+  "domain": "opensesame.com",
+  "careers": "https://job-boards.greenhouse.io/opensesame"
+ },
+ "OpenTable": {
+  "domain": "opentable.com",
+  "careers": "https://job-boards.greenhouse.io/opentable"
+ },
+ "Oracle": {
+  "domain": "oracle.com",
+  "careers": "https://www.oracle.com/careers/"
+ },
+ "Outright International": {
+  "domain": "outrightinternational.org",
+  "careers": "https://outrightinternational.org/about/jobs"
+ },
+ "Papaya Global": {
+  "domain": "papayaglobal.com",
+  "careers": "https://www.papayaglobal.com/careers/"
+ },
+ "PayMongo": {
+  "domain": "paymongo.com",
+  "careers": "https://www.paymongo.com/careers"
+ },
+ "PayPal": {
+  "domain": "paypal.com",
+  "careers": "https://careers.pypl.com/"
+ },
+ "Paytm": {
+  "domain": "paytm.com",
+  "careers": "https://jobs.lever.co/paytm"
+ },
+ "PhonePe": {
+  "domain": "phonepe.com",
+  "careers": "https://www.phonepe.com/careers/"
+ },
+ "Physics Wallah": {
+  "domain": "pw.live",
+  "careers": "https://www.pw.live/life"
+ },
+ "PLDT": {
+  "domain": "pldt.com",
+  "careers": "https://careers.pldt.com.ph/"
+ },
+ "PostHog": {
+  "domain": "posthog.com",
+  "careers": "https://posthog.com/careers"
+ },
+ "Postman": {
+  "domain": "postman.com",
+  "careers": "https://www.postman.com/company/careers/"
+ },
+ "Preply": {
+  "domain": "preply.com",
+  "careers": "https://jobs.ashbyhq.com/preply"
+ },
+ "PriceLabs": {
+  "domain": "pricelabs.co",
+  "careers": "https://apply.workable.com/pricelabs"
+ },
+ "PwC": {
+  "domain": "pwc.com",
+  "careers": "https://www.pwc.com/gx/en/careers.html"
+ },
+ "Razorpay": {
+  "domain": "razorpay.com",
+  "careers": "https://job-boards.greenhouse.io/razorpaysoftwareprivatelimited"
+ },
+ "Red Hat": {
+  "domain": "redhat.com",
+  "careers": "https://www.redhat.com/en/jobs"
+ },
+ "Reddit": {
+  "domain": "redditinc.com",
+  "careers": "https://www.redditinc.com/careers"
+ },
+ "Remote": {
+  "domain": "remote.com",
+  "careers": "https://job-boards.greenhouse.io/remotecom"
+ },
+ "Revolut": {
+  "domain": "revolut.com",
+  "careers": "https://www.revolut.com/careers/"
+ },
+ "Salesforce": {
+  "domain": "salesforce.com",
+  "careers": "https://careers.salesforce.com/"
+ },
+ "Samsung": {
+  "domain": "samsung.com",
+  "careers": "https://www.samsung.com/us/careers/"
+ },
+ "SAP": {
+  "domain": "sap.com",
+  "careers": "https://jobs.sap.com/"
+ },
+ "ShopBack": {
+  "domain": "shopback.com",
+  "careers": "https://careers.shopback.com/"
+ },
+ "Shopee": {
+  "domain": "shopee.com",
+  "careers": "https://careers.shopee.sg/"
+ },
+ "Shopify": {
+  "domain": "shopify.com",
+  "careers": "https://www.shopify.com/careers"
+ },
+ "Siemens": {
+  "domain": "siemens.com",
+  "careers": "https://jobs.siemens.com/"
+ },
+ "Slack": {
+  "domain": "slack.com",
+  "careers": "https://slack.com/careers"
+ },
+ "Spotify": {
+  "domain": "spotify.com",
+  "careers": "https://www.lifeatspotify.com/jobs"
+ },
+ "Sprinto": {
+  "domain": "sprinto.com",
+  "careers": "https://jobs.lever.co/Sprinto"
+ },
+ "Sprout Solutions": {
+  "domain": "sprout.ph",
+  "careers": "https://careers-page.com/sprout-solutions-phil-inc"
+ },
+ "Squarespace": {
+  "domain": "squarespace.com",
+  "careers": "https://www.squarespace.com/careers"
+ },
+ "Standard Chartered": {
+  "domain": "sc.com",
+  "careers": "https://www.sc.com/en/careers/"
+ },
+ "Stripe": {
+  "domain": "stripe.com",
+  "careers": "https://stripe.com/jobs"
+ },
+ "Sumo Logic": {
+  "domain": "sumologic.com",
+  "careers": "https://job-boards.greenhouse.io/sumologic"
+ },
+ "Supabase": {
+  "domain": "supabase.com",
+  "careers": "https://jobs.ashbyhq.com/supabase"
+ },
+ "Swiggy": {
+  "domain": "swiggy.com",
+  "careers": "https://careers.swiggy.com/"
+ },
+ "Tata Consultancy Services": {
+  "domain": "tcs.com",
+  "careers": "https://www.tcs.com/careers"
+ },
+ "Tech Mahindra": {
+  "domain": "techmahindra.com",
+  "careers": "https://careers.techmahindra.com/"
+ },
+ "TechnologyAdvice": {
+  "domain": "technologyadvice.com",
+  "careers": "https://technologyadvice.com/careers/"
+ },
+ "Think Academy": {
+  "domain": "thethinkacademy.com",
+  "careers": "https://www.thethinkacademy.com/careers/"
+ },
+ "Thomson Reuters": {
+  "domain": "thomsonreuters.com",
+  "careers": "https://careers.thomsonreuters.com/"
+ },
+ "Thumbtack": {
+  "domain": "thumbtack.com",
+  "careers": "https://jobs.ashbyhq.com/thumbtack"
+ },
+ "Tokopedia": {
+  "domain": "tokopedia.com",
+  "careers": "https://www.tokopedia.com/careers/"
+ },
+ "Traveloka": {
+  "domain": "traveloka.com",
+  "careers": "https://www.traveloka.com/en-id/careers"
+ },
+ "Twilio": {
+  "domain": "twilio.com",
+  "careers": "https://job-boards.greenhouse.io/twilio"
+ },
+ "Uber": {
+  "domain": "uber.com",
+  "careers": "https://www.uber.com/global/en/careers/"
+ },
+ "Udemy": {
+  "domain": "udemy.com",
+  "careers": "https://about.udemy.com/careers/"
+ },
+ "Unacademy": {
+  "domain": "unacademy.com",
+  "careers": "https://unacademy.com/careers"
+ },
+ "Unilever": {
+  "domain": "unilever.com",
+  "careers": "https://careers.unilever.com/"
+ },
+ "upGrad": {
+  "domain": "upgrad.com",
+  "careers": "https://www.upgrad.com/careers/"
+ },
+ "Vercel": {
+  "domain": "vercel.com",
+  "careers": "https://vercel.com/careers"
+ },
+ "Visa": {
+  "domain": "visa.com",
+  "careers": "https://corporate.visa.com/en/jobs/"
+ },
+ "Webflow": {
+  "domain": "webflow.com",
+  "careers": "https://webflow.com/careers"
+ },
+ "Wikimedia Foundation": {
+  "domain": "wikimediafoundation.org",
+  "careers": "https://job-boards.greenhouse.io/wikimedia"
+ },
+ "Wipro": {
+  "domain": "wipro.com",
+  "careers": "https://careers.wipro.com/"
+ },
+ "Wise": {
+  "domain": "wise.com",
+  "careers": "https://wise.jobs/"
+ },
+ "Wix": {
+  "domain": "wix.com",
+  "careers": "https://careers.wix.com/"
+ },
+ "Workstream": {
+  "domain": "workstream.us",
+  "careers": "https://job-boards.greenhouse.io/workstream"
+ },
+ "Xendit": {
+  "domain": "xendit.co",
+  "careers": "https://job-boards.greenhouse.io/xendit"
+ },
+ "YipitData": {
+  "domain": "yipitdata.com",
+  "careers": "https://job-boards.greenhouse.io/yipitdata"
+ },
+ "Yugabyte": {
+  "domain": "yugabyte.com",
+  "careers": "https://job-boards.greenhouse.io/yugabyte"
+ },
+ "Zapier": {
+  "domain": "zapier.com",
+  "careers": "https://jobs.ashbyhq.com/zapier"
+ },
+ "Zendesk": {
+  "domain": "zendesk.com",
+  "careers": "https://jobs.zendesk.com/"
+ },
+ "Zoho": {
+  "domain": "zoho.com",
+  "careers": "https://www.zoho.com/careers/"
+ },
+ "Zomato": {
+  "domain": "zomato.com",
+  "careers": "https://www.zomato.com/careers"
+ },
+ "Zoom": {
+  "domain": "zoom.us",
+  "careers": "https://careers.zoom.us/"
+ }
+}

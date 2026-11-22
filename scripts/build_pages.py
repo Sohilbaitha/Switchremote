@@ -271,15 +271,34 @@ def build_companies(jobs):
     hiring.sort(key=lambda x: x.lower())
     names = sorted(set(names), key=lambda x: x.lower())
     from urllib.parse import quote
+    links = json.loads((ROOT / "data" / "company_links.json").read_text())
+    def logo(n):
+        dom = links.get(n, {}).get("domain", "")
+        first = escape(n[:1].upper())
+        # Logos are stored on our own site (logos/<domain>.png); without one we show the first letter
+        img = (f'<img src="logos/{dom}.png" alt="" width="28" height="28" loading="lazy" onerror="this.remove()">'
+               if dom and (ROOT / "logos" / f"{dom}.png").exists() else "")
+        return f'<span class="co-logo" aria-hidden="true">{first}{img}</span>'
+    def careers(n):
+        u = links.get(n, {}).get("careers", "")
+        return u
     hire_html = "".join(
-        f'<li><a href="/?q={quote(n)}"><span class="co-n">{escape(n)}</span>'
+        f'<li><a class="co-card" href="/?q={quote(n)}">{logo(n)}<span class="co-n">{escape(n)}</span>'
         f'<span class="co-c">{live.get(norm(n), 0)} {"job" if live.get(norm(n), 0) == 1 else "jobs"} live</span></a></li>'
         for n in hiring)
     groups = {}
     for n in names:
         k = n[0].upper() if n[0].isalpha() else "#"
         groups.setdefault(k, []).append(n)
-    az = "".join(f'<h3 class="co-l">{k}</h3><ul class="co-all">' + "".join(f"<li>{escape(n)}</li>" for n in v) + "</ul>"
+    def item(n):
+        u = careers(n)
+        inner = f'{logo(n)}<span>{escape(n)}</span>'
+        if u:
+            return (f'<li><a href="{escape(u, quote=True)}" target="_blank" rel="noopener noreferrer nofollow" '
+                    f'data-track="company_careers_click" title="{escape(n, quote=True)} careers page">{inner}'
+                    f'<span class="co-ext" aria-hidden="true">&#8599;</span></a></li>')
+        return f"<li><span class=\"co-plain\">{inner}</span></li>"
+    az = "".join(f'<h3 class="co-l">{k}</h3><ul class="co-all">' + "".join(item(n) for n in v) + "</ul>"
                  for k, v in sorted(groups.items()))
     url = SITE + "companies.html"
     title = "Remote Jobs for Freshers by Company | Switchremote"
@@ -287,7 +306,7 @@ def build_companies(jobs):
             "and Canva. See which companies have remote fresher jobs and internships open right now.")
     body = (f'<main class="wrap legal companies">\n  <h1>Companies on Switchremote</h1>\n'
             f'  <p>We list remote jobs for freshers from these {len(names)} companies whenever they have one open. '
-            f'Tap a company with live jobs to see them.</p>\n'            f'  <p class="meta">Switchremote is not affiliated with, endorsed by or sponsored by any of these companies. '
+            f'Tap a company with live jobs to see them, or tap any company below to open its official careers page.</p>\n'            f'  <p class="meta">Switchremote is not affiliated with, endorsed by or sponsored by any of these companies. '
             f'Company names are shown only to tell you whose jobs we list, and all trademarks belong to their owners.</p>\n'
             f'  <h2>Hiring now</h2>\n  <ul class="co-hire">{hire_html}</ul>\n'
             f'  <h2>All companies A to Z</h2>\n  {az}\n'
