@@ -111,5 +111,6 @@ try{localStorage.setItem(k,on?'dark':'light')}catch(e){}if(window.gtag)gtag('eve
 })();
 </script>
 <script src="analytics.js"></script>
+<script>if("serviceWorker"in navigator)addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})});</script>
 </body>
 </html>
