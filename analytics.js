@@ -48,10 +48,11 @@ function showBanner() {
   box.setAttribute('role', 'dialog');
   box.setAttribute('aria-label', 'Cookie choice');
   box.innerHTML =
-    '<p>We would like to use Google Analytics cookies to count visits and clicks, so we can improve Switchremote. ' +
-    'You can say no and still use the whole site. <a href="privacy.html">Read our privacy policy</a>.</p>' +
-    '<div class="cookie-btns"><button type="button" class="yes">Accept</button>' +
-    '<button type="button" class="no">No thanks</button></div>';
+    '<p>Can we use Google Analytics cookies to count visits and clicks? It helps us see what works and make Switchremote better for you. ' +
+    'We never sell your data, and you can say no and still use the whole site. <a href="privacy.html">Privacy policy</a>.</p>' +
+    // Both buttons are the same size. Accept sits on the right, where a thumb rests on most phones.
+    '<div class="cookie-btns"><button type="button" class="no">No thanks</button>' +
+    '<button type="button" class="yes">Accept</button></div>';
   document.body.appendChild(box);
   box.querySelector('.yes').addEventListener('click', function () {
     setChoice('yes'); loadGA(); box.remove();
