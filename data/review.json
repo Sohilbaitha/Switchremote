@@ -7,6 +7,13 @@
   "source": "Himalayas"
  },
  {
+  "company": "BaseApp Systems",
+  "jobs": 1,
+  "example": "Full Time Job At Baseapp",
+  "link": "https://himalayas.app/companies/baseapp-systems/jobs/full-time-job-at-baseapp?utm_source=api",
+  "source": "Himalayas"
+ },
+ {
   "company": "Bosch Group",
   "jobs": 1,
   "example": "[BD] IT Project Operation Assistant Intern (6-Month Internship)",
@@ -14,17 +21,17 @@
   "source": "Himalayas"
  },
  {
-  "company": "Clera",
-  "jobs": 1,
-  "example": "Sales Development Associate",
-  "link": "https://himalayas.app/companies/clera/jobs/sales-development-associate-2441852164?utm_source=api",
-  "source": "Himalayas"
- },
- {
   "company": "CXG",
   "jobs": 1,
   "example": "Operations Trainee (Part-Time)",
   "link": "https://himalayas.app/companies/cxg/jobs/operations-trainee-part-time?utm_source=api",
+  "source": "Himalayas"
+ },
+ {
+  "company": "Dazeinfo",
+  "jobs": 1,
+  "example": "Content Writers - Mobile/Social Media/eCommerce Industry",
+  "link": "https://himalayas.app/companies/dazeinfo/jobs/content-writers-mobile-social-media-ecommerce-industry?utm_source=api",
   "source": "Himalayas"
  },
  {
@@ -116,6 +123,13 @@
   "jobs": 1,
   "example": "Native Speakers for AI Audio Conversations (DE, KO, RU, IT, JA)",
   "link": "https://himalayas.app/companies/rustlabs/jobs/native-speakers-for-ai-audio-conversations-de-ko-ru-it-ja?utm_source=api",
+  "source": "Himalayas"
+ },
+ {
+  "company": "Salve.Inno Consulting",
+  "jobs": 1,
+  "example": "Junior Performance Marketing Specialist (Paid Acquisition & Growth)",
+  "link": "https://himalayas.app/companies/salve-inno-consulting/jobs/junior-performance-marketing-specialist-paid-acquisition-growth-7640827553?utm_source=api",
   "source": "Himalayas"
  },
  {
