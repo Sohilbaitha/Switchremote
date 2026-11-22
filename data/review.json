@@ -14,6 +14,13 @@
   "source": "Himalayas"
  },
  {
+  "company": "Clera",
+  "jobs": 1,
+  "example": "Sales Development Associate",
+  "link": "https://himalayas.app/companies/clera/jobs/sales-development-associate-2441852164?utm_source=api",
+  "source": "Himalayas"
+ },
+ {
   "company": "CXG",
   "jobs": 1,
   "example": "Operations Trainee (Part-Time)",
@@ -109,13 +116,6 @@
   "jobs": 1,
   "example": "Junior Customs Declaration Agent",
   "link": "https://himalayas.app/companies/sourcefit/jobs/junior-customs-declaration-agent?utm_source=api",
-  "source": "Himalayas"
- },
- {
-  "company": "TELUS Digital",
-  "jobs": 2,
-  "example": "Thai Native : AI Speech & Audio Specialist",
-  "link": "https://himalayas.app/companies/telus-digital/jobs/thai-native-ai-speech-audio-specialist?utm_source=api",
   "source": "Himalayas"
  },
  {
