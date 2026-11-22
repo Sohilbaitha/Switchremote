@@ -13,6 +13,9 @@ def check(item):
         return name, e.code, v["careers"]
     except Exception as e:
         return name, "ERR " + type(e).__name__, v["careers"]
+extra = {"PW alt careers.pw.live": {"careers": "https://careers.pw.live/"}, "PW alt pw.live/careers": {"careers": "https://pw.live/careers"},
+         "Uber alt list": {"careers": "https://www.uber.com/us/en/careers/list/"}, "Hello alt": {"careers": "https://helloenglish.com/"}}
+d.update(extra)
 with cf.ThreadPoolExecutor(12) as ex:
     res = list(ex.map(check, d.items()))
 bad = [r for r in res if r[1] != 200]
