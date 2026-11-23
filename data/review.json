@@ -35,6 +35,13 @@
   "source": "Himalayas"
  },
  {
+  "company": "etaily",
+  "jobs": 1,
+  "example": "Content Creator Intern",
+  "link": "https://himalayas.app/companies/etaily/jobs/content-creator-intern?utm_source=api",
+  "source": "Himalayas"
+ },
+ {
   "company": "Expedock",
   "jobs": 1,
   "example": "Gameplay Data Collector (Project-Based)",
@@ -53,6 +60,13 @@
   "jobs": 1,
   "example": "Technical Customer Support (SaaS only)",
   "link": "https://himalayas.app/companies/keepgo/jobs/technical-customer-support-saas-only?utm_source=api",
+  "source": "Himalayas"
+ },
+ {
+  "company": "KraftPixel Digital Solutions Private Limited",
+  "jobs": 1,
+  "example": "Web Engineer Trainee (Internship Track: Full Stack)",
+  "link": "https://himalayas.app/companies/kraftpixel-digital-solutions-private-limited/jobs/web-engineer-trainee-internship-track-full-stack?utm_source=api",
   "source": "Himalayas"
  },
  {
@@ -88,13 +102,6 @@
   "jobs": 3,
   "example": "Junior Lawyer – Remote (Worldwide)",
   "link": "https://himalayas.app/companies/remotejobsone/jobs/junior-lawyer-remote-worldwide?utm_source=api",
-  "source": "Himalayas"
- },
- {
-  "company": "RMgX",
-  "jobs": 1,
-  "example": "Intern – Java",
-  "link": "https://himalayas.app/companies/rmgx/jobs/intern-java-8574784410?utm_source=api",
   "source": "Himalayas"
  },
  {
