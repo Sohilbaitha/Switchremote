@@ -64,16 +64,9 @@
  },
  {
   "company": "micro1",
-  "jobs": 11,
-  "example": "Talent Support Specialist",
-  "link": "https://himalayas.app/companies/micro1/jobs/talent-support-specialist?utm_source=api",
-  "source": "Himalayas"
- },
- {
-  "company": "Mondelēz International",
-  "jobs": 1,
-  "example": "Sales Officer Trainee - North Branch",
-  "link": "https://himalayas.app/companies/mondelez-international/jobs/sales-officer-trainee-north-branch?utm_source=api",
+  "jobs": 12,
+  "example": "Mathlib Contributor",
+  "link": "https://himalayas.app/companies/micro1/jobs/mathlib-contributor?utm_source=api",
   "source": "Himalayas"
  },
  {
@@ -81,6 +74,13 @@
   "jobs": 1,
   "example": "Video Content Creator Intern",
   "link": "https://himalayas.app/companies/noct/jobs/video-content-creator-intern?utm_source=api",
+  "source": "Himalayas"
+ },
+ {
+  "company": "Partyhat",
+  "jobs": 1,
+  "example": "Digital Illustrator",
+  "link": "https://himalayas.app/companies/partyhat/jobs/digital-illustrator-7389798820?utm_source=api",
   "source": "Himalayas"
  },
  {
@@ -140,17 +140,10 @@
   "source": "Himalayas"
  },
  {
-  "company": "Weekday",
-  "jobs": 1,
-  "example": "SDR Intern",
-  "link": "https://himalayas.app/companies/weekday-com/jobs/sdr-intern?utm_source=api",
-  "source": "Himalayas"
- },
- {
   "company": "Welocalize",
-  "jobs": 1,
-  "example": "Bengali Audio Transcription QA",
-  "link": "https://himalayas.app/companies/welocalize/jobs/bengali-audio-transcription-qa?utm_source=api",
+  "jobs": 4,
+  "example": "Tamil Audio Transcription QA",
+  "link": "https://himalayas.app/companies/welocalize/jobs/tamil-audio-transcription-qa?utm_source=api",
   "source": "Himalayas"
  },
  {
