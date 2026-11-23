@@ -7,13 +7,6 @@
   "source": "Himalayas"
  },
  {
-  "company": "BaseApp Systems",
-  "jobs": 1,
-  "example": "Full Time Job At Baseapp",
-  "link": "https://himalayas.app/companies/baseapp-systems/jobs/full-time-job-at-baseapp?utm_source=api",
-  "source": "Himalayas"
- },
- {
   "company": "Bosch Group",
   "jobs": 1,
   "example": "[BD] IT Project Operation Assistant Intern (6-Month Internship)",
@@ -21,17 +14,17 @@
   "source": "Himalayas"
  },
  {
+  "company": "Clera",
+  "jobs": 1,
+  "example": "Sales Development Associate",
+  "link": "https://himalayas.app/companies/clera/jobs/sales-development-associate-4520581748?utm_source=api",
+  "source": "Himalayas"
+ },
+ {
   "company": "CXG",
   "jobs": 1,
   "example": "Operations Trainee (Part-Time)",
   "link": "https://himalayas.app/companies/cxg/jobs/operations-trainee-part-time?utm_source=api",
-  "source": "Himalayas"
- },
- {
-  "company": "Dazeinfo",
-  "jobs": 1,
-  "example": "Content Writers - Mobile/Social Media/eCommerce Industry",
-  "link": "https://himalayas.app/companies/dazeinfo/jobs/content-writers-mobile-social-media-ecommerce-industry?utm_source=api",
   "source": "Himalayas"
  },
  {
@@ -56,13 +49,6 @@
   "source": "Himalayas"
  },
  {
-  "company": "ITC2",
-  "jobs": 1,
-  "example": "HR Assistant (Internship)",
-  "link": "https://himalayas.app/companies/itc2/jobs/hr-assistant-internship?utm_source=api",
-  "source": "Himalayas"
- },
- {
   "company": "Keepgo",
   "jobs": 1,
   "example": "Technical Customer Support (SaaS only)",
@@ -78,16 +64,9 @@
  },
  {
   "company": "micro1",
-  "jobs": 10,
-  "example": "Telecommunications Customer Support Specialist",
-  "link": "https://himalayas.app/companies/micro1/jobs/telecommunications-customer-support-specialist?utm_source=api",
-  "source": "Himalayas"
- },
- {
-  "company": "Mindrift",
-  "jobs": 1,
-  "example": "Record Videos at Home with Your iPhone - Get $70",
-  "link": "https://himalayas.app/companies/mindrift/jobs/record-videos-at-home-with-your-iphone-get-70-3654225499?utm_source=api",
+  "jobs": 11,
+  "example": "Talent Support Specialist",
+  "link": "https://himalayas.app/companies/micro1/jobs/talent-support-specialist?utm_source=api",
   "source": "Himalayas"
  },
  {
@@ -145,6 +124,13 @@
   "example": "Junior Customs Declaration Agent",
   "link": "https://himalayas.app/companies/sourcefit/jobs/junior-customs-declaration-agent?utm_source=api",
   "source": "Himalayas"
+ },
+ {
+  "company": "The Flex",
+  "jobs": 1,
+  "example": "Part-Time Virtual Travel Assistant & Affiliate Recruiter Management",
+  "link": "https://jobicy.com/jobs/150701-part-time-virtual-travel-assistant-affiliate-recruiter-management",
+  "source": "Jobicy"
  },
  {
   "company": "Uy, Nicolasora & Associates, Co.",
