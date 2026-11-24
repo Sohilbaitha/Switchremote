@@ -147,6 +147,13 @@
   "source": "Himalayas"
  },
  {
+  "company": "Vertex Inc.",
+  "jobs": 1,
+  "example": "Project Coordinator",
+  "link": "https://himalayas.app/companies/vertex-inc/jobs/project-coordinator?utm_source=api",
+  "source": "Himalayas"
+ },
+ {
   "company": "Welocalize",
   "jobs": 4,
   "example": "Tamil Audio Transcription QA",
