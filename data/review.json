@@ -1,5 +1,12 @@
 [
  {
+  "company": "AccuKnox",
+  "jobs": 1,
+  "example": "AI Security Engineer Trainee",
+  "link": "https://himalayas.app/companies/accuknox/jobs/ai-security-engineer-trainee?utm_source=api",
+  "source": "Himalayas"
+ },
+ {
   "company": "Aspiring Vietnam",
   "jobs": 1,
   "example": "Tình Nguyện Viên Nhân sự",
@@ -63,15 +70,8 @@
   "source": "Himalayas"
  },
  {
-  "company": "KraftPixel Digital Solutions Private Limited",
-  "jobs": 1,
-  "example": "Web Engineer Trainee (Internship Track: Full Stack)",
-  "link": "https://himalayas.app/companies/kraftpixel-digital-solutions-private-limited/jobs/web-engineer-trainee-internship-track-full-stack?utm_source=api",
-  "source": "Himalayas"
- },
- {
   "company": "micro1",
-  "jobs": 11,
+  "jobs": 9,
   "example": "Mathlib Contributor",
   "link": "https://himalayas.app/companies/micro1/jobs/mathlib-contributor?utm_source=api",
   "source": "Himalayas"
@@ -130,6 +130,13 @@
   "jobs": 1,
   "example": "Internship Trainee - Operations",
   "link": "https://himalayas.app/companies/uy-nicolasora-associates-co/jobs/internship-trainee-operations?utm_source=api",
+  "source": "Himalayas"
+ },
+ {
+  "company": "VBuzz Marketing",
+  "jobs": 1,
+  "example": "Chat Support Specialist — Digital Media Brands",
+  "link": "https://himalayas.app/companies/vbuzz-marketing/jobs/chat-support-specialist-digital-media-brands?utm_source=api",
   "source": "Himalayas"
  },
  {
