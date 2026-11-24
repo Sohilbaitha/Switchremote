@@ -15,9 +15,9 @@
  },
  {
   "company": "Clera",
-  "jobs": 1,
-  "example": "Sales Development Associate",
-  "link": "https://himalayas.app/companies/clera/jobs/sales-development-associate-4520581748?utm_source=api",
+  "jobs": 2,
+  "example": "Founding Business Development Representative (BDR)",
+  "link": "https://himalayas.app/companies/clera/jobs/founding-business-development-representative-bdr-36530670?utm_source=api",
   "source": "Himalayas"
  },
  {
@@ -70,13 +70,6 @@
   "source": "Himalayas"
  },
  {
-  "company": "LaunchBrightly",
-  "jobs": 1,
-  "example": "Product Setup Specialist - Operations",
-  "link": "https://himalayas.app/companies/launchbrightly/jobs/product-setup-specialist-operations?utm_source=api",
-  "source": "Himalayas"
- },
- {
   "company": "micro1",
   "jobs": 11,
   "example": "Mathlib Contributor",
@@ -98,10 +91,10 @@
   "source": "Himalayas"
  },
  {
-  "company": "RemoteJobsOne",
-  "jobs": 3,
-  "example": "Junior Lawyer – Remote (Worldwide)",
-  "link": "https://himalayas.app/companies/remotejobsone/jobs/junior-lawyer-remote-worldwide?utm_source=api",
+  "company": "RMgX",
+  "jobs": 1,
+  "example": "Intern – Java",
+  "link": "https://himalayas.app/companies/rmgx/jobs/intern-java-8574784410?utm_source=api",
   "source": "Himalayas"
  },
  {
@@ -131,13 +124,6 @@
   "example": "Junior Customs Declaration Agent",
   "link": "https://himalayas.app/companies/sourcefit/jobs/junior-customs-declaration-agent?utm_source=api",
   "source": "Himalayas"
- },
- {
-  "company": "The Flex",
-  "jobs": 1,
-  "example": "Part-Time Virtual Travel Assistant & Affiliate Recruiter Management",
-  "link": "https://jobicy.com/jobs/150701-part-time-virtual-travel-assistant-affiliate-recruiter-management",
-  "source": "Jobicy"
  },
  {
   "company": "Uy, Nicolasora & Associates, Co.",
