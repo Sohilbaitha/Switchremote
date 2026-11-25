@@ -22,7 +22,7 @@
  },
  {
   "company": "Clera",
-  "jobs": 2,
+  "jobs": 1,
   "example": "Founding Business Development Representative (BDR)",
   "link": "https://himalayas.app/companies/clera/jobs/founding-business-development-representative-bdr-36530670?utm_source=api",
   "source": "Himalayas"
@@ -105,6 +105,13 @@
   "source": "Himalayas"
  },
  {
+  "company": "RWS Group",
+  "jobs": 1,
+  "example": "Associate Resource Coordinator",
+  "link": "https://himalayas.app/companies/rws-group/jobs/associate-resource-coordinator-9265267537?utm_source=api",
+  "source": "Himalayas"
+ },
+ {
   "company": "Salve.Inno Consulting",
   "jobs": 1,
   "example": "Junior Performance Marketing Specialist (Paid Acquisition & Growth)",
@@ -137,6 +144,13 @@
   "jobs": 1,
   "example": "Chat Support Specialist — Digital Media Brands",
   "link": "https://himalayas.app/companies/vbuzz-marketing/jobs/chat-support-specialist-digital-media-brands?utm_source=api",
+  "source": "Himalayas"
+ },
+ {
+  "company": "Ventra Health",
+  "jobs": 1,
+  "example": "ASC Coding Specialist - Remote in South India",
+  "link": "https://himalayas.app/companies/ventra-health/jobs/asc-coding-specialist-remote-in-south-india?utm_source=api",
   "source": "Himalayas"
  },
  {
