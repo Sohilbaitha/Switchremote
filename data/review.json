@@ -14,13 +14,6 @@
   "source": "Himalayas"
  },
  {
-  "company": "Bosch Group",
-  "jobs": 1,
-  "example": "[BD] IT Project Operation Assistant Intern (6-Month Internship)",
-  "link": "https://himalayas.app/companies/bosch-group/jobs/bd-it-project-operation-assistant-intern-6-month-internship?utm_source=api",
-  "source": "Himalayas"
- },
- {
   "company": "Clera",
   "jobs": 1,
   "example": "Founding Business Development Representative (BDR)",
@@ -79,8 +72,8 @@
  {
   "company": "micro1",
   "jobs": 12,
-  "example": "Cozi Specialist",
-  "link": "https://himalayas.app/companies/micro1/jobs/cozi-specialist?utm_source=api",
+  "example": "Airline Customer Service Specialist",
+  "link": "https://himalayas.app/companies/micro1/jobs/airline-customer-service-specialist?utm_source=api",
   "source": "Himalayas"
  },
  {
