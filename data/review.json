@@ -35,6 +35,13 @@
   "source": "Himalayas"
  },
  {
+  "company": "Daniel J Edelman Holdings",
+  "jobs": 1,
+  "example": "Intern",
+  "link": "https://himalayas.app/companies/daniel-j-edelman-holdings/jobs/intern?utm_source=api",
+  "source": "Himalayas"
+ },
+ {
   "company": "DTiQ",
   "jobs": 1,
   "example": "L1 / T1 Technical Support Representative",
@@ -88,20 +95,6 @@
   "jobs": 1,
   "example": "Digital Illustrator",
   "link": "https://himalayas.app/companies/partyhat/jobs/digital-illustrator-7389798820?utm_source=api",
-  "source": "Himalayas"
- },
- {
-  "company": "Portcast",
-  "jobs": 1,
-  "example": "Data Analyst Intern",
-  "link": "https://himalayas.app/companies/portcast/jobs/data-analyst-intern?utm_source=api",
-  "source": "Himalayas"
- },
- {
-  "company": "RMgX",
-  "jobs": 1,
-  "example": "Intern – Java",
-  "link": "https://himalayas.app/companies/rmgx/jobs/intern-java-8574784410?utm_source=api",
   "source": "Himalayas"
  },
  {
