@@ -78,9 +78,9 @@
  },
  {
   "company": "micro1",
-  "jobs": 9,
-  "example": "Mathlib Contributor",
-  "link": "https://himalayas.app/companies/micro1/jobs/mathlib-contributor?utm_source=api",
+  "jobs": 12,
+  "example": "Cozi Specialist",
+  "link": "https://himalayas.app/companies/micro1/jobs/cozi-specialist?utm_source=api",
   "source": "Himalayas"
  },
  {
@@ -102,13 +102,6 @@
   "jobs": 1,
   "example": "Native Speakers for AI Audio Conversations (DE, KO, RU, IT, JA)",
   "link": "https://himalayas.app/companies/rustlabs/jobs/native-speakers-for-ai-audio-conversations-de-ko-ru-it-ja?utm_source=api",
-  "source": "Himalayas"
- },
- {
-  "company": "RWS Group",
-  "jobs": 1,
-  "example": "Associate Resource Coordinator",
-  "link": "https://himalayas.app/companies/rws-group/jobs/associate-resource-coordinator-9265267537?utm_source=api",
   "source": "Himalayas"
  },
  {
@@ -179,13 +172,6 @@
   "jobs": 1,
   "example": "🌍 Junior Machine Learning Engineer, Remote- Contract",
   "link": "https://himalayas.app/companies/xperteez-technology/jobs/junior-machine-learning-engineer-remote-contract?utm_source=api",
-  "source": "Himalayas"
- },
- {
-  "company": "YRGCARE",
-  "jobs": 1,
-  "example": "Junior Video Editor & Graphic Designer",
-  "link": "https://himalayas.app/companies/yrgcare/jobs/junior-video-editor-graphic-designer?utm_source=api",
   "source": "Himalayas"
  }
 ]
