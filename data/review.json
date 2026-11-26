@@ -7,6 +7,13 @@
   "source": "Himalayas"
  },
  {
+  "company": "Appetiser Apps",
+  "jobs": 1,
+  "example": "Junior Full-Stack Developer",
+  "link": "https://himalayas.app/companies/appetiser-apps/jobs/junior-full-stack-developer?utm_source=api",
+  "source": "Himalayas"
+ },
+ {
   "company": "Aspiring Vietnam",
   "jobs": 1,
   "example": "Tình Nguyện Viên Nhân sự",
@@ -21,6 +28,13 @@
   "source": "Himalayas"
  },
  {
+  "company": "Corporate Web Solutions",
+  "jobs": 1,
+  "example": "Web Developer Intern",
+  "link": "https://himalayas.app/companies/corporate-web-solutions/jobs/web-developer-intern-8152198664?utm_source=api",
+  "source": "Himalayas"
+ },
+ {
   "company": "CXG",
   "jobs": 1,
   "example": "Operations Trainee (Part-Time)",
@@ -32,6 +46,13 @@
   "jobs": 1,
   "example": "Intern",
   "link": "https://himalayas.app/companies/daniel-j-edelman-holdings/jobs/intern?utm_source=api",
+  "source": "Himalayas"
+ },
+ {
+  "company": "DCX PH",
+  "jobs": 1,
+  "example": "Home Based DCX E-Commerce Trainee",
+  "link": "https://himalayas.app/companies/dcx-ph/jobs/home-based-dcx-e-commerce-trainee?utm_source=api",
   "source": "Himalayas"
  },
  {
@@ -57,23 +78,16 @@
  },
  {
   "company": "micro1",
-  "jobs": 10,
-  "example": "Airline Customer Service Specialist",
-  "link": "https://himalayas.app/companies/micro1/jobs/airline-customer-service-specialist?utm_source=api",
-  "source": "Himalayas"
- },
- {
-  "company": "NOCT",
-  "jobs": 1,
-  "example": "Video Content Creator Intern",
-  "link": "https://himalayas.app/companies/noct/jobs/video-content-creator-intern?utm_source=api",
+  "jobs": 11,
+  "example": "Hospitality Worker (Toast POS User)",
+  "link": "https://himalayas.app/companies/micro1/jobs/hospitality-worker-toast-pos-user-6179024574?utm_source=api",
   "source": "Himalayas"
  },
  {
   "company": "Owens & Minor",
-  "jobs": 1,
-  "example": "Junior SOC Analyst-2",
-  "link": "https://himalayas.app/companies/owensminor/jobs/junior-soc-analyst-2?utm_source=api",
+  "jobs": 2,
+  "example": "Junior SOC Analyst-1",
+  "link": "https://himalayas.app/companies/owensminor/jobs/junior-soc-analyst-1?utm_source=api",
   "source": "Himalayas"
  },
  {
@@ -105,17 +119,17 @@
   "source": "Himalayas"
  },
  {
-  "company": "Search Atlas",
+  "company": "SupportNinja",
   "jobs": 1,
-  "example": "Agentic SDR - Enterprise",
-  "link": "https://himalayas.app/companies/search-atlas/jobs/agentic-sdr-enterprise?utm_source=api",
+  "example": "Wholesale Support Specialist",
+  "link": "https://himalayas.app/companies/supportninja/jobs/wholesale-support-specialist?utm_source=api",
   "source": "Himalayas"
  },
  {
   "company": "TELUS International AI Inc",
-  "jobs": 9,
-  "example": "SELFIES- Jordan",
-  "link": "https://himalayas.app/companies/telus-international-ai-inc/jobs/selfies-jordan?utm_source=api",
+  "jobs": 10,
+  "example": "SELFIES- Japan",
+  "link": "https://himalayas.app/companies/telus-international-ai-inc/jobs/selfies-japan?utm_source=api",
   "source": "Himalayas"
  },
  {
