@@ -35,10 +35,10 @@
   "source": "Himalayas"
  },
  {
-  "company": "DTiQ",
+  "company": "Dynata",
   "jobs": 1,
-  "example": "L1 / T1 Technical Support Representative",
-  "link": "https://himalayas.app/companies/dtiq/jobs/l1-t1-technical-support-representative?utm_source=api",
+  "example": "Telephone Interviewer",
+  "link": "https://himalayas.app/companies/dynata/jobs/telephone-interviewer?utm_source=api",
   "source": "Himalayas"
  },
  {
@@ -57,7 +57,7 @@
  },
  {
   "company": "micro1",
-  "jobs": 12,
+  "jobs": 10,
   "example": "Airline Customer Service Specialist",
   "link": "https://himalayas.app/companies/micro1/jobs/airline-customer-service-specialist?utm_source=api",
   "source": "Himalayas"
@@ -112,10 +112,10 @@
   "source": "Himalayas"
  },
  {
-  "company": "Uy, Nicolasora & Associates, Co.",
-  "jobs": 1,
-  "example": "Internship Trainee - Operations",
-  "link": "https://himalayas.app/companies/uy-nicolasora-associates-co/jobs/internship-trainee-operations?utm_source=api",
+  "company": "TELUS International AI Inc",
+  "jobs": 9,
+  "example": "SELFIES- Jordan",
+  "link": "https://himalayas.app/companies/telus-international-ai-inc/jobs/selfies-jordan?utm_source=api",
   "source": "Himalayas"
  },
  {
@@ -144,13 +144,6 @@
   "jobs": 3,
   "example": "Tamil Audio Transcription QA",
   "link": "https://himalayas.app/companies/welocalize/jobs/tamil-audio-transcription-qa?utm_source=api",
-  "source": "Himalayas"
- },
- {
-  "company": "Worldwide Clinical Trials",
-  "jobs": 1,
-  "example": "Governance, Risk, and Compliance (GRC) Junior Analyst (India)",
-  "link": "https://himalayas.app/companies/worldwide-clinical-trials/jobs/governance-risk-and-compliance-grc-junior-analyst-india?utm_source=api",
   "source": "Himalayas"
  },
  {
