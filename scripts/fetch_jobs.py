@@ -74,6 +74,20 @@ BAD = ["registration fee", "security deposit", "pay a fee", "processing fee", "i
        "unpaid position", "unpaid role", "volunteer position", "volunteer role", "no salary",
        "equity only", "pay for training", "training fee"]
 
+# Pay that is only commission (no fixed salary, stipend or hourly pay) is left out.
+# A sales job with a base salary plus commission is still fine.
+COMMISSION_PAY = re.compile(r"commission[- ](based|basis)|on (a )?commission basis|\b100% commission|"
+                            r"straight commission|commission[- ]only|paid (only )?(on|by|in) commission|"
+                            r"earn(ings)? (are )?(only )?(from|through) commission", re.I)
+FIXED_PAY = re.compile(r"base (salary|pay)|fixed (salary|pay)|\bsalary\b|\bstipend\b|hourly (rate|pay)|"
+                       r"per hour|/\s?(hour|hr|month|year)\b|\bper (month|annum|year)\b|\bctc\b|\blpa\b", re.I)
+# Earning from people you recruit (multi-level structures) is never a job
+RECRUIT_EARN = re.compile(r"(commission|earn|%)[^.]{0,40}\b(affiliates|people|members|partners) you (recruit|refer|bring)", re.I)
+
+
+def commission_only(text):
+    return bool(RECRUIT_EARN.search(text)) or (bool(COMMISSION_PAY.search(text)) and not FIXED_PAY.search(text))
+
 
 def get(url, headers=None):
     req = urllib.request.Request(url, headers={**HEADERS, **(headers or {})})
@@ -293,7 +307,7 @@ def make(title, company, location, url, posted, source, text, need_remote=False,
         if need_remote and not REMOTE_WORDS.search(location + " " + title):
             return None
         body = (title + " " + full).lower()
-        if not title_ok(title) or not level_ok(level) or has(body, BAD) or SCAM.search(body):
+        if not title_ok(title) or not level_ok(level) or has(body, BAD) or SCAM.search(body) or commission_only(body):
             return None
         # Read the whole listing (requirements are often near the end): fresher jobs only,
         # and nothing posted by an agency for a hidden "client"
