@@ -29,9 +29,9 @@
  },
  {
   "company": "Corporate Web Solutions",
-  "jobs": 3,
-  "example": "Electric Vehicles Designs Intern",
-  "link": "https://himalayas.app/companies/corporate-web-solutions/jobs/electric-vehicles-designs-intern?utm_source=api",
+  "jobs": 4,
+  "example": "Data Science Intern",
+  "link": "https://himalayas.app/companies/corporate-web-solutions/jobs/data-science-intern?utm_source=api",
   "source": "Himalayas"
  },
  {
@@ -78,7 +78,7 @@
  },
  {
   "company": "micro1",
-  "jobs": 10,
+  "jobs": 8,
   "example": "Hospitality Worker (Toast POS User)",
   "link": "https://himalayas.app/companies/micro1/jobs/hospitality-worker-toast-pos-user-6179024574?utm_source=api",
   "source": "Himalayas"
