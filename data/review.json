@@ -7,13 +7,6 @@
   "source": "Himalayas"
  },
  {
-  "company": "Appetiser Apps",
-  "jobs": 1,
-  "example": "Junior Full-Stack Developer",
-  "link": "https://himalayas.app/companies/appetiser-apps/jobs/junior-full-stack-developer?utm_source=api",
-  "source": "Himalayas"
- },
- {
   "company": "Aspiring Vietnam",
   "jobs": 1,
   "example": "Tình Nguyện Viên Nhân sự",
@@ -29,16 +22,16 @@
  },
  {
   "company": "Corporate Web Solutions",
-  "jobs": 1,
-  "example": "Web Developer Intern",
-  "link": "https://himalayas.app/companies/corporate-web-solutions/jobs/web-developer-intern-8152198664?utm_source=api",
+  "jobs": 3,
+  "example": "Electric Vehicles Designs Intern",
+  "link": "https://himalayas.app/companies/corporate-web-solutions/jobs/electric-vehicles-designs-intern?utm_source=api",
   "source": "Himalayas"
  },
  {
-  "company": "CXG",
+  "company": "Cybertexex",
   "jobs": 1,
-  "example": "Operations Trainee (Part-Time)",
-  "link": "https://himalayas.app/companies/cxg/jobs/operations-trainee-part-time?utm_source=api",
+  "example": "KYC Officer (remote, Vietnam)",
+  "link": "https://himalayas.app/companies/cybertexex/jobs/kyc-officer-remote-vietnam?utm_source=api",
   "source": "Himalayas"
  },
  {
@@ -49,13 +42,6 @@
   "source": "Himalayas"
  },
  {
-  "company": "DCX PH",
-  "jobs": 1,
-  "example": "Home Based DCX E-Commerce Trainee",
-  "link": "https://himalayas.app/companies/dcx-ph/jobs/home-based-dcx-e-commerce-trainee?utm_source=api",
-  "source": "Himalayas"
- },
- {
   "company": "Dynata",
   "jobs": 1,
   "example": "Telephone Interviewer",
@@ -63,10 +49,10 @@
   "source": "Himalayas"
  },
  {
-  "company": "etaily",
+  "company": "Foxelli Group",
   "jobs": 1,
-  "example": "Content Creator Intern",
-  "link": "https://himalayas.app/companies/etaily/jobs/content-creator-intern?utm_source=api",
+  "example": "Customer Support & Sales Agent | E-commerce | Remote",
+  "link": "https://himalayas.app/companies/foxelli-group/jobs/customer-support-sales-agent-e-commerce-remote?utm_source=api",
   "source": "Himalayas"
  },
  {
@@ -78,7 +64,7 @@
  },
  {
   "company": "micro1",
-  "jobs": 11,
+  "jobs": 10,
   "example": "Hospitality Worker (Toast POS User)",
   "link": "https://himalayas.app/companies/micro1/jobs/hospitality-worker-toast-pos-user-6179024574?utm_source=api",
   "source": "Himalayas"
@@ -88,13 +74,6 @@
   "jobs": 2,
   "example": "Junior SOC Analyst-1",
   "link": "https://himalayas.app/companies/owensminor/jobs/junior-soc-analyst-1?utm_source=api",
-  "source": "Himalayas"
- },
- {
-  "company": "Partyhat",
-  "jobs": 1,
-  "example": "Digital Illustrator",
-  "link": "https://himalayas.app/companies/partyhat/jobs/digital-illustrator-7389798820?utm_source=api",
   "source": "Himalayas"
  },
  {
@@ -127,7 +106,7 @@
  },
  {
   "company": "TELUS International AI Inc",
-  "jobs": 10,
+  "jobs": 16,
   "example": "SELFIES- Japan",
   "link": "https://himalayas.app/companies/telus-international-ai-inc/jobs/selfies-japan?utm_source=api",
   "source": "Himalayas"
@@ -144,27 +123,6 @@
   "jobs": 1,
   "example": "ASC Coding Specialist - Remote in South India",
   "link": "https://himalayas.app/companies/ventra-health/jobs/asc-coding-specialist-remote-in-south-india?utm_source=api",
-  "source": "Himalayas"
- },
- {
-  "company": "Vertex Inc.",
-  "jobs": 1,
-  "example": "Project Coordinator",
-  "link": "https://himalayas.app/companies/vertex-inc/jobs/project-coordinator?utm_source=api",
-  "source": "Himalayas"
- },
- {
-  "company": "Welocalize",
-  "jobs": 3,
-  "example": "Tamil Audio Transcription QA",
-  "link": "https://himalayas.app/companies/welocalize/jobs/tamil-audio-transcription-qa?utm_source=api",
-  "source": "Himalayas"
- },
- {
-  "company": "Xperteez Technology",
-  "jobs": 1,
-  "example": "🌍 Junior Machine Learning Engineer, Remote- Contract",
-  "link": "https://himalayas.app/companies/xperteez-technology/jobs/junior-machine-learning-engineer-remote-contract?utm_source=api",
   "source": "Himalayas"
  }
 ]
