@@ -21,6 +21,13 @@
   "source": "Himalayas"
  },
  {
+  "company": "Clera",
+  "jobs": 1,
+  "example": "Sales Development Associate",
+  "link": "https://himalayas.app/companies/clera/jobs/sales-development-associate-9464129786?utm_source=api",
+  "source": "Himalayas"
+ },
+ {
   "company": "Corporate Web Solutions",
   "jobs": 3,
   "example": "Electric Vehicles Designs Intern",
@@ -46,6 +53,13 @@
   "jobs": 1,
   "example": "Telephone Interviewer",
   "link": "https://himalayas.app/companies/dynata/jobs/telephone-interviewer?utm_source=api",
+  "source": "Himalayas"
+ },
+ {
+  "company": "Finmid",
+  "jobs": 1,
+  "example": "Entrepreneur in Residence Intern - Ops Focus",
+  "link": "https://himalayas.app/companies/finmid/jobs/entrepreneur-in-residence-intern-ops-focus?utm_source=api",
   "source": "Himalayas"
  },
  {
