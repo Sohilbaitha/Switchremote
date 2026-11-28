@@ -1,12 +1,5 @@
 [
  {
-  "company": "Aspiring Vietnam",
-  "jobs": 1,
-  "example": "Tình Nguyện Viên Nhân sự",
-  "link": "https://himalayas.app/companies/aspiring-vietnam/jobs/tinh-nguy-n-vien-nhan-s?utm_source=api",
-  "source": "Himalayas"
- },
- {
   "company": "Axipro",
   "jobs": 1,
   "example": "Junior SEO Specialist",
@@ -46,6 +39,20 @@
   "jobs": 1,
   "example": "KYC Officer (remote, Vietnam)",
   "link": "https://himalayas.app/companies/cybertexex/jobs/kyc-officer-remote-vietnam?utm_source=api",
+  "source": "Himalayas"
+ },
+ {
+  "company": "Cypress Global Services, Inc",
+  "jobs": 1,
+  "example": "Customer Support Rep (CSR) US Night shift - Work from home",
+  "link": "https://himalayas.app/companies/cypress-global-services-inc/jobs/customer-support-rep-csr-us-night-shift-work-from-home?utm_source=api",
+  "source": "Himalayas"
+ },
+ {
+  "company": "Enterprise Management Solutions, Inc.",
+  "jobs": 1,
+  "example": "Claims Processor",
+  "link": "https://himalayas.app/companies/enterprise-management-solutions-inc/jobs/claims-processor?utm_source=api",
   "source": "Himalayas"
  },
  {
@@ -93,9 +100,9 @@
  },
  {
   "company": "Owens & Minor",
-  "jobs": 2,
-  "example": "Junior SOC Analyst-1",
-  "link": "https://himalayas.app/companies/owensminor/jobs/junior-soc-analyst-1?utm_source=api",
+  "jobs": 1,
+  "example": "Junior SOC Analyst-2",
+  "link": "https://himalayas.app/companies/owensminor/jobs/junior-soc-analyst-2?utm_source=api",
   "source": "Himalayas"
  },
  {
@@ -117,6 +124,13 @@
   "jobs": 1,
   "example": "Junior Performance Marketing Specialist (Paid Acquisition & Growth)",
   "link": "https://himalayas.app/companies/salve-inno-consulting/jobs/junior-performance-marketing-specialist-paid-acquisition-growth-7640827553?utm_source=api",
+  "source": "Himalayas"
+ },
+ {
+  "company": "Smart Apartment Data",
+  "jobs": 1,
+  "example": "Virtual Call Center Agent (Outbound Market Research) - REMOTE PHILIPPINES",
+  "link": "https://himalayas.app/companies/smart-apartment-data/jobs/virtual-call-center-agent-outbound-market-research-remote-philippines-6781570831?utm_source=api",
   "source": "Himalayas"
  },
  {
